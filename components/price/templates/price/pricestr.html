@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<!--На данной странице представлена форма, которая формируется динамически!!!
+в price.py блюпринта price_tb
+в @price_blueprint.route('/pricestr/<int:row_table>/<int:col_table>/', methods=['GET', 'POST'])
+def createprice(row_table, col_table)-->
+<!--на основании данных о количестве строк и столбцов,
+полученных на странице price.html в функции priceindex() @price_blueprint.route('/priceroute/'-->
+<main>
+    <div class="container-fluid mx-5">
+
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4" href="{{ url_for('price_bp.priceindex') }}">
+                Создать новый прайс
+            </a>
+            <a class="pl-4" href="{{ url_for('price_bp.choose_price') }}">
+                Перейти к списку прайсов
+            </a>
+            {% if session.get('card_usluga_id') %}
+            <a class="pl-4"
+               href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=session.get('card_usluga_id')) }}">
+                Вернуться к карточке услуги
+            </a>
+            {% else %}
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Перейти к карточкам услуг
+            </a>
+            {% endif %}
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <!--Навигационные ссылки - начало-->
+        <!--<div class="row pb-3 pt-2">-->
+        <!--<div class="col-2">-->
+        <!--<a href="{{ url_for('admin.index') }}">-->
+        <!--Вернуться в панель администратора-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-2 text-center">-->
+        <!--<a href="{{ url_for('price_bp.priceindex') }}">-->
+        <!--Создать новый прайс-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-2 text-left">-->
+        <!--<a href="{{ url_for('price_bp.choose_price') }}">-->
+        <!--Перейти к списку прайсов-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-2 text-left">-->
+        <!--{% if session.get('card_usluga_id') %}-->
+        <!--<a href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=session.get('card_usluga_id')) }}">-->
+        <!--Вернуться к карточке услуги-->
+        <!--</a>-->
+        <!--{% else %}-->
+        <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+        <!--Перейти к карточкам услуг-->
+        <!--</a>-->
+        <!--{% endif %}-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки - конец-->
+
+        <h3 class="text-success pt-3">
+            <b> Шаг 2 </b>
+        </h3>
+
+        <h5 class="text-left pl-0 my-2">
+            Введите данные
+        </h5>
+        <div class="text-danger">Обратите внимание!</div>
+        <div class="base_color_1"><b>
+            1. Имя прайса должно быть содержательным и отражать смысл таблицы.
+            </b>
+        </div>
+        <div class="base_color_1"><b>
+            2. Первая строка и первый столбец - это заголовки в таблице.
+            </b>
+        </div>
+            <div class="pl-3">Давайте им значимые и понятные имена
+                (например тираж, красочность 4+4, кол-во, руб. и т.п.)
+            </div>
+            <div class="pl-3">В них не доступны ссылки для заказа - это заголовки.</div>
+        <div class="base_color_1"><b>
+            3. В ячейку прайса вы можете ввести как цифры, так и текст.
+        </b>
+        </div>
+        <div class="pl-3"><b>3.1 Ввод цены:</b></div>
+            <div class="pl-3">Если вы хотите ввести в ячейку прайса цену, то в этой строке не должно быть других символов,
+            кроме цифр и точки. </div>
+        <div class="pl-3">Копейки указывайте через точку, а не запятую. </div>
+        <div class="pl-3">Размерность указывайте в столбце (строке) заголовка.</div>
+        <div class="pl-3">В этом случае будет доступно изменение кол-ва услуг в заказе.</div>
+        <div class="pl-3"><b>3.2 Ввод текста:</b></div>
+        <div class="pl-3">Вы также можете ввести текст, не более 20 символов (например: Цена по запросу) или не вводить ничего.</div>
+        <div class="pl-3">В этом случае изменение кол-ва услуг в заказе будет НЕ доступно. </div>
+
+
+
+        <!--https://bootstrap-4.ru/docs/4.6/components/forms/-->
+        <form method="POST" action="">
+            {{ form.csrf_token }}
+
+            {% if form.errors %}
+            <ul class="errors">
+                {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                {% for error in field_errors %}
+                <li>{{ form[field_name].label }}: {{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {{ err }}
+            <div class="row">
+                <div class="col-4">
+                    {{ message }}
+                </div>
+            </div>
+
+            <!--class="table-responsive" - добавляет прокрутку-->
+            <!--см. https://bootstrap-4.ru/articles/cheatsheet/#table-reflow-->
+            <table class="table-responsive">
+                <!--<thead class="mb-5">-->
+                <th class="pb-3">
+                    {{ form.name_price_table.label(class='text-success') }}<br>
+                    <!--{{ form.name_price_table(value="Наименование прайса") }}-->
+                    {{ form.name_price_table(class='form-control') }}
+
+                </th>
+                <!--</thead>-->
+                <br>
+                <br>
+                <tbody class="mt-5">
+                <tr>
+                    {% for cols in form.mycol %}
+                    <td class="text-success pt-3">
+                        <!--{{ cols.row.label }}-->
+                        {{ cols.row }}
+                        <!-- -&lt;!&ndash;{{ cols }}&ndash;&gt;-->
+                    </td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="row pt-5">
+                <div class="col-2">
+                    {{ form.submit(class='btn btn-success form-control') }}
+                </div>
+            </div>
+            <!--<div class="form-row">-->
+            <!--{% for field in form %}-->
+            <!--<div class="col col-sm">-->
+            <!--{{ field(class="form-control") }}-->
+            <!--</div>-->
+            <!--{% endfor %}-->
+            <!--</div>-->
+
+
+
+    </form>
+    <br>
+    </div>
+</main>
+{% endblock %}
+
+
+<!--***Вариант 1 красивая форма но не работает как надо!!! - начало-->
+<!--Вид устраивает(адаптивный и все красиво но!!! не знаю как передать разные значения-->
+<!--так как это в цикле повторяется одно поле из одной формы class FormProba и-->
+<!--при заполнении 1 поля все остальные заполняются тем же значением-->
+<!--<div class="container">-->
+    <!--<form method="POST" action="">-->
+        <!--{{ form.csrf_token }}-->
+        <!--<div class="form-group col-md-4">-->
+            <!--{{ form.name_price_table(class="form-control", value='Наименование таблицы прайса') }}-->
+        <!--</div>-->
+
+        <!--<div class="form-row">-->
+            <!--{% for i in range(col_table) %}-->
+            <!--<div class="col col-sm">-->
+                <!--{% for j in range(row_table) %}-->
+                <!--{{ row_table }}-->
+                <!--{% endfor %}-->
+            <!--</div>-->
+            <!--{% endfor %}-->
+        <!--</div>-->
+        <!--<br>-->
+        <!--<div class="form-group col-md-2">-->
+            <!--{{ form.submit(class="form-control") }}-->
+        <!--</div>-->
+    <!--</form>-->
+<!--</div>-->
+<!--***Вариант 1 красивая форма но не работает как надо!!! - конец-->
+<!--<br>-->
+
+<!--<br>-->
+
+
+
+<!--<div class="container-fluid">-->
+    <!--<form method="POST" action="" class="mb-5">-->
+        <!--{{ form.csrf_token }}-->
+        <!--&lt;!&ndash;<div>&ndash;&gt;-->
+            <!--&lt;!&ndash;{{ form.mycol }}&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+        <!--<div class="form-group col-md-4">-->
+            <!--{{ form.name_price_table(class="form-control", value='Наименование прайса') }}-->
+        <!--</div>-->
+
+        <!--<div class="form-row">-->
+            <!--{% for cols in form.mycol %}-->
+            <!--<div class="col col-sm">-->
+                <!--<br>-->
+                <!--{{ cols.row(class="form-control mt-5") }}-->
+                <!--<br>-->
+            <!--</div>-->
+
+            <!--{% endfor %}-->
+        <!--</div>-->
+
+        <!--<br>-->
+        <!--<br>-->
+        <!--<br>-->
+        <!--<br>-->
+        <!--<br>-->
+        <!--<div class="form-group col-md-2">-->
+            <!--{{ form.submit(class="form-control mt-5") }}-->
+        <!--</div>-->
+        <!--<br>-->
+
+    <!--</form>-->
+<!--</div>-->
+
+
+
+
+                <!--<form method="POST" action="">-->
+                    <!--{{ form.csrf_token }}-->
+
+                           <!--{{ form.hidden_tag() }}-->
+                            <!--{{ form.name_price_table.label }} {{ form.name_price_table(class="table-responsive") }}-->
+                    <!--<div class="container">-->
+                    <!--<div class="row">-->
+
+                            <!--{% for col in form.mycol %}-->
+                            <!--<div class="col">-->
+                            <!--{% for row in form.myrow %}-->
+
+                                <!--&lt;!&ndash;{{ row.label }}{{ col.label }}&ndash;&gt;-->
+                                <!--{{ col }}-->
+                                <!--&lt;!&ndash;{{ row(class="table-responsive") }}&ndash;&gt;-->
+
+                            <!--{% endfor %}-->
+                                <!--</div>-->
+                            <!--{% endfor %}-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--{{ form.submit }}-->
+                <!--</form>-->
+
+<!--<div>Форма номер2 - начало</div>-->
+<!--<div class="container">    -->
+    <!--<table class="table table-responsive">-->
+        <!--&lt;!&ndash;Варианты адаптивности - начало&ndash;&gt;-->
+        <!--&lt;!&ndash;<table class="table table-sm-responsive"></table>&ndash;&gt;-->
+        <!--&lt;!&ndash;<table class="table table-md-responsive">&lt;!&ndash; ... &ndash;&gt;</table>&ndash;&gt;-->
+        <!--&lt;!&ndash;<table class="table table-lg-responsive">&lt;!&ndash; ... &ndash;&gt;</table>&ndash;&gt;-->
+        <!--&lt;!&ndash;<table class="table table-xl-responsive">&lt;!&ndash; ... &ndash;&gt;</table>&ndash;&gt;-->
+        <!--&lt;!&ndash;Варианты адаптивности - конец&ndash;&gt;-->
+        <!--<tbody>-->
+            <!--<tr>-->
+                <!--{% for cols in form.mycol %}-->
+                <!--<td class="unstyled">-->
+                    <!--{{ form.hidden_tag() }}-->
+                    <!--{{ cols.row }}-->
+                <!--</td>-->
+                <!--{% endfor %}-->
+             <!--</tr>-->
+            <!--</tbody>-->
+    <!--</table>-->
+
+
+    <!--<table class="table table-sm-responsive">&lt;!&ndash; ... &ndash;&gt;</table>-->
+    <!--<table class="table table-md-responsive">&lt;!&ndash; ... &ndash;&gt;</table>-->
+    <!--<table class="table table-lg-responsive">&lt;!&ndash; ... &ndash;&gt;</table>-->
+    <!--<table class="table table-xl-responsive">&lt;!&ndash; ... &ndash;&gt;</table>-->
+<!--</div>-->
+<!--<div>Форма номер2 - конец</div>-->
+
+    <!--<div>Форма номер3</div>-->
+    <!--<div class="row">-->
+        <!--<div class="col-12">-->
+            <!--<div class="table-responsive">-->
+                <!--<form method="POST" action="">-->
+                    <!--{{ form.csrf_token }}-->
+                    <!--<table class="table">-->
+                        <!--&lt;!&ndash;<thead>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<tr>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<th>#</th>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</thead>&ndash;&gt;-->
+                        <!--<tbody>-->
+                        <!--<tr>-->
+                            <!--<td>-->
+                                <!--{{ form.hidden_tag() }}-->
+                                <!--{{ form.name_price_table.label }} {{ form.name_price_table(class="table-responsive") }}-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--{% for col in form.mycol %}-->
+
+                            <!--<td>-->
+                            <!--{% for row in col.myrow %}-->
+                                <!--{{ row.label }}-->
+                                <!--{{ col.label }}-->
+                                <!--{{ col(class="table-responsive") }}<br>-->
+                                <!--{{ row(class="table-responsive") }}-->
+                            <!--{% endfor %}-->
+                            <!--</td>-->
+
+                            <!--{% endfor %}-->
+                        <!--</tr>-->
+
+                        <!--</tbody>-->
+                    <!--</table>-->
+                    <!--{{ form.submit }}-->
+                <!--</form>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <!--<div class="col">-->
+
+
+            <!--<table class="table-responsive">-->
+                <!--<form method="POST" action="">-->
+                <!--<thead>-->
+                <!--{% for column in range(col_table) %}-->
+                <!--&lt;!&ndash;<th contenteditable>I'm editable</th>&ndash;&gt;-->
+                <!--<th>I'm editable</th>-->
+                <!--{% endfor %}-->
+                <!--</thead>-->
+                     <!--</form>-->
+            <!--</table>-->
+
+        <!--</div>-->
+    <!--</div>-->
+<!--<div>Форма номер3 - конец</div>-->
+
+    <!--Пример1-http://wordpress-life.ru/html-kak-pomestit-form-v-table.html - начало-->
+    <!--<form method="post" id="myform"></form>-->
+    <!--<table>-->
+        <!--<tr>-->
+            <!--<td>-->
+                <!--<input type="text" name="first_name" value="first_name" form="myform">-->
+            <!--</td>-->
+            <!--<td>-->
+                <!--<input type="text" name="second_name" value="second_name" form="myform">-->
+            <!--</td>-->
+            <!--<td>-->
+                <!--<input type="submit" name="add" form="myform"/>-->
+            <!--</td>-->
+        <!--</tr>-->
+    <!--</table>-->
+    <!--Пример1-http://wordpress-life.ru/html-kak-pomestit-form-v-table.html - конец-->
+
+

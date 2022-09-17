@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container">
+    <!--<h6>Из фотоманагер1</h6>-->
+
+        <div class="row pt-2">
+            <div class="col-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            </div>
+            <a href="{{ url_for('foto_manager_bp.choice') }}">
+            Создать новую карточку услуг
+            </a>
+        </div>
+
+        <!--Модуль удаления и редактирования файлов с миниатюрами - начало-->
+        <h4 class="mt-1 pt-3 text-left base_color_1">Карточки услуг</h4>
+
+        {% for razdel in menu_all %}
+        <br>
+        <h5 class="pl-4 text-left bg-success text-white">Раздел меню: {{ razdel }} </h5>
+        <div>Перечень карточек услуг (в соответствующих видах услуг)(если есть):</div>
+
+
+        <div class="row">
+
+            {% for usluga in uslugi_all %}
+            {% if usluga.punkt_menu_id == razdel.id %}
+            {% for foto in foto_all %}
+            {% if foto.dir_usluga == usluga.link %}
+
+
+            <div class="col-md-4 p-2">
+                <!--Внимание!!! класс h-100 помог выровнять по высоте!!!-->
+                <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
+                <!--отступов между колонками а при попытке задать margin (m-1 например)-->
+                <!--приводило к тому что отступ появлялся но 4 колонки не помещались на 1 строке(ьтолько 3)-->
+                <!--<div class="border border-success p-2 h-100">-->
+
+
+                    <div class="card border-success m-2 p-3 h-100">
+                        <div class="text-success p-2"><b>Услуга: </b>{{ usluga }}</div>
+                        <img class="card-img-top"
+                             src="/static/images/uploads/{{ foto.dir_uploads }}{{ foto.secure_name_photo }}"
+                             alt="фото услуги">
+                        <div class="card-body">
+                            <div class="card-text">
+                                <div><b>Заголовок фото:</b></div>
+                                {% if foto.title %}
+                                <div>{{ foto.title }}</div>
+                                {% endif %}
+                                <div class="pt-2"><b>Сопроводительный текст:</b></div>
+                                {% if foto.comments %}
+                                <div>{{ foto.comments }}</div>
+                                {% endif %}
+                                <div class="pt-2"><b>Исходное имя файла:</b></div>
+                                <div>{{ foto.origin_name_photo }}</div>
+                                <div class="pt-2"><b>Имя файла в базе:</b></div>
+                                <div>{{ foto.secure_name_photo }}</div>
+                                {% if foto.price %}
+                                <div class="pt-2"><b>Прикрепленные прайсы:</b></div>
+
+                                {% for price in foto.price %}
+                                <div>
+                                <a href="{{ url_for('price_bp.choose_price') }}">
+                                    </div>
+                                {{ price }}
+                                    </a>
+                                {% endfor %}
+                                {% endif %}
+                                <div class="pt-2"><b>Id фото в базе:</b> {{ foto.id }}</div>
+
+                            </div>
+                        </div>
+                        <!--<div class="card-footer">-->
+                        <div class="p-2">
+                            {% if current_user.has_role('superadmin') %}
+                            <div class="row">
+                                <div class="col-4">
+                                    <!--Передача данных в модальное окно Важно!!!  - начало -->
+                                    <!--Для передачи данных (фото которое удаляем) в модальное окно нужно -->
+                                    <!-- обязательно указать идентификатор удаляемого объекта!!-->
+                                    <!--и в тригере модального окна (data-target="#deleteFoto{{ foto.id }}")-->
+                                    <!--и в самом модальном окне id="deleteFoto{{ foto.id }}"-->
+                                    <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
+
+                                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                                            data-target="#deleteFoto{{ foto.id }}"
+                                            href="{{ url_for('foto_manager_bp.delete_foto', id=foto['id']) }}">
+                                        Удалить
+                                    </button>
+
+                                    <!--Модальное окно  - начало-->
+                                    <!--Его не видно пока не нажать ссылку Удалить2 !!!!!!!-->
+                                    <!--активируется после нажатия на триггер(он выше (ссылка - удалить карусель)-->
+                                    <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+                                    <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+                                    <!--ставим модальное окно внутри цикла car in carousel -->
+                                    <div class="modal fade" id="deleteFoto{{ foto.id }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteFotoLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteFotoLabel">
+                                                        Вы уверены, что хотите удалить фото?
+                                                    </h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                        <!--&times; - это крестик для закрытия-->
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <h6 class="text-success">
+                                                        <b>Внимание!</b><br>
+                                                    </h6>
+                                                    <div class="text-danger">
+                                                        <b>Фото </b>
+                                                    </div>
+                                                    {{ foto }}
+
+                                                    <div class="text-danger">
+                                                        <b>будет удалено!</b>
+                                                    </div>
+                                                    <div class="text-danger">
+                                                        <b>При удалении фото будет удалена вся карточка услуги!</b>
+                                                    </div>
+                                                    <br>
+                                                    Если вы хотите изменить заголовок фото <br>или текст к
+                                                    изображению,<br>
+                                                    выйдите из диалогового окна и нажмите кнопку
+                                                    <b>Редактировать </b>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Закрыть
+                                                    </button>
+
+                                                    <a class="btn btn-danger"
+                                                       href="{{ url_for('foto_manager_bp.delete_foto', id=foto['id']) }}"
+                                                       role="button">
+                                                        Удалить {{ foto['id'] }}
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Модальное окно - конец-->
+                                    <!--Передача данных в модальное окно Важно!!!  - конец -->
+
+                                </div>
+
+                                <div class="col-6">
+                                    <!--Форма для редактирования фото-->
+                                    <!--Здесь все поля скрытые и мы их используем исключительно
+                                    для передачи данных о фото при переходе на страницу редакитрования-->
+                                    <!--<form method="POST" action="/admin/edit/edit_foto_info/">-->
+                                    <form method="POST" action="{{ url_for('foto_manager_bp.edit_foto') }}">
+                                        {{ form_edit.csrf_token }}
+
+                                        {{ form_edit.submit_edit_form_from_mini(class="btn btn-secondary") }}
+
+                                        {{ form_edit.secure_name_photo(value= foto.secure_name_photo) }}
+                                        {{ form_edit.origin_name_photo(value= foto.origin_name_photo) }}
+                                        {{ form_edit.dir_uploads(value= foto.dir_uploads) }}
+                                        {{ form_edit.dir_usluga(value= foto.dir_usluga) }}
+                                        {{ form_edit.dir_menu(value= foto.dir_menu) }}
+                                        {{ form_edit.hidden_title(value= foto.title) }}
+                                        {{ form_edit.hidden_comments(value= foto.comments) }}
+                                    </form>
+                                    <!--Форма для редактирования фото - конец -->
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-10 pt-2 pr-2">
+                                    <a class="btn btn-success w-100"
+                                       href="{{ url_for('foto_manager_bp.add_price', id=foto['id']) }}">
+                                        Добавить прайс в карточку
+                                    </a>
+                                </div>
+                                <div class="col-2">
+                                </div>
+                            </div>
+                            <div class="row">
+                                {% if foto.price|length > 0 %}
+                                <div class="col-10 pt-2 pr-2">
+
+                                        <a class="btn btn-danger w-100"
+                                           href="{{ url_for('foto_manager_bp.delete_price', foto_id=foto['id']) }}">
+                                            Удалить прайс из карточки
+                                        </a>
+
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                <!--</div>-->
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+        <!--Модуль удаления файлов с миниатюрами в правом столбце- конец-->
+
+    </div>
+</main>
+
+<!--Вариант2 - начало - разбираться-->
+<!--https://question-it.com/questions/660373/modalnoe-okno-flask-confirm-s-neskolkimi-knopkami-->
+<!--Вариант2 - конец - разбираться-->
+
+<!--***** Вариант 1 - начало-->
+<!--Модальное окно - начало - - работает!!!-->
+<!--работает но немного другой функционал - читать!!!!-->
+<!--https://it-blog.ru/js/modalnoe-okno-bootstrap/-->
+<!--<div id="myModal" class="modal" tabindex="-1">-->
+    <!--<div class="modal-dialog">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<h5 class="modal-title">Подтверждение</h5>-->
+                <!--<button type="button" class="close" data-dismiss="modal">×</button>-->
+            <!--</div>-->
+            <!--<div class="modal-body">-->
+                <!--<p>Вы хотите сохранить изменения в этом документе перед закрытием?</p>-->
+                <!--<p class="text-secondary">-->
+                    <!--<small>Если вы не сохраните, ваши изменения будут потеряны.</small>-->
+                <!--</p>-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">-->
+                    <!--Закрыть-->
+                <!--</button>-->
+                <!--<button type="button" class="btn btn-primary">Сохранить изменения</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--Модальное окно - конец-->
+
+<!--Скрипт для модального окна - начало - работает!!!-->
+<!--https://it-blog.ru/js/modalnoe-okno-bootstrap/-->
+<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
+<!--<script>-->
+    <!--$(document).ready(function(){-->
+        <!--$("#myModal").modal('show');-->
+    <!--});-->
+<!--</script>-->
+<!--Скрипт для модального окна - конец-->
+<!--****** Вариант 1 - конец-->
+
+
+{% endblock %}
+

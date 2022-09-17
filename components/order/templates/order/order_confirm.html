@@ -1,0 +1,115 @@
+<!--страница - подтверждения, что заявка на заказ принята-->
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container">
+
+        {% if current_user.user_first_name %}
+        <div class="pt-3">{{ current_user.user_first_name }}!</div>
+        {% else %}
+        <div class="pt-3">{{ current_user }}!</div>
+        {% endif %}
+
+        <div class="pt-3">Ваша заявка зарегистрирована и будет обработана в ближайшее время. </div>
+        <div>Номер заявки:</div>
+        <div class="pt-5">Для уточнения деталей заказа укажите ваши контактные данные:</div>
+        <!--Для чего класс form-signin - не помню!!! поэтому не использую-->
+                    <!--<form class="form-signin pt-1" action="" method="POST">-->
+                    <form action="" method="POST">
+                        {{ form.csrf_token }}
+
+                        <!--Вывод ошибок:-->
+                        <!--Ошибки можем сформировать разными способами:-->
+                        <!--1) валидация, кот. делаем внутри формы, с помощью валидаторов формы
+                        (встроенных и валидаторов, задаваемых в функции validate_user_phone.
+                        Имя такой функции формируется так: validate_имя валидируемого поля
+                        В ней можем задать свои сообщения валидатора.)
+                        При использовании встроенных валидаторов появляются стандартные сообщения,
+                        кот. заданы в браузерах (могут немного отличаться)
+                        Если задано в параметрах валидатора собственные message - появятся они!!!-->
+                        <!--2) условия, кот. накладываем на данные внутри роута и передаем на стр. с помощью переменных            -->
+                        <!--Затем на стр. выводим ошибки и 1) и 2)-->
+
+                        {% if not current_user.phones %}
+                        <!--Вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        {% if form.user_phone.errors %}
+                        {% for err in form.user_phone.errors %}
+                        <p class="error alert alert-warning" role="alert">
+                            {{ err }}
+                        </p>
+                        {% endfor %}
+                        {% endif %}
+                        <!--Вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+
+                        <!--Вывод ошибок, формируемых внутри роута (п.2) (если такие заданы), кот. рендерит эту стр. - начало-->
+                        {% if err %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ err }}
+                        </div>
+                        {% endif %}
+                        <!--Вывод ошибок, формируемых внутри роута (п.2), кот. рендерит эту стр. - конец-->
+
+
+                        <!--класс бутстреп text-muted делает текст более бледным чем черный (серым)-->
+                        {{ form.user_phone.label(class="text-muted control-label") }}
+                        {{ form.user_phone(class="form-control") }}
+
+                        {% endif %}
+
+                        {% if not current_user.user_first_name %}
+                        <div class="pt-3">
+                            <!--Вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            {% if form.user_first_name.errors %}
+                            {% for err in form.user_first_name.errors %}
+                            <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                            {% endfor %}
+                            {% endif %}
+                            <!--Вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+                        </div>
+
+                        <div class="pt-3">
+                            <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                            {{ form.user_first_name(class="form-control") }}
+                        </div>
+                        {% endif %}
+
+                        <div class="pt-3">
+                            <!--{{ form.user_surname.label(class="text-muted control-label") }}-->
+                            {{ form.user_surname(class="form-control") }}
+                        </div>
+
+
+                        <!--class="list-unstyled" убирает ненужные точки в начале строки в списке-->
+                        <!--радиокнопок, т.к. в типе RadioField поля form.user_organization используются теги -->
+                        <!--<ul><li></li></ul> которые задают эти точки по умолчанию-->
+                        <div class="pt-4">
+                            {{ form.user_organization.label(class="text-muted control-label") }}
+                            {{ form.user_organization(class="list-unstyled") }}
+
+                        </div>
+
+                        <div class="pt-3">
+                            {{ form.user_consent() }}
+                            {{ form.user_consent.label(class="text-muted control-label") }}
+                            <div>
+                                <a href="">Соглашение о персональных данных</a>
+                            </div>
+                        </div>
+
+                        <!--Кнопка сохранить - с классом form-control-->
+                        <div class="pt-5 pb-3">
+                            {{ form.submit(class="form-control btn btn-success") }}
+                        </div>
+                        <!--Кнопка сохранить - без класса form-control-->
+                        <!--<div class="pt-3">                                -->
+                        <!--{{ form.submit(class="btn btn-success") }}-->
+                        <!--</div>-->
+
+                    </form>
+
+    </div>
+</main>
+
+{% endblock %}

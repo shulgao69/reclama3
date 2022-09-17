@@ -1,0 +1,1080 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container">
+        <h2>ФОРМЫ</h2>
+
+
+        <!--БЛОК - Форма с использованием maskedinput - начало-->
+        <div class="p-3 mt-3 border border-success">
+            <div class="row">
+
+                <div class="col-6">
+                    Маски тел. на чистом js см. https://htmlweb.ru/html/form/form_input_pattern.php<br>
+                    Далее используем плагины и др. Этот способ не разбирала!
+
+                    <!--**** Плагин  maskedinput и wtforms - начало-->
+
+                    <!--https://webstool.ru/jquery.maskedinput.html-->
+                    <!--https://github.com/digitalBush/jquery.maskedinput-->
+                    <!--http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html-->
+                    <!--https://snipp.ru/jquery/masked-input-->
+                    <h5 class="pt-3"><b>Вариант 1</b> (TestForm1)</h5>
+                    <b>C использованием maskedinput и wtforms</b>
+                    <p>Этот вариант планирую использовать в проекте.</p>
+                    <form action="" method="POST">
+                        {{ form1.csrf_token }}
+                        <div>
+                            <!--класс бутстреп text-muted делает текст более бледным-->
+                            <!--class="form-control" использовать во всех вариантах-->
+                            <div class="text-danger">class="form-control" использовать во всех вариантах</div>
+                            {{ form1.user_phone.label(class="text-muted control-label") }}
+                        </div>
+                        <p>
+                <span>
+                    {{ form1.user_phone(class="form-control") }}
+                </span>
+                        </p>
+                        <div><b>Как сделано:</b></div>
+                        <p>
+                            1) Предварительное заполнение поля ввода (placeholder) и первичная установка автофокуса
+                            заданы в классе формы
+                            в словаре <br>render_kw={'autofocus': True, 'placeholder': "+7(___)___-__-__" }<br>
+                        </p>
+                        <p style="text-indent: 25px;">
+                            В этом словаре можно задавать различные атрибуты,
+                            которые обычно задаются в теге ввода данных input. Подробнее см.<br>
+                            http://programmerbook.ru/html/input/type/tel/<br>
+                            http://htmlbook.ru/html/input/type<br>
+                            https://xakep.ru/2018/09/24/wtforms/<br>
+                            https://atuin.ru/blog/maska-dlya-vvoda-nomera-telefona/
+                        </p>
+                        <p>
+                            <b>Placeholder и автофокус</b> можно также задать в HTML внутри <br>
+                            <!--Чтобы напечатать код в тексте надо в тег code обернуть например < или {-->
+                            <code>{</code>{ form1.user_phone(class="form-control", placeholder="+7(___)___-__-__",
+                            autofocus="True") }}<br>
+
+                            <b>Результат будет один и тот же!</b>
+                        </p>
+                        <p>
+                            Если вместе с использованием плагина использовать атрибут value="..." - значение по
+                            умолчанию (либо в классе формы либо в html с использованием wtforms (в скобках))
+                            то этот аргумент игнорируется (как я поняла). Если плагин не используется, то при задании
+                            аргумента value="..."
+                            его значение будет в поле ввода и при отправке пустой формы будет передано на сервер(в
+                            отличии от placeholder)).
+                        </p>
+                        <p>
+                            2) Далее, для верного заполнения номера, используется плагин <b>maskedinput jquery</b>.<br>
+                            С его помощью создается маска заполнения номера телефона (например)
+                            и его валидация (например заполнение только цифрами).
+                        </p>
+                        <p style="text-indent: 25px;">
+                            В классе формы использую валидаторы RegExp и
+                            дополнительный валидатор в функции def validate_user_phone.<br>
+                            При использовании плагина <b>maskedinput jquery</b> это не нужно, в нем валидация есть!<br>
+                            Но я оставлю. Их можно использовать, если плагин не задействован.
+                        </p>
+                        <p>
+                            3) Кроме того используется скрипт, который при клике на поле ввода
+                            устанавливает курсор на определенную позицию. У нас на 3(то есть после первой скобки)
+                        </p>
+                        <p>
+                            Для использования <b>maskedinput jquery</b> необходимо:<br>
+                        </p>
+                        <p>
+                        <p>
+                            1. Подключить jquery<br>
+                            <!--Чтобы напечатать код в тексте надо в тег code обернуть например < или {-->
+                            <code><</code>script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"><code><</code>/script><br>
+                        </p>
+                        <p>
+                            2. Подключить плагин <b>maskedinput jquery</b><br>
+                            <code><</code>script src="https://cdnjs.cloudflare.com/ajax/libs/<br>jquery.maskedinput/1.4.1/jquery.maskedinput.js"
+                            type="text/javascript"><code><</code>/script><br>
+                        </p>
+                        <p>
+                            3. Подключить скрипт создания функции setCursorPosition
+                            установки курсора при клике<br>
+                        </p>
+                        <p class="ml-3">
+                            <!--Чтобы напечатать код в тексте надо в тег code обернуть например < или {-->
+                            <code><</code>script type="text/javascript"><br>
+                            $.fn.setCursorPosition = function(pos) {<br>
+                        <div class="ml-5">
+                            if ($(this).get(0).setSelectionRange) {<br>
+                            $(this).get(0).setSelectionRange(pos, pos);<br>
+                            } else if ($(this).get(0).createTextRange) {<br>
+                            var range = $(this).get(0).createTextRange();<br>
+                            range.collapse(true);<br>
+                            range.moveEnd('character', pos);<br>
+                            range.moveStart('character', pos);<br>
+                            range.select();<br>
+                            }<br>
+                        </div>
+                        };<br>
+                        <!--Чтобы напечатать код в тексте надо в тег code обернуть например < или {-->
+                        <code><</code>/script>
+                        </p>
+                        <p>
+                            4. Подключить скрипт <b>maskedinput jquery</b>
+                            с маской и дополнительной функцией setCursorPosition, заданной ранее<br>
+                            Обратите внимание что id объекта в скрипте ниже - это имя поля(?) в форме!!
+                        </p>
+                        <p class="ml-3">
+                            <code><</code>script type="text/javascript"><br>
+                            $("#user_phone").click(function(){<br>
+                            $(this).setCursorPosition(3);<br>
+                            }).mask("+7(999) 999-99-99");<br>
+                            <code><</code>/script>
+                        </p>
+
+                    </form>
+                </div>
+
+                <div class="col-6">
+
+                    <h5 class="pt-3"><b>Вариант 2</b></h5>
+                    <b>Использование maskedinput без использования wtforms</b>
+                    <p class="pb-3">см. https://snipp.ru/jquery/masked-input</p>
+                    <h6>Без использования функции установки курсора после клика</h6>
+                    <input type="text" id="mask-phone" class="form-control" placeholder="+7(___) ___-__-__"><br>
+                    <div>Код:</div>
+
+                    <code><</code>input type="text" id="mask-phone" class="form-control"
+                    placeholder="+7(___) ___-__-__"><br>
+                    <br>
+
+                    <code><</code>script><br>
+                    $('#mask-phone').mask('+7 (999) 999-99-99');<br>
+                    <code><</code>/script><br>
+                    <div class="pt-3">
+                        <h6>C использованием функции установки курсора после клика</h6>
+                    <input type="text" id="input_phone" class="form-control" placeholder="+7(___)___-__-__"  /><br>
+                    <p>Код:</p>
+                        <p>
+                        <code><</code>input type="text" id="input_phone" class="form-control" placeholder="+7(___)___-__-__"  /><br>
+                        </p>
+                        <p class="pl-2">
+                        <code><</code>script type="text/javascript"><br>
+                        $.fn.setCursorPosition = function(pos) {<br>
+                          if ($(this).get(0).setSelectionRange) {<br>
+                            $(this).get(0).setSelectionRange(pos, pos);<br>
+                          } else if ($(this).get(0).createTextRange) {<br>
+                            var range = $(this).get(0).createTextRange();<br>
+                            range.collapse(true);<br>
+                            range.moveEnd('character', pos);<br>
+                            range.moveStart('character', pos);<br>
+                            range.select();<br>
+                          }<br>
+                        };<br>
+                        <code><</code>/script>
+                        </p>
+                        <p>
+                        <code><</code>script type="text/javascript"><br>
+                        $("#input_phone").click(function(){<br>
+                          $(this).setCursorPosition(3);<br>
+                        }).mask("+7(999) 999-99-99");<br>
+                        <code><</code>/script><br>
+                        </p>
+
+
+                    </div>
+
+
+
+                        <h4 class="pt-5">Дополнительная информация</h4>
+
+                    <p class="pt-2"><h5>Подробнее о плагине см</h5>
+                    https://webstool.ru/jquery.maskedinput.html<br>
+                    https://github.com/digitalBush/jquery.maskedinput<br>
+                    http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html<br>
+                    <br><b>МНОГО масок ввода для (ИНН, права, полис ОСАГО, банковская карта и многое др.)</b> с
+                    использованием wtworms и просто используя тег input<br>
+                    https://snipp.ru/jquery/masked-input
+                    </p>
+
+
+                    <p>
+                        <b>Предопределены следующие стандартные обозначения:</b><br>
+                        9 - любая цифра [0-9]<br>
+                        a - любой символ латинского алфавита [A-Za-z]<br>
+                        * - цифра или символ латинского алфавита [A-Za-z0-9]<br>
+                    </p>
+
+                    <p>
+                    <h5><b>Базовые примеры использования:</b></h5>
+                    <b>Маска для даты</b><br>
+                    <code><</code>input placeholder="Дата day/month/year" id="date" type="text"/><br>
+                    <code><</code>script type="text/javascript"><br>
+                        $("#date").click(function(){<br>
+                          $(this).setCursorPosition(0);<br>
+                        }).mask("99/99/9999");<br>
+                        <code><</code>/script><br>
+                    <!--Эти вводы управляются плагином jquery.maskedinput, скрипты находятся в base.html - начало-->
+                    <!--https://webstool.ru/jquery.maskedinput.html-->
+                    <!--https://github.com/digitalBush/jquery.maskedinput-->
+                    <!--http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html-->
+                    <!--https://snipp.ru/jquery/masked-input-->
+                     <input placeholder="Дата day/month/year" id="date" type="text"/><br>
+                    <!--Эти вводы управляются плагином jquery.maskedinput см base.html - конец-->
+
+                    <b>Маска номера телефона</b><br>
+                    $("#phone_1").mask("(999) 999-9999");<br>
+                    (___) ___-____<br><br>
+                    <b>Маска для банковской варты</b><br>
+                    $("#card").mask("9999-9999-9999-9999");<br>
+                    ____-____-____-____<br><br>
+                    <b>Переопределение стандартных обозначений для указания номера с фиксированной девяткой, например
+                        код
+                        оператора</b><br>
+                    $.mask.definitions['9'] = false;<br>
+                    $.mask.definitions['5'] = "[0-9]";<br>
+                    $("#phone_4").mask("8(921) 555-5555");<br>
+                    8(921) ___-____<br>
+                    </p>
+
+
+                    <h5 class="pt-2"><b>**** Примеры использования maskedinput из</b></h5>
+                    <b>https://github.com/digitalBush/jquery.maskedinput/blob/master/demo/<br>index.html</b><br>
+                    сам скрипт см в templates/base.html
+                    <table class="mt-4">
+                        <tr>
+                            <td>Date</td>
+                            <td><input id="date-1" value="1231" type="text" tabindex="1"/></td>
+                            <td>99/99/9999</td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td><input class="phone" type="text" tabindex="2"/></td>
+                            <td>(999) 999-9999</td>
+                        </tr>
+                        <tr>
+                            <td>Phone(Readonly)</td>
+                            <td><input class="phone" type="text" tabindex="2" readonly/></td>
+                            <td>(999) 999-9999</td>
+                        </tr>
+                        <tr>
+                            <td>Phone + Ext</td>
+                            <td><input id="phoneExt" type="text" tabindex="2"/></td>
+                            <td>(999) 999-9999? x99999</td>
+                        </tr>
+                        <tr>
+                            <td>Int'l Phone</td>
+                            <td><input id="iphone" type="text" tabindex="2"/></td>
+                            <td>+33 999 999 999</td>
+                        </tr>
+                        <tr>
+                            <td>Tax ID</td>
+                            <td><input id="tin" type="text" tabindex="3"/></td>
+                            <td>99-9999999</td>
+                        </tr>
+                        <tr>
+                            <td>SSN</td>
+                            <td><input id="ssn" type="text" tabindex="4"/></td>
+                            <td>999-99-9999</td>
+                        </tr>
+                        <tr>
+                            <td>Product Key</td>
+                            <td><input id="product" type="text" tabindex="5"/></td>
+                            <td>a*-999-a999</td>
+                        </tr>
+                        <tr>
+                            <td>Eye Script</td>
+                            <td><input id="eyescript" type="text" tabindex="6"/></td>
+                            <td>~9.99 ~9.99 999</td>
+                        </tr>
+                        <tr>
+                            <td>Purchase Order</td>
+                            <td><input id="po" type="text" tabindex="6"/></td>
+                            <td>aaa-999-***</td>
+                        </tr>
+                        <tr>
+                            <td>Percent</td>
+                            <td><input id="pct" type="text" tabindex="6"/></td>
+                            <td>99%</td>
+                        </tr>
+                        <tr>
+                            <td>Phone (autoclear=false)</td>
+                            <td><input id="phoneAutoclearFalse" type="text" tabindex="6"/></td>
+                            <td>(999) 999-9999</td>
+                        </tr>
+                        <tr>
+                            <td>Phone + Ext (autoclear=false)</td>
+                            <td><input id="phoneExtAutoclearFalse" type="text" tabindex="6"/></td>
+                            <td>(999) 999-9999? x99999</td>
+                        </tr>
+                    </table>
+
+
+                </div>
+                <!--**** Плагин  maskedinput и wtforms - конец-->
+
+            </div>
+        </div>
+        <!--БЛОК - Форма с использованием maskedinput - конец-->
+
+        <!--БЛОК - Формы Bootstrup без использования maskedinput - начало-->
+        <div class="p-3 mt-3 border border-success">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Вариант 3</h4>
+                    <h5>Bootstrap формы</h5>
+                        <!--см. https://betacode.net/11969/bootstrap-form-->
+                        <h6>Подробные руководства и примеры <br>
+                            cм. также https://bootstrap-4.ru/docs/4.0/components/forms/?<br>
+                            см. https://betacode.net/11969/bootstrap-form</h6>
+
+                        <h5 class="pt-3">Вариант 3.1 - Bootstrap формы (без BootstrapFormHelpers)
+                        </h5>
+                    <h6>Обязательно используйте class="form-control" и соответствующий type (например type="time"). <br>
+                        Благодаря им в том числе происходит валидация форм и появляются сообщения об ошибках</h6>
+                    <div>При использовании в wtforms (flask-wtforms) бутстреп класс form-control тоже желательно использовать, т.к. задается валидация.
+                        Если ее не достаточно, то дополнительные валидаторы можно задать в python классе формы с помощью валидаторов или функций.</div>
+                       <div><b>Обратите внимание на статью о валидации</b> (https://bootstrap-4.ru/docs/4.0/components/forms/?)</div>
+                    <h5 class="pt-3 text-success">ПРИМЕРЫ</h5>
+                    <h5 class="text-success">из https://betacode.net/11969/bootstrap-form#a22435839</h5>
+
+
+                    <h6 class="py-3">Form Select</h6>
+
+                    <form>
+                        <div class="form-group">
+                            <label for="mySelect1">Select (Single Select)</label>
+                            <select id="mySelect1" class="form-control">
+                                <option value="js">Javascript</option>
+                                <option value="css">Css</option>
+                                <option value="bootstrap" selected>Bootstrap</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mySelect2">Select (Multi Select)</label>
+                            <select id="mySelect2" class="form-control" multiple>
+                                <option value="js">Javascript</option>
+                                <option value="css">Css</option>
+                                <option value="bootstrap" selected>Bootstrap</option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <h6 class="py-3">Input Datetime-Local</h6>
+
+                    <div class="form-group">
+                        <label for="myDateTimeLocal2">Bootstrap Input DateTimeLocal</label>
+                        <input type="datetime-local" id="myDateTimeLocal2" class="form-control"
+                               min="2018-06-07T00:00" max="2018-06-14T00:00" value="2018-06-08T14:02">
+                    </div>
+                    <h6 class="py-3">Input type="date" (.form-control)</h6>
+                    <form>
+                        <div class="form-group">
+                            <label for="myDate1">Input Date (Default)</label>
+                            <input type="date" id="myDate1">
+                        </div>
+                        <div class="form-group">
+                            <label for="myDate2">Bootstrap Input Date</label>
+                            <input type="date" id="myDate2" class="form-control"
+                                   min="2000-01-01" max="2025-12-31" value="today">
+                        </div>
+                    </form>
+
+                    <h6 class="py-3">Bootstrap Input Time</h6>
+                    <div class="form-group">
+                        <label for="myTime2">Укажите удобное для вас время</label>
+                        <input id="myTime2" class="form-control"
+                               type="time"
+                               min="9:00" max="18:00" value="13:07">
+                    </div>
+
+                    <h6 class="py-3">Bootstrap Input DateTimeLocal</h6>
+                    <div class="form-group">
+                        <label for="myDateTimeLocal2">Укажите удобные для вас дату и время</label>
+                        <input type="datetime-local" id="myDateTimeLocal2" class="form-control"
+                               min="2018-06-07T00:00" max="2024-06-14T00:00" value="2018-06-08T14:02">
+                    </div>
+                    <form>
+                        <h6 class="py-3">Bootstrap Input Radio</h6>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="radio" id="myRadio1" class="form-check-input">
+                                <label for="myRadio1">Bootstrap Input Radio</label>
+                            </div>
+                        </div>
+                        <h6 class="py-3">Bootstrap Input Checkbox</h6>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" id="myCheckbox2" class="form-check-input">
+                                <label for="myCheckbox2" class="form-check-label">Bootstrap Input Checkbox</label>
+                            </div>
+                        </div>
+                    </form>
+
+                    <h6 class="py-3">Input range</h6>
+                    <div>Также см. разные варианты http://seiyria.com/bootstrap-slider/</div>
+                    <form>
+                        <div class="form-group">
+                            <label for="myRange1">Input Range (Default)</label>
+                            <input type="range" id="myRange1" min="5" max="10" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="myRange2">Bootstrap Input Range</label>
+                            <input type="range" id="myRange2" min="5" max="10" step="0.01"
+                                   class="form-control-range">
+                        </div>
+                    </form>
+
+                    <h5 class="pt-4 text-success">ПРИМЕРЫ</h5>
+                    <h5 class="text-success">из https://bootstrap-4.ru/docs/4.0/components/forms/?</h5>
+
+
+
+
+
+                    <h6 class="py-3">Вложенные формы</h6>
+                    <form class="form-inline">
+                        <label class="sr-only" for="inlineFormInputName2">Name</label>
+                        <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2"
+                               placeholder="Jane Doe">
+
+                        <label class="sr-only" for="inlineFormInputGroupUsername2">Имя пользователя</label>
+                        <div class="input-group mb-2 mr-sm-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">@</div>
+                            </div>
+                            <input type="text" class="form-control" id="inlineFormInputGroupUsername2"
+                                   placeholder="Имя пользователя">
+                        </div>
+
+                        <div class="form-check mb-2 mr-sm-2">
+                            <input class="form-check-input" type="checkbox" id="inlineFormCheck">
+                            <label class="form-check-label" for="inlineFormCheck">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                    </form>
+
+                    <form>
+                        <div class="form-group">
+                            <h6 class="py-3">Email address</h6>
+
+                            <label for="exampleInputEmail1">Email address</label>
+                            <input type="email" class="form-control" id="exampleInputEmail1"
+                                   aria-describedby="emailHelp" placeholder="Enter email">
+                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                                else.
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <h6 class="py-3">Password</h6>
+                            <label for="exampleInputPassword1">Password</label>
+                            <input type="password" class="form-control" id="exampleInputPassword1"
+                                   placeholder="Password">
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+
+                    <!--Пример с валидацией (включая JavaScript) - начало -->
+                    <h6 class="py-3">Валидация (примеры)</h6>
+                    <form class="needs-validation" novalidate>
+                        <div class="form-row">
+                            <div class="col-md-4 mb-3">
+                                <label for="validationCustom01">Имя</label>
+                                <input type="text" class="form-control" id="validationCustom01" placeholder="Имя"
+                                       value="Mark" required>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="validationCustom02">Фамилия</label>
+                                <input type="text" class="form-control" id="validationCustom02" placeholder="Фамилия"
+                                       value="Otto" required>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="validationCustomUsername">Имя пользователя</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                                    </div>
+                                    <input type="text" class="form-control" id="validationCustomUsername"
+                                           placeholder="Имя пользователя" aria-describedby="inputGroupPrepend" required>
+                                    <div class="invalid-feedback">
+                                        Please choose a username.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="validationCustom03">City</label>
+                                <input type="text" class="form-control" id="validationCustom03" placeholder="City"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid city.
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="validationCustom04">State</label>
+                                <input type="text" class="form-control" id="validationCustom04" placeholder="State"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid state.
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="validationCustom05">Zip</label>
+                                <input type="text" class="form-control" id="validationCustom05" placeholder="Zip"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid zip.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                                <label class="form-check-label" for="invalidCheck">
+                                    Agree to terms and conditions
+                                </label>
+                                <div class="invalid-feedback">
+                                    You must agree before submitting.
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit form</button>
+                    </form>
+
+                    <!--Пример JavaScript для отключения отправки формы при наличии недопустимых полей-->
+                    <!--Без этого скрипта форма будет отправляться даже если она не заполнена-->
+                    <script>
+                    // Example starter JavaScript for disabling form submissions if there are invalid fields
+                    (function() {
+                      'use strict';
+                      window.addEventListener('load', function() {
+                        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                        var forms = document.getElementsByClassName('needs-validation');
+                        // Loop over them and prevent submission
+                        var validation = Array.prototype.filter.call(forms, function(form) {
+                          form.addEventListener('submit', function(event) {
+                            if (form.checkValidity() === false) {
+                              event.preventDefault();
+                              event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                          }, false);
+                        });
+                      }, false);
+                    })();
+                    </script>
+                    <!--Пример с валидацией (включая JavaScript) - конец -->
+
+
+                    <h6 class="py-3">ОТЛИЧНЫЙ ПРИМЕР БЕЗ дополнительных JS, только бутстреп</h6>
+                    <div>http://lite-blog.ru/poleznosti/42-bootstrap-input-range-svyazyvaem-s-input.html</div>
+                    <div>Рассмотрим основные понятия:</div>
+                    <div><b>oninput="input_text1.value = rangeinput1.value"</b> - позволяет при перемещении слайдера менять значения в инпуте на ходу.</div>
+                    <div><b>onchange="rangeinput1.value = input_text1.value"</b> - позволяет при вводе числа перемещать бегунок ползунка.</div>
+                    <div>Все остальное вроде просто и понятно, спасибо за прочтение!</div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Сумма кредита</span>
+                        </div>
+                        <input type="text" class="form-control"
+                               name="input_text1" id="input_text1" value="5000000"
+                               max="10000000"
+                               onchange="rangeinput1.value = input_text1.value"/>
+                        <input type="range" class="form-control-range slider"
+                               id="rangeinput1"
+                               value="5000000" min="5000" max="10000000"
+                               step="5000"
+                               oninput="input_text1.value = rangeinput1.value"
+                               onchange="input_text1.value = rangeinput1.value">
+                    </div>
+                </div>
+
+                <!--Вариант 3.2 - Bootstrup формы c плагином BootstrapFormHelpers. - начало-->
+                <div class="col-6">
+                    <h5>Вариант 3.2 - Bootstrap формы c плагином BootstrapFormHelpers.<br>
+                        продолжение и примеры см. еще в конц стр.
+                    </h5>
+                    См. https://question-it.com/tags/bootstrap-form-helper/info<br>
+                    См. https://bootstrapformhelpers.com<br>
+                    См. https://question-it.com/tags/bootstrap-form-helper/info<br>
+                    См. https://cdnjs.com/libraries/bootstrap-formhelpers
+                    См. https://github.com/winmarkltd/BootstrapFormHelpers?utm_source=cdnjs&utm_medium=cdnjs_link&utm_campaign=cdnjs_library
+                    <p class="pt-2">
+                        <b>Подключение плагина:</b><br>
+                        В теге head<br>
+                        <code><</code>link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.min.css" integrity="sha512-fHutzlvDWRXol9PbR1+DHHLgwFCwkN730wN2HAeioUopGWuOk7jz0Mo4yXf/J4T7YrHISYWL0DF/73VmM3FcZw==" crossorigin="anonymous" referrerpolicy="no-referrer" /><br>
+                        Перед <code><</code>/body> <code><</code>/html><br>
+                        <code><</code>script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/js/bootstrap-formhelpers.min.js" integrity="sha512-m4xvGpNhCfricSMGJF5c99JBI8UqWdIlSmybVLRPo+LSiB9FHYH73aHzYZ8EdlzKA+s5qyv0yefvkqjU2ErLMg==" crossorigin="anonymous" referrerpolicy="no-referrer"><code><</code>/script><br>
+                    </p>
+                    Как подключить картинки(флаги например) не знаю - разбираться!<br>
+                    Возможно поэтому не работают корректно?<br>
+                    Подключение см. https://cdnjs.com/libraries/bootstrap-formhelpers<br>
+                    Но куда и как конкретно эти ссылки (кроме css и js - это я вставила) вставить?
+                    <!--см. https://question-it.com/tags/bootstrap-form-helper/info-->
+                    <!--см. https://bootstrapformhelpers.com-->
+                    <div class="pt-2">Используются классы bfh-phone или bfh-countries и т.п. например class="form-control bfh-phone"</div>
+                    <br>
+                    <p class="pt-2">
+                    <b>Bootstrap Form Helpers</b> - это набор плагинов jQuery, предназначенных для внешней среды Bootstrap.
+                    О помощниках формы начальной загрузки помощники по формам начальной загрузки -
+                    это коллекция плагинов JQuery, чтобы помочь вам создавать лучшие формы.
+                    Плагины могут использоваться по отдельности, но некоторые из них работают вместе, например,
+                    Страны и Штаты.
+                    </p>
+                        <p class="pt-2">
+                        <b>Коллекция включает в себя:</b>
+                    </p>
+
+                    <div>Пользовательский элемент выбора, Слайдер, Палитра цветов,
+                        Выбор страны, Государственный сборщик,
+                    Выбор валюты, Телефонный вход, Ввод числа, Средство выбора языка,
+                    Выбор часового пояса, Выбор шрифтов Google, Выбор даты,
+                    Сборщик времени, Выбор шрифта, Выбор размера шрифта</div><br>
+
+                    <p><b>Плагин поддерживают все основные браузеры</b>,
+                    но официально не поддерживают браузеры на платформах Linux.
+                    Требуется jQuery 1.10.2 или выше и Bootstrap 3.0.0 или лучше.
+                    </p>
+                    НЕ работают корректно - рабираться!!!
+                    <h5>Примеры использования:</h5>
+
+                    <h6 class="pt-2">1. color picker</h6>
+                    <div class="bfh-colorpicker" data-name="colorpicker1" data-color="#FF0000">
+                    </div>
+                    КОД
+                    <code><</code>div class="bfh-colorpicker" data-name="colorpicker1" data-color="#FF0000">
+                    <code><</code>/div>
+
+                    <h6 class="pt-2">2.  font picker</h6>
+                    не работает
+                    <select class="form-control bfh-fonts" data-available="Arial,Calibri,Helvetica"></select>
+
+                    <h6 class="pt-2">3.  date picker</h6>
+                    см https://bootstrapformhelpers.com/datepicker/<br>
+                    Разбираться почему не работает выбор года и месяца
+                    <div class="bfh-datepicker"
+                         data-min="01/15/2013"
+                         data-max="01/15/2025"
+                         data-close="false">
+                    </div>
+                    <div class="bfh-datepicker"
+                         data-min="01/15/2013"
+                         data-max="today"
+                         data-close="false">
+                    </div>
+                    <h6 class="pt-2">3.  slider</h6>
+                    <div class="bfh-slider" data-name="slider3" data-min="5" data-max="25">
+                    </div>
+
+                    <h6 class="pt-2">4. countries</h6>
+                    см. также https://techarks.ru/qa/javascript/bootstrap-form-helper-state-41/
+                    <div class="bfh-selectbox bfh-countries" data-country="RU" data-flags="true">
+                    </div>
+                    <h6 class="pt-2">5. phone</h6>
+
+                    <input type="text" class="form-control bfh-phone" value="5555555555"
+                           data-format="+1 (ddd) ddd-dddd">
+
+                    <span class="bfh-phone" data-format="+1 (ddd) ddd-dddd" data-number="15555555555">
+                        <input type="text">
+                    </span>
+                    Пример использования выбора страны и города - см<br>
+                    https://techarks.ru/qa/javascript/bootstrap-form-helper-state-41/
+                    <!--Вариант 3.2 - Bootstrup формы c плагином BootstrapFormHelpers. - конец-->
+
+
+
+
+
+                    <!--*** Пример обычной формы с нужными для ввода тел. параметрами - начало-->
+                    <div>
+                        <h5 class="pt-3">Вариант 4</h5>
+                        <p>
+                            *** Пример обычной формы с нужными для ввода тел. параметрами
+                        </p>
+                        <p>см. http://programmerbook.ru/html/input/type/tel/<br>
+                            см. http://programmerbook.ru/html/input/pattern/
+                        </p>
+                        <p>Пример обычной формы (не через flask-wtf)
+                            в кот. есть образец ввода данных (placeholder) и
+                            формат ввода данных(pattern в кот. задано регулярное выражение)
+                        </p>
+                        <!--Чтобы напечатать код в тексте надо в тег code обернуть например < или {-->
+                        <code><</code>label>Мобильный телефон:<br>
+                        <code><</code>input type="tel" name="phone_number"<br>
+                        placeholder="+7(___) ___-__-__"<br>
+                        pattern="\+7\s?[\(]{0,1}9[0-9]{2}[\)]{0,1}\s?\d{3}[-]{0,1}\d{2}[-]{0,1}\d{2}"><br>
+                        <code><</code>/label>
+
+                        <p>
+                            <label>Мобильный телефон:
+                                <input type="tel" name="phone_number"
+                                       placeholder="+7(___) ___-__-__"
+                                       pattern="\+7\s?[\(]{0,1}9[0-9]{2}[\)]{0,1}\s?\d{3}[-]{0,1}\d{2}[-]{0,1}\d{2}">
+                            </label>
+                        </p>
+                    </div>
+                    <!--*** Пример обычной формы с нужными для ввода тел. параметрами - конец-->
+
+
+
+                </div>
+                <div class="col-6">
+                    <!--варианты ввода телефона отсюда - начало-->
+                    <!--https://htmlweb.ru/html/form/form_input_pattern.php-->
+                    <!--к вар 2 еще нужен js - он внизу-->
+
+                    <!--1вар-->
+                    <!--<p>Введите телефон в формате +7-xxx-xxx-xx-xx, где вместо x должна быть цифра:</p>-->
+                    <!--<p><input type="tel" pattern="\+7\-[0-9]{3}\-[0-9]{3}\-[0-9]{2}\-[0-9]{2}"></p>-->
+                    <!--<p><input type="submit" value="Отправить"></p>-->
+
+                    <!--2 вар-->
+                    <!--<form>-->
+                    <!--<label for="online_phone">Телефон:</label>-->
+                    <!--<input id="online_phone" name="phone" type="tel" maxlength="50"-->
+                    <!--autofocus="autofocus" required="required"-->
+                    <!--value="+7(___)___-__-__"-->
+                    <!--pattern="\+7\s?[\(]{0,1}9[0-9]{2}[\)]{0,1}\s?\d{3}[-]{0,1}\d{2}[-]{0,1}\d{2}"-->
+                    <!--placeholder="+7(___)___-__-__">-->
+                    <!--</form>-->
+
+                    <!--вариант отсюда - конец-->
+
+                </div>
+            </div>
+        </div>
+        <!--БЛОК - Форма Bootstrup без использования maskedinput - конец-->
+
+        <!--БЛОК - Вывод ошибок - начало-->
+        <div class="p-3 mt-3 border border-success">
+            <h5 class="text-left mt-1 b-1">
+                Вывод ошибок...
+            </h5>
+            <h5 class="pt-1">Ошибки можем сформировать разными способами:</h5>
+            <div class="row pt-3">
+
+                <div class="col-6">
+
+                    <form class="pt-1" action="" method="POST">
+                        {{ form1.csrf_token }}
+
+                        <p><b> 1) Валидация, кот. делаем внутри класса формы, с помощью встроенных валидаторов формы</b>
+                            (InputRequired(), Regexp и тд) <br>
+                            Там можем задать сообщение.<br>
+                        </p>
+
+                        <p>Например</p>
+                        <p><b>class TestForm1(FlaskForm):</b><br>
+                        <div class="ml-4">
+                            user_phone = TelField("Введите телефон",<br>
+                            [InputRequired(), <br>
+                            Regexp("^(\+)?(7|8)?(\s)*?(\-)?(\()?\d{3,5}(\))?(\s)*?(\-)?\d{1,3}(\s)*?(\-)?\d{2}(\s)*?(\-)?\d{2}(\s)*$",
+                            <br>
+                            message='Неверный формат телефона...')])
+                        </div>
+                        </p>
+
+                        <p class="text-success">
+                            <b>Код в шаблоне </b><br>(Внимание! Проверять синтаксис, тк в примере могут быть опущены
+                            символы {, <
+                            в тегах и jinja для отображения текста кода на стр)
+                        </p>
+                        <p>
+                            <code>{</code>% if form1.user_phone.errors %}<br>
+                            <code>{</code>% for err in form1.user_phone.errors %}<br>
+                            <code><</code>p class="error alert alert-warning" role="alert"><code><</code>{ err
+                            }}<code><</code>/p><br>
+                            <code>{</code>% endfor %}<br>
+                            <code>{</code>% endif %}<br>
+
+                        </p>
+                        <!--Собственно сам код-->
+                        <!--Код вывода ошибок, формируемых на основе валидаторов формы - начало-->
+                        <p>
+                            {% if form1.user_phone.errors %}
+                            {% for err in form1.user_phone.errors %}
+                        <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                        {% endfor %}
+                        {% endif %}
+                        </p>
+                        <!--Код вывода ошибок, формируемых на основе валидаторов формы - конец-->
+
+                    </form>
+                    <p>
+                        <b>2) Условия, кот. накладываем на данные внутри роута</b> и <br>
+                        передаем на страницу с помощью переменных, например err
+                    </p>
+                    <p class="text-success">
+                        <b>Код в шаблоне </b><br>(Внимание! Проверять синтаксис, тк в примере могут быть опущены символы
+                        {, <
+                        в тегах и jinja для отображения текста кода на стр)
+                    </p>
+                    <p>
+                        <code>{</code>% if err %}<br>
+                        <code><</code>div class="alert alert-warning" role="alert"><code>{</code>{ err }}<code><</code>/div><br>
+                        <code>{</code>% endif %}<br>
+                    </p>
+
+                    <!--Собственно сам код-->
+                    <!--Вывод ошибок, формируемых внутри роута, кот. рендерит эту стр. - начало-->
+                    {% if err %}
+                    <div class="alert alert-warning" role="alert">{{ err }}</div>
+                    {% endif %}
+                    <!--Вывод ошибок, формируемых внутри роута, кот. рендерит эту стр. - конец-->
+
+                </div>
+
+                <div class="col-6">
+
+
+                    <p>
+                        <b>3) Условия, кот. накладываем на данные внутри функции,</b> задающей дополнительную валидацию
+                        <b>в классе формы</b> <br>
+                    <div><b>Имя функции при этом должно быть таким: <br>validate_имя валидируемого поля.</b></div>
+                    Это валидатор, который будет добавляться к встроенным валидаторам, заданным в форме. Пример:
+                    </p>
+                    <b>class ApplicationForm(FlaskForm):</b><br>
+                    <p class="ml-3">
+
+                        # В словаре render_kw={....} можно задать атрибуты поля,<br>
+                        # кот.(без Flask-wtform) можно задать в теге input <br>
+
+                        user_phone = TelField("Введите телефон",<br>
+                        <span class="pl-4"> [InputRequired(), </span><br>
+                        <span class="pl-4">Regexp("^(...)*$",</span><br>
+                        <span class="pl-4">message='Неверный формат телефона...')],</span><br>
+                    <span class="pl-4">render_kw={'autofocus': True, 'placeholder': "+7(___)___-__-__" })
+                        </span>
+                    <div class="pl-4">
+
+                        <div class="pt-2"><b>def validate_user_phone(form, field):</b></div>
+                        <div class="pl-2">
+                            if field.data:
+                        </div>
+                        <div class="pl-4">
+                            num = [int(i) for i in field.data if i.isdigit()]<br>
+                            if len(num)>11:<br>
+                        </div>
+                        <div class="pl-5">raise ValidationError('Телефон должен быть не более 11 цифр')</div>
+                        <div class="pl-4">if len(num)<10:</div>
+                        <div class="pl-5">raise ValidationError('Телефон должен быть не менее 10 цифр')</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <!--БЛОК - Вывод ошибок - конец-->
+
+        <!--БЛОК - ПРОЧЕЕ - начало-->
+        <div class="p-3 mt-3 border border-success">
+            <h5 class="pt-2">ПРОЧЕЕ</h5>
+            <h5 class="pt-2">Иконка кнопки из Бутстрап библиотеки</h5>
+
+
+            <!--Иконка кнопки из Бутстрап библиотеки - начало-->
+            <a>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="40" height="40" fill="currentColor"
+                     class="bi bi-toggle-on" viewBox="0 0 16 16">
+                    <path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10H5zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
+                </svg>
+            </a>
+            <!--иконка кнопки из Бутстрап библиотеки - конец-->
+            <div>Код</div>
+            <p class="pl-3">
+                <code><</code>a><br>
+                <code><</code>svg xmlns="http://www.w3.org/2000/svg"<br>
+                width="40" height="40" fill="currentColor"<br>
+                class="bi bi-toggle-on" viewBox="0 0 16 16"><br>
+                <code><</code>path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10H5zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/><br>
+                <code><</code>/svg><br>
+                <code><</code>/a><br>
+            </p>
+        </div>
+        <!--БЛОК - ПРОЧЕЕ - конец-->
+
+    </div>
+
+
+<!--Вариант 3.2 - Bootstrup формы c плагином BootstrapFormHelpers - примеры - продолжение - начало-->
+    <div class="container pt-3">
+        Примеры Bootstrap Form Helpers Examples с гитхаба стр.examples.html
+    https://github.com/winmarkltd/BootstrapFormHelpers/blob/master/examples.html
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Bootstrap Form Helpers Examples</h1>
+				<hr>
+				<h4>Time Picker</h4>
+				<div class="bfh-timepicker" id="timepicker" data-align="right"></div>
+				<br>
+				<button onclick="getVal()" class="btn btn-default">Get Value</button>
+				<hr>
+				<h4>Select</h4>
+				<div class="bfh-selectbox" data-name="selectbox1">
+					<div data-value="1">Option 1</div>
+					<div data-value="2">Option 2</div>
+					<div data-value="3">Option 3</div>
+					<div data-value="4">Option 4</div>
+					<div data-value="5">Option 5</div>
+					<div data-value="6">Option 6</div>
+					<div data-value="7">Option 7</div>
+					<div data-value="8">Option 8</div>
+					<div data-value="9">Option 9</div>
+					<div data-value="10">Option 10</div>
+					<div data-value="11">Option 11</div>
+					<div data-value="12">Option 12</div>
+					<div data-value="13">Option 13</div>
+					<div data-value="14">Option 14</div>
+					<div data-value="15">Option 15</div>
+				</div>
+				<hr>
+				<h4>Color Picker</h4>
+				<div class="bfh-colorpicker" data-name="colorpicker1">
+				</div>
+				<hr>
+				<h4>Date Picker</h4>
+				<div class="bfh-datepicker">
+				</div>
+				<hr>
+				<h4>Time Picker</h4>
+				<div class="bfh-timepicker">
+				</div>
+				<hr>
+				<h4>Slider</h4>
+				<div class="bfh-slider" data-name="slider1">
+				</div>
+				<hr>
+				<h4>Phone Input</h4>
+				<form action="#">
+					<input type="text" class="form-control bfh-phone" data-format="+1 (ddd) ddd-dddd">
+				</form>
+				<hr>
+				<h4>Number Input</h4>
+				<form action="">
+					<input type="text" class="form-control bfh-number">
+				</form>
+				<hr>
+				<h4>Country Picker</h4>
+				<form action="">
+					<select class="form-control bfh-countries" data-country="US"></select>
+				</form>
+				<hr>
+				<h4>State Picker</h4>
+				<div class="bfh-selectbox bfh-countries" data-country="US" data-flags="true">
+				</div>
+				<hr>
+				<h4>Currency Picker</h4>
+				<form action="">
+					<select class="form-control bfh-currencies" data-currency="EUR"></select>
+				</form>
+				<hr>
+				<h4>Language Picker</h4>
+				<form action="">
+					<select class="form-control bfh-languages" data-language="en"></select>
+				</form>
+				<hr>
+				<h4>Timezone Picker</h4>
+				<form action="">
+					<select class="form-control bfh-timezones" data-country="US"></select>
+				</form>
+				<hr>
+				<h4>Google Font Picker</h4>
+				<form action="">
+					<select class="form-control bfh-googlefonts" data-font="Lato"></select>
+				</form>
+				<hr>
+				<h4>Font Picker</h4>
+				<form action="">
+						<select class="form-control bfh-fonts" data-font="Arial"></select>
+				</form>
+				<hr>
+				<h4>Font Size Picker</h4>
+				<form action="">
+					<select class="form-control bfh-fontsizes" data-fontsize="12"></select>
+				</form>
+			</div>
+		</div>
+	</div>
+<!--Вариант 3.2 - Bootstrup формы c плагином BootstrapFormHelpers - примеры-продолжение- конец-->
+
+</main>
+
+{% endblock %}
+
+<!--варианты ввода телефона отсюда - начало-->
+<!--https://htmlweb.ru/html/form/form_input_pattern.php-->
+<!--к вар 2 еще нужен js - он внизу-->
+
+<!--1вар-->
+<!--<p>Введите телефон в формате +7-xxx-xxx-xx-xx, где вместо x должна быть цифра:</p>-->
+<!--<p><input type="tel" pattern="\+7\-[0-9]{3}\-[0-9]{3}\-[0-9]{2}\-[0-9]{2}"></p>-->
+<!--<p><input type="submit" value="Отправить"></p>-->
+
+<!--2 вар-->
+<!--<form>-->
+<!--<label for="online_phone">Телефон:</label>-->
+<!--<input id="online_phone" name="phone" type="tel" maxlength="50"-->
+<!--autofocus="autofocus" required="required"-->
+<!--value="+7(___)___-__-__"-->
+<!--pattern="\+7\s?[\(]{0,1}9[0-9]{2}[\)]{0,1}\s?\d{3}[-]{0,1}\d{2}[-]{0,1}\d{2}"-->
+<!--placeholder="+7(___)___-__-__">-->
+<!--</form>-->
+
+<!--вариант отсюда - конец-->
+
+<!--варианты отсюда - начало-->
+<!--https://htmlweb.ru/html/form/form_input_pattern.php-->
+<!--к вар 2 еще нужен js - он внизу-->
+
+<!--<script type="text/javascript">-->
+  <!--function setCursorPosition(pos, e) {-->
+    <!--e.focus();-->
+    <!--if (e.setSelectionRange) e.setSelectionRange(pos, pos);-->
+    <!--else if (e.createTextRange) {-->
+      <!--var range = e.createTextRange();-->
+      <!--range.collapse(true);-->
+      <!--range.moveEnd("character", pos);-->
+      <!--range.moveStart("character", pos);-->
+      <!--range.select()-->
+    <!--}-->
+  <!--}-->
+
+  <!--function mask(e) {-->
+    <!--//console.log('mask',e);-->
+    <!--var matrix = this.placeholder,// .defaultValue-->
+        <!--i = 0,-->
+        <!--def = matrix.replace(/\D/g, ""),-->
+        <!--val = this.value.replace(/\D/g, "");-->
+    <!--def.length >= val.length && (val = def);-->
+    <!--matrix = matrix.replace(/[_\d]/g, function(a) {-->
+      <!--return val.charAt(i++) || "_"-->
+    <!--});-->
+    <!--this.value = matrix;-->
+    <!--i = matrix.lastIndexOf(val.substr(-1));-->
+    <!--i < matrix.length && matrix != this.placeholder ? i++ : i = matrix.indexOf("_");-->
+    <!--setCursorPosition(i, this)-->
+  <!--}-->
+  <!--window.addEventListener("DOMContentLoaded", function() {-->
+    <!--var input = document.querySelector("#online_phone");-->
+    <!--input.addEventListener("input", mask, false);-->
+    <!--input.focus();-->
+    <!--setCursorPosition(3, input);-->
+  <!--});-->
+<!--</script>-->
+
+<!--варианты отсюда - конец-->

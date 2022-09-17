@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+
+    <div class="container">
+        <div class="py-3">
+            <a href="{{ url_for('foto_manager_bp.manager_foto') }}">Вернуться к списку фото</a>
+        </div>
+        <h5 class="text-success">
+            Карточка услуги
+        </h5>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Имя файла:
+            </b></div>
+            <div class="col-3">
+                {{ foto.secure_name_photo }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Заголовок фото:
+            </b></div>
+            <div class="col-3">
+                {{ foto.title }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Сопроводительный текст к фото:
+            </b></div>
+            <div class="col-3">
+                {{ foto.comments }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Прикрепленные прайсы:
+            </b></div>
+            <div class="col-3">
+                {% for price in foto.price %}
+                {{ price }},
+                {% endfor %}
+            </div>
+        </div>
+
+        <h5 class="pt-4">Выбрать прайс</h5>
+        <div class="pt-2 pb-4">
+            <b>
+            <h6 class="text-danger">Внимание!</h6>
+            <div>
+                    1. К карточке услуги (фото) вы можете прикрепить несколько прайсов!!!
+            </div>
+            <div class="text-danger">
+                2. Прайс может быть прикреплен только к одной карточке услуги (фото).
+            </div>
+            </b>
+            <div class="pl-3">
+                Если вы добавляете прайс к данной карточке услуги (фото),
+                то этот прайс будет перемещен в эту карточку, а из другой удален <br>
+                (если ранее он был прикреплен к другой карточке)!!!
+            </div>
+        </div>
+        {% if foto.price|length < prices|length %}
+        <h4 class="pb-4 base_color_1">Список прайсов, доступных к добавлению</h4>
+        {% else %}
+        <h5 class="pb-4 text-danger">Нет прайсов, доступных к добавлению</h5>
+        {% endif %}
+
+
+        {% for price in prices %}
+
+        {% if price not in foto.price %}
+
+        <!--Модальное окно  - начало-->
+        <!--Его не видно пока не нажать ссылку Удалить2 !!!!!!!-->
+        <!--активируется после нажатия на триггер(он выше (ссылка - удалить карусель)-->
+        <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+        <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+        <!--ставим модальное окно внутри цикла car in carousel -->
+        <div class="modal fade" id="addPrice{{ price['id'] }}" tabindex="-1" role="dialog"
+             aria-labelledby="addPrice{{ price['id'] }}Label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPrice{{ price['id'] }}Label">
+                            Подтвердите добавление прайса {{ price }} к фото {{ foto }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                            <!--&times; - это крестик для закрытия-->
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="text-success">
+                            <b>Внимание!</b><br>
+                        </h6>
+
+                        {% if price['card_uslugi'] %}
+                    <div>
+                        Этот прайс сейчас прикреплен к изображению
+                    </div>
+                    <div>
+                        {{ price['card_uslugi']['secure_name_photo'] }}({{ price['card_uslugi']['title'] }})
+                    </div>
+                    <img class="m-2"
+                         width="70"
+                         height="70"
+                         src="/static/images/uploads/{{ price['card_uslugi'].dir_uploads }}{{ price['card_uslugi'].secure_name_photo }}">
+                    {% else %}
+                    <div>
+                        Этот прайс сейчас не прикреплен ни к одному изображению
+                    </div>
+                    {% endif %}
+                        <div class="text-danger">
+                            <b>После подтверждения прайс {{ price }} <br>
+                                будет прикреплен к фото {{ foto }}! </b>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Закрыть
+                        </button>
+
+                        <a class="btn btn-danger"
+                           href="{{ url_for('foto_manager_bp.attach_price', foto_id=foto['id'], price_id=price['id']) }}"
+                           role="button">
+                            Добавить прайс
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Модальное окно - конец-->
+        <!--Передача данных в модальное окно Важно!!!  - конец -->
+
+
+        <div>
+            <div class="row">
+                <div class="col-6">
+                    <h5>
+                        {{ price['name_price_table'] }}
+                    </h5>
+                    {% if price['card_uslugi'] %}
+                    <div>
+                        Этот прайс сейчас прикреплен к изображению
+                    </div>
+                    <div>
+                        {{ price['card_uslugi']['secure_name_photo'] }}({{ price['card_uslugi']['title'] }})
+                    </div>
+                    <img class="m-2"
+                         width="70"
+                         height="70"
+                         src="/static/images/uploads/{{ price['card_uslugi'].dir_uploads }}{{ price['card_uslugi'].secure_name_photo }}">
+                    {% else %}
+                    <div>
+                        Этот прайс сейчас не прикреплен ни к одному изображению
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- Триггер модального окна 2 (Вариант: ссылка) - начало -->
+                <a class="text-right"
+                   href="{{ url_for('foto_manager_bp.attach_price', foto_id=foto['id'], price_id=price['id']) }}"
+                   data-toggle="modal"
+                   data-target="#addPrice{{ price['id'] }}">
+                    Добавить прайс {{ price }} к фото {{ foto.title }}
+                </a>
+                <!-- Триггер модального окна 2 (Вариант: ссылка) - конец-->
+
+            </div>
+
+
+            <div class="row">
+                <div class="col-8 container-fluid">
+                    <table class="table table-reflow mb-5">
+                        {% for i in range(price['value_table']|length) %}
+                        {% if i == 0 %}
+                        <thead>
+                        <tr>
+                            {% for val in price['value_table'][i] %}
+                            <th>{{ val }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        {% else %}
+                        <tbody>
+                        <tr>
+                            {% for val in price['value_table'][i] %}
+                            <td>{{ val }}</td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                        {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-4 container-fluid">
+
+                </div>
+            </div>
+            <br>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+
+    </div>
+</main>
+
+
+{% endblock %}

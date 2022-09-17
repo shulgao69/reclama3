@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+{% block container %}
+<main class="container my-2 py-2">
+
+    <div class="row p-3">
+
+        <div class="col-4 col-lg-4">
+
+
+            <!--Загрузка файлов Скрипт на чистом javascript - начало-->
+            <!--class TestForm(FlaskForm)-->
+            <div class="mt-1 b-1">
+                <!--Заголовки-->
+                <h4 class="mb-2 font-weight-light">Скрипт на чистом javascript </h4>
+                <h6 class="mb-3 font-weight-light">(тогда как в Choice2 используем JQuery)</h6>
+                <h4 class="mb-2 font-weight-light">Выберите раздел и услугу,</h4>
+                <h6 class="mb-3 font-weight-light">для которых вы хотите загрузить фото</h6>
+                <!--Заголовки -  конец-->
+
+                <!--Форма загрузки файла-->
+                <form method="POST" action="/test/testindex/" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+
+                    <!--<select>-->
+                    <!--<option>Пункт 1</option>-->
+                    <!--<option>Пункт 2</option>-->
+                    <!--</select>-->
+
+                    <!--{{ form.menu(class="py-2 my-2", id='select_menu') }} не верно!-->
+                    <!--{{ form.usluga(class="py-2 my-2", id='select_usluga') }} не верно!-->
+                    <!--id='select_menu  и id='select_usluga' определены в форме class FormChoice1(FlaskForm):!!!-->
+                    <!--Кроме того поле формы SelectField видимо подразумевает что это аналогия-->
+                    <!--<select>-->
+                    <!--<option>Пункт 1</option>-->
+                    <!--<option>Пункт 2</option>-->
+                    <!--</select>-->
+                    <!--Поэтомы в скрипте мы заполняем эти теги <option>Пункт 1</option> значениями из базы -->
+                    <!--после выбора меню(событие onchange) и запроса с помощью fetch-->
+                    <div>
+                        {{ form.menu.label(class="py-1 mt-0") }}
+                    </div>
+                    <div>
+                        {{ form.menu(class="container-fluid py-2 mt-0") }}
+                    </div>
+                    <div>
+                        {{ form.usluga.label(class="py-1 mt-2") }}
+                    </div>
+                    <div>
+                        {{ form.usluga(class="container-fluid py-2 mt-0") }}
+                    </div>
+
+
+                    <!--Поле выбора файла-->
+                    <div>
+                        {{ form.photo.label(class="py-0 mt-2") }}
+                        <!--{{ form.photo(class="form-control text-center pb-4 mb-4") }}-->
+                    </div>
+                    <div>
+                        {{ form.photo(class="py-2 mt-0") }}
+                        <!--Поле выбора файла -  конец-->
+                    </div>
+
+                    <div>
+                        {{ form.title.label(class="py-0 mt-2") }}
+                    </div>
+                    <div>
+                        {{ form.title(class="container-fluid py-1 my-1") }}
+                    </div>
+                    <div>
+                        {{ form.comments.label(class="py-1 my-1") }}
+                    </div>
+                    <div>
+                        {{ form.comments(class="container-fluid py-1 my-1") }}
+                    </div>
+
+
+                    <!--Кнопка загрузки-->
+                    <!--{{ form.submit }}-->
+                    {{ form.submit(class="form-control my-3 btn-success btn-block") }}
+                    <!--Кнопка загрузки -  конец-->
+
+                    <!--<div class="checkbox mb-3"></div>-->
+                    <!--<button class="btn btn-lg btn-danger btn-block" type="submit">DDDDDDDD</button>-->
+
+                </form>
+            </div>
+            <!--Загрузка файлов Скрипт на чистом javascript - конец-->
+        </div>
+
+        <div class="col-4 col-lg-4">
+
+            <!--Примеры использования JS кодов - начало-->
+            <p>Какой-то текст </p>
+            <div id='primer1'>
+            <button id="create1" type="submit" class="pt-2">create1</button>
+            </div>
+            <div id='primer2'>
+                <button id="create2" type="submit" class="pt-2">create2</button>
+            </div>
+            <button onclick="createParagraph()" class="pt-2">create3</button>
+            <button id="createparagraph" class="py-2">Создать параграфы до и после этого абзаца</button>
+            <div class="pt-5">Следующая ссылка открывает электронную почту и имеет параметры(например subject=тема письма) и др.</div>
+            <a class="mb-5 pb-5" href="mailto:buminfo1@mail.ru?subject=Ура">Отправить письмо для shulgao69</a>
+            <div>Подробнее
+                <!--class="text-break" используем для того чтобы длинная ссылка
+                (это как бы одно слово) не вылезала за края колонки-->
+                <a class="text-break" href="https://developer.mozilla.org/ru/docs/Learn/HTML/Introduction_to_HTML/Creating_hyperlinks">
+                https://developer.mozilla.org/ru/docs/Learn/HTML/Introduction_to_HTML/Creating_hyperlinks
+                </a>
+            </div>
+            <div>
+                <a href="https://developer.roman.grinyov.name/blog/9">
+                    "https://developer.roman.grinyov.name/blog/9"
+                </a>
+            </div>
+
+            <div class="mt-1 b-1">
+                <!--Заголовки-->
+                <h4 class="mb-2 font-weight-light">Тест - страница</h4>
+                <p class="h5 font-weight-light mb-5"> аааааааааааа </p>
+                <div class="my-5">
+                    <a href="/">Вернуться на главную страницу</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4 col-lg-4">
+
+
+            <!--script №1-->
+            <!--События onmouseover="bigImg(this)" onmouseout="normalImg(this)" и script №1 -->
+            <!--задают увеличение и уменьшение размеров фото при наведении и ухода курсора мыши на фото-->
+            <img onmouseover="bigImg(this)" onmouseout="normalImg(this)" class="img-fluid mt-2" id='first'  src="/static/images/logo.png">
+            <!--class="img-fluid" уменьшает изображение по ширине столбца-->
+            <img class="img-fluid mt-2" src="/static/pictures/2.jpg">
+            <!--<img class="img-fluid mt-2 pt-2" src="/static/pictures/1.jpg">-->
+
+        </div>
+    </div>
+
+</main>
+<!--script №1-->
+<!--События onmouseover="bigImg(this)" onmouseout="normalImg(this)" и script №1 -->
+<!--задают увеличение и уменьшение размеров фото при наведении и ухода курсора мыши на фото-->
+<script>
+function bigImg(x) {
+    <!--x.style.height = "264px";-->
+    <!--x.style.width = "564px";-->
+    x.style.width = "200%";
+    x.style.zIndex= "100";
+    x.style.transition = "1s linear"
+    <!--x.style.transitionDuration= "1s"-->
+}
+
+<!--Почему-то скорость не изменилась при задании y.style.transition= "10s"-->
+function normalImg(y) {
+    y.style.width = "auto";
+    y.style.zIndex= "auto";
+    y.style.transition = "10s"
+    <!--y.style.transitionDuration= "1s"-->
+}
+</script>
+
+
+<!--Добавление нескольких обработчиков событий к одному элементу-->
+<!--https://html5css.ru/js/js_htmldom_eventlistener.php-->
+<script charset="utf-8" type="text/javascript">
+let element=document.getElementById("create1");
+element.addEventListener("click", createParagraphInButton);
+element.addEventListener("click", createParagraphInDiv);
+element.addEventListener("click", allOk, false);
+
+function createParagraphInButton() {
+    let para = document.createElement('p');
+    para.textContent = 'Вы добавили текст в кнопку!';
+    let element = document.getElementById('create1');
+    element.appendChild(para);
+}
+
+function createParagraphInDiv() {
+    let para = document.createElement('p');
+    para.textContent = 'Вы добавили текст ниже кнопки!';
+    let element = document.getElementById('primer1');
+    element.appendChild(para);
+}
+
+<!--alert всегда сработает раньше чем все остальные обработчики!!!-->
+function allOk() {
+   alert('Все ок');
+};
+
+</script>
+
+
+<!--Пример  https://html5css.ru/js/js_htmldom_nodes.php-->
+<script charset="utf-8" type="text/javascript">
+    document.getElementById("create2").onclick=function() {
+        let para = document.createElement('p');
+        para.textContent = 'Ты нажал кнопку Создать параграф 2! и появилась эта строка';
+        <!--Вместо para.textContent можно и так-->
+        <!--para.innerHTML = 'Ты нажал кнопку Создать параграф 2! и появилась эта строка';-->
+        let element = document.getElementById("primer2");
+        element.appendChild(para);
+    }
+</script>
+
+
+
+<!--Скрипт для создания элементов '<p>Привет</p>' и '<p>Пока</p>' до и после-->
+<!--элемента с id=createparagraph-->
+<!--<script>-->
+  <!--createparagraph.insertAdjacentHTML('beforebegin', '<p>Привет</p>');-->
+  <!--createparagraph.insertAdjacentHTML('afterend', '<p>Пока</p>');-->
+<!--</script>-->
+
+<!--Замена фото по клику на фото с вопросом-подтверждением-->
+<script>
+var myImage = document.getElementsByTagName('img');
+for (let image of myImage){
+    image.onclick = function() {
+    if (confirm("Ты уверен что хочешь поменять фото?")) {
+        alert( 'Отлично!' );
+        image.setAttribute ('src', '/static/pictures/4.jpg');
+        image.setAttribute ('class', 'img-fluid');
+    } else {
+        alert( 'Очень жаль!' );
+    }
+    }
+}
+</script>
+
+
+<!--Замена фото по клику (вар 1 - более короткий)-->
+<!--<script>-->
+<!--let myImage = document.getElementById('first');-->
+<!--myImage.onclick = function() {-->
+    <!--alert('Ouch! !');-->
+    <!--var mySrc = myImage.getAttribute('src');-->
+    <!--if(mySrc === '/static/images/logo.png') {-->
+        <!--alert('VAU');-->
+        <!--myImage.setAttribute ('src', '/static/pictures/4.jpg');-->
+        <!--myImage.setAttribute ('class', 'img-fluid');-->
+    <!--} else {-->
+    <!--alert('NOT VAU');-->
+    <!--myImage.setAttribute ('src', '/static/pictures/1.jpg');-->
+    <!--}-->
+<!--}-->
+<!--</script>-->
+
+<!--Замена фото по клику (вар 2 - более длинный)-->
+<!--<script>-->
+<!--&lt;!&ndash;let myImage = document.getElementById('first');&ndash;&gt;-->
+<!--document.getElementById('first').onclick = function() {-->
+    <!--alert('Ouch! !');-->
+    <!--var mySrc = document.getElementById('first').getAttribute('src');-->
+    <!--if(mySrc === '/static/images/logo.png') {-->
+        <!--alert('VAU');-->
+        <!--document.getElementById('first').setAttribute ('src', '/static/pictures/4.jpg');-->
+        <!--document.getElementById('first').setAttribute ('class', 'img-fluid');-->
+    <!--} else {-->
+    <!--alert('NOT VAU');-->
+    <!--document.getElementById('first').setAttribute ('src', '/static/pictures/1.jpg');-->
+    <!--}-->
+<!--}-->
+<!--</script>-->
+
+<!--Скрипт, который показывает сообщение при любом щелчке мыши на любом месте-->
+<!--https://developer.mozilla.org/ru/docs/Learn/Getting_started_with_the_web/JavaScript_basics-->
+<!--<script>-->
+<!--document.querySelector('h4').onclick = function() {-->
+    <!--alert('Ouch! Stop poking me!');-->
+<!--}-->
+<!--</script>-->
+<!--Скрипт, который каждый раз показывает сообщение при  щелчке мыши на первом фото с id first-->
+<!--<script>-->
+<!--document.getElementById('first').onclick = function() {-->
+    <!--alert('Ouch! Stop poking me!');-->
+<!--}-->
+<!--</script>-->
+
+
+<!--**** Выбор из выпадающего списка - начало - работает!!!! - -->
+<!--это код на чистом JavaScripts(Choice2 - на JQuery)-->
+<!--Основано на-->
+<!--https://github.com/PrettyPrinted/dynamic_select_flask_wtf_javascript (код из видео ниже)-->
+<!--https://www.youtube.com/watch?v=I2dJuNwlIH0-->
+    <!--Python файл:-->
+    <!--https://github.com/PrettyPrinted/dynamic_select_flask_wtf_javascript/blob/master/app.py-->
+    <!--templates файл:-->
+    <!--https://github.com/PrettyPrinted/dynamic_select_flask_wtf_javascript/blob/master/templates/index.html-->
+<!--смотрела также https://learn.javascript.ru/fetch-->
+<script charset="utf-8" type="text/javascript">
+    <!--id select_menu и select_usluga заданы не в форме а в файле где описана форма-->
+    <!--( у нас файл forms.py (class TestForm(FlaskForm)) в блюпринте components/test)-->
+    let menu_select = document.getElementById("select_menu");
+    let usluga_select = document.getElementById("select_usluga");
+
+    <!--При выборе раздела в меню из выпадающего списка запускается анонимная функция-->
+    menu_select.onchange = function()  {
+
+        let menu;
+        <!--переменной menu присваивается значение выбора-->
+        menu = menu_select.value;
+
+        <!--запускается запрос fetch на роут '/testprefix/testroute/' + menu-->
+        <!--затем когда в ответ получаем  uslugs-->
+        <!--например uslugs= [{'id': 11, 'title': 'Лендинги для автомагазинов'}, {'id': 14, 'title': 'Лендинги для цветочных магазинов'}]-->
+        <!--https://learn.javascript.ru/fetch-->
+        <!--.then   - см в https://learn.javascript.ru/promise-basics-->
+        fetch('/testprefix/testroute/' + menu).then(function(response) {
+
+            <!--обрабатываем ответ запроса-->
+            response.json().then(function(data) {
+                <!--let optionHTML = '';-->
+                let spisokUslug = '';
+
+                for (let usluga of data.uslugs) {
+
+                <!--https://learn.javascript.ru/form-elements-->
+                <!--формируем новый список услуг соответствующих выбранному меню перебирая uslugs-->
+                    spisokUslug += '<option value="' + usluga.id + '">' + usluga.title + '</option>';
+                }
+
+                <!--изменяем usluga_select-->
+                usluga_select.innerHTML = spisokUslug;
+                })
+        });
+    }
+</script>
+<!--***** Выбор из выпадающего списка - конец - работает!!!!-->
+
+
+<!--Запускайте эти скрипты по очереди для просмотра их действия-->
+<!--Часть 1 https://learn.javascript.ru-->
+
+<!--***** Модальные окна - начало-->
+<!--https://learn.javascript.ru/alert-prompt-confirm-->
+<!--На все указанные методы 1)-3) распространяются два ограничения:-->
+<!--Расположение окон определяется браузером. Обычно окна находятся в центре.-->
+<!--Визуальное отображение окон зависит от браузера, и мы не можем изменить их вид.-->
+
+<!--https://learn.javascript.ru/javascript-specials-->
+<!--1) alert - модальное окно с текстом и кнопкой ок-->
+<!--<script>-->
+    <!--alert("Hello");-->
+<!--</script>-->
+
+<!--2) prompt - модальное окно с текстом, полем ввода и кнопками ок или отмена-->
+<!--2.1-->
+<!--<script>-->
+    <!--let age = prompt('Сколько тебе лет?', 100);-->
+    <!--//ВНИМАНИЕ!! кавычки именно такие!! при "" значение не подставляет!-->
+    <!--alert(`Тебе ${age} лет!`); // Тебе 100 лет!-->
+<!--</script>-->
+
+<!--2.2-->
+<!--<script>-->
+    <!--let test = prompt("Введите пожалуйста ваш возраст", "");-->
+    <!--alert(`Тебе ${test} лет!`); // Тебе 100 лет!-->
+<!--</script>-->
+
+<!--3) confirm - модальное окно с текстом(вопросом),  и кнопками ок или отмена&ndash;&gt;-->
+<!--<script>-->
+    <!--let isBoss = confirm("Ты здесь главный?");-->
+    <!--alert( isBoss ); // true, если нажата OK-->
+<!--</script>-->
+<!--***** Модальные окна - конец-->
+
+<!--***** Функции - начало-->
+
+<!--Пример 1-->
+<!--<script>-->
+<!--console.log("Вывод данных в консоль");-->
+<!--function showMessage(from, text) {-->
+    <!--if (text === undefined) {-->
+    <!--text = 'текст не добавлен';-->
+    <!--}-->
+    <!--alert(from + ': ' + text);-->
+    <!--}-->
+<!--showMessage('Аня2', "Как дела?-2"); // Аня: Как дела? (**)-->
+<!--showMessage('Боря3', "Как дела?-3");-->
+<!--let test = 'Женя1';-->
+<!--&lt;!&ndash;КАВЫЧКИ!!!!!&ndash;&gt;-->
+<!--showMessage(`${test}`, 'Привет!-1');-->
+<!--let test2 = 'Женя2';-->
+<!--showMessage(`${test2}`);-->
+<!--</script>-->
+
+<!--Пример2-->
+<!--<script>-->
+<!--let year = prompt('В каком году была опубликована спецификация ECMAScript-2015?', '');-->
+<!--if (year == 2015) {-->
+<!--alert( "Правильно!" );-->
+<!--alert( "Вы такой умный!" );-->
+<!--} else {-->
+<!--alert( "Может быть в 2015?" );-->
+<!--confirm("Точно?");-->
+<!--}-->
+<!--</script>-->
+
+<!--Пример3-->
+<!--<script>-->
+<!--let year = prompt('В каком году была опубликована спецификация ECMAScript-2015?', '');-->
+
+<!--if (year < 2015) {-->
+  <!--alert( 'Это слишком рано...' );-->
+<!--} else if (year > 2015) {-->
+  <!--alert( 'Это поздновато' );-->
+<!--} else {-->
+  <!--alert( 'Верно!' );-->
+<!--}-->
+<!--</script>-->
+<!--***** Функции - конец-->
+
+<!--***** Функции-стрелки - начало-->
+<!--Пример 1-->
+<!--<script>-->
+<!--let sum = (a, b) => a + b;-->
+<!--&lt;!&ndash;/* Более короткая форма для:&ndash;&gt;-->
+<!--&lt;!&ndash;let sum = function(a, b) {&ndash;&gt;-->
+  <!--&lt;!&ndash;return a + b;&ndash;&gt;-->
+<!--&lt;!&ndash;};&ndash;&gt;-->
+<!--&lt;!&ndash;*/&ndash;&gt;-->
+<!--alert( sum(1, 2) );-->
+<!--let double = n => n * 2;-->
+<!--alert( double(3) );-->
+<!--</script>-->
+<!--***** Функции-стрелки - конец-->
+{% endblock %}

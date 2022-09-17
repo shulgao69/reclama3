@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block container %}
+<main class="container my-5 py-5">
+  <div class="text-center my-5">
+
+    <!--дополнительный параметр ignore missing -->
+    <!--в случае отсутствие шаблона (как в нашем случае)
+    не будет приводить к появлению исключения TemplateNotFound-->
+    <!--{% include 'emodzicar.html' ignore missing %}-->
+
+    <p class="h4 font-weight-light mb-2 mt-5">Файл, который вы пытаетесь загрузить, </p>
+    <p class="h4 font-weight-light mb-2">имеет не допустимое для загрузки расширение</p>
+    <p class="h4 font-weight-light">или содержимое файла не соответствуе указанному расширению</p>
+    <div class="my-5">
+      <a href="/upl">Вернуться на страницу загрузки файлов</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

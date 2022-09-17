@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block container %}
+ <!--Данная страница - копия choice2 без формы удаления файлов-->
+<main>
+    <!--Для размещения 2 форм см.-->
+    <!--см https://fooobar.com/questions/140124/multiple-forms-in-a-single-page-using-flask-and-wtforms-->
+
+    <div class="container">
+        <div class="row pt-2 pb-3">
+            <div class="col-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            </div>
+            <!--<a href="{{ url_for('carousel_manager_bp.render_create_carousel') }}">-->
+            <!--Создать новую карусель-->
+            <!--</a>-->
+        </div>
+        <div class="row">
+            <div class="col-8 col-lg-4">
+                <h3 class="text-success">
+                   <b> Шаг 2 </b>
+                </h3>
+                <div class="text-left mt-3 text-success"><b>
+                    Наименование карусели:
+                </b></div>
+
+                <div>
+                {{ name_carousel }}
+                </div>
+                <div class="text-left mt-2 text-success"><b>
+                    Директория загрузки карусели:
+                </b></div>
+                <div>
+                    {{ dir_carousel }}
+                </div>
+                <div class="text-left mt-2 text-success"><b>
+                    Количество изображений в карусели:
+                </b></div>
+                <div>
+                    {{ number_foto }}
+                    </div>
+                <h5 class="text-left mt-4">
+                    Загрузите изображения в карусель.
+                </h5>
+                <div class="text-muted">
+                    Внимание!
+                    </div>
+                    <div class="text-muted">
+                    Порядок следования слайдов в карусели
+                    соответствует порядковым номерам загруженных файлов.
+                </div>
+                <div class="text-muted">
+                    Заголовок и текст фото - это текст на слайде (белым цветом).
+                    </div>
+                <div class="text-muted">
+                    Не являются обязательными полями.
+                </div>
+
+                <!--Загрузка файлов - начало-->
+                <div class="mt-1 b-1">
+
+
+                    <!--Форма загрузки файла-->
+                    <!--<form method="POST" action="/admin/carousel/upload/" enctype="multipart/form-data">-->
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {{ form_uploads_carousel.csrf_token }}
+
+                        <!--<div>-->
+                            <!--{{ form_uploads_carousel.all_photo.label(class="py-1 mt-0") }}-->
+                        <!--</div> <br>-->
+                        <div class="text-success">
+                            {{ form_uploads_carousel.all_photo(class="container-fluid py-2 px-0 mt-0") }}
+                        </div>
+
+
+                        <!--Поле выбора файла-->
+                        <!--Поле выбора файла -  конец-->
+
+                        <!--Кнопка загрузки-->
+                        <div>
+                            {{ form_uploads_carousel.submit_carousel(class="form-control my-3 btn-success btn-block") }}
+                        </div>
+                        <!--Кнопка загрузки -  конец-->
+                    </form>
+
+
+                </div>
+                <!--Загрузка файлов - конец-->
+            </div>
+
+            <div class="col-4 col-lg-4">
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

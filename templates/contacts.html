@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block container %}
+
+
+{% include 'carousel_body_top.html' %}
+<div class="container pt-3">
+    <!--class="row" - создаст сетку с тем кол-вом колонок которые заданы в col-2(col-4) и тп (всего 12)-->
+    <div class="row pt-0">
+
+        <div class="col-4 text-left">
+            <!-- column content here -->
+            <h3 class="pt-4 base_color_1">ООО "Информ Центр"</h3>
+            <div class="pt-4">г. Тверь, Вагжановский пер., д.9, офис 509</div>
+            <div class="pt-3">тел.: 8 (4822) 34-12-26</div>
+            <div class="pt-3">e-mail: buminfo1@mail.ru</div>
+            <br>
+            <h4 class="pt-4 base_color_1">Банковские реквизиты:</h4>
+            <div class="pt-3">ИНН 11111111111111111111111</div>
+            <div class="pt-3">ОГРН 1111111111111111111111</div>
+            <div class="pt-3 pb-5">КПП 11111111111111111111111</div>
+        </div>
+
+        <div class="col-8">
+            <!--<div class="border base_color_1 border-success">-->
+            <div style="border:3px solid;" class="base_color_1 m-3">
+                <!--Вставка Яндекс карты-->
+            <!--https://codernet.ru/articles/web/kak_vstavit_kartu_na_sajt_html_kak_sdelat_eto_prosto_po_shagam/-->
+
+                <div style="position:relative;overflow:hidden;">
+                    <a href="https://yandex.ru/maps/14/tver/?utm_medium=mapframe&utm_source=maps"
+                       style="color:#eee; font-size:12px; position:absolute; top:0px;">
+                        <!--Тверь-->
+                    </a>
+                    <a href="https://yandex.ru/maps/14/tver/house/vagzhanovskiy_pereulok_9/Z0wYfwRhSkcAQFtsfXR0cHVkZw==/?ll=35.932873%2C56.851849&utm_medium=mapframe&utm_source=maps&z=18.4"
+                       style="color:#eee;font-size:12px;position:absolute;top:14px;">
+                        <!--Вагжановский переулок, 9 — Яндекс Карты-->
+                    </a>
+
+                    <!--Измененный вариант-->
+                    <div style="border:1px solid " class="base_color_1 m-3">
+                    <iframe class="container-fluid"
+                            src="https://yandex.ru/map-widget/v1/-/CCUByXg88B"
+                            width="560" height="400" frameBorder=0
+                            allowfullscreen="true">
+                    </iframe>
+                        </div>
+
+                    <!--исходный вариант iframe с карт - начало -->
+                    <!--<iframe class="container-fluid"-->
+                            <!--src="https://yandex.ru/map-widget/v1/-/CCUByXg88B"-->
+                            <!--width="560" height="400" frameborder="1"-->
+                            <!--allowfullscreen="true" style="position:relative;">-->
+                    <!--</iframe>-->
+                     <!--исходный вариант iframe с карт - конец -->
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% include 'carousel_body_middle.html' %}
+{% include 'carousel_body_bottom.html' %}
+
+</div>
+{% endblock %}

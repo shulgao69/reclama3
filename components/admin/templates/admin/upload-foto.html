@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main class="container">
+
+  <div class="row">
+    <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+      <div class="text-center mt-5 b-1">
+        <!--Заголовки-->
+        <h1 class="h4 mb-3 font-weight-light">Загрузка фото</h1>
+        <!--Заголовки -  конец-->
+
+        <!--Форма загрузки файла-->
+        <!--при загрузке файлов enctype="multipart/form-data обязательно!!!-->
+        <form method="POST" action="" enctype="multipart/form-data">
+          {{ form.csrf_token }}
+          {{ err }}
+          {% if success %}
+          <p>Фото успешно загружено. Загрузите следующее фото.</p>
+          {% endif %}
+
+          <!--Поле выбора файла-->
+          <!--{{ form.photo.label }}-->
+          <!--{{ form.photo(class="form-control text-center pb-4 mb-4") }}-->
+          {{ form.photo(class="py-2 my-2") }}
+          <!--Поле выбора файла -  конец-->
+
+          <!--Кнопка загрузки-->
+          {{ form.submit(class="form-control mb-5 btn btn-lg btn-success btn-block") }}
+          <!--Кнопка загрузки -  конец-->
+
+        </form>
+        <!--Форма загрузки файла - конец-->
+        <br>
+        <div class="text-center px-5"><a href="/">Вернуться на главную</a></div><br>
+
+
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+

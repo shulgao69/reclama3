@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block container %}
+ <!--Данная страница - копия choice2 без формы удаления файлов-->
+<main>
+    <!--Для размещения 2 форм см.-->
+    <!--см https://fooobar.com/questions/140124/multiple-forms-in-a-single-page-using-flask-and-wtforms-->
+
+    <div class="container">
+        <div class="row pt-2 pb-3">
+            <div class="col-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            </div>
+            <!--<a href="{{ url_for('carousel_manager_bp.render_create_carousel') }}">-->
+            <!--Создать новую карусель-->
+            <!--</a>-->
+        </div>
+        <div class="row">
+            <div class="col-4 col-lg-4 col-sm-12">
+                <!--<h5 mb-4>-->
+                    <!--create_carousel.html (Форма CreateCarouselForm)-->
+                <!--</h5>-->
+                <h3 class="text-success">
+                   <b> Шаг 1 </b>
+                </h3>
+
+                <h5 class="text-left pl-0 my-2">
+                    Заполните форму
+                </h5>
+
+                {% if message_name %}
+                <div class="text-danger">
+                    <b>{{ message_name }}</b>
+                </div>
+                {% endif %}
+
+                {% if message_dir %}
+                <div class="text-danger">
+                   <b> {{ message_dir}} </b>
+                </div>
+                {% endif %}
+
+
+
+
+
+                <!--Загрузка файлов - начало-->
+                <div class="mt-3 mb-1">
+                    <!--Заголовки-->
+                    <!--<h4 class="mb-2 font-weight-light">Выберите раздел и услугу,</h4>-->
+                    <!--<h6 class="mb-3 font-weight-light">для которых вы хотите загрузить фото</h6>-->
+                    <!--Заголовки -  конец-->
+
+                    <!--Форма загрузки файла-->
+                    <form method="POST" action="/admin/carousel/create/" enctype="multipart/form-data">
+                        {{ form_create.csrf_token }}
+
+                        <div><b>
+                            {{ form_create.name_carousel.label(class="text-success") }}
+                        </b></div>
+                        <div class="text-muted">
+                            Внимание! Наименование карусели должно быть уникальным!
+                        </div>
+                        <div>
+                            {{ form_create.name_carousel(class="container-fluid mt-2 mb-3") }}
+                        </div>
+                        <div><b>
+                            {{ form_create.dir_carousel.label(class="text-success") }}
+                        </b></div>
+                        <div class="text-muted">
+                            Внимание! <br>
+                            Для каждой карусели создается своя директория.<br>
+                            Имя директории загрузки должо быть <b>уникальным</b>,
+                            задано только <b>латинскими</b> строчными буквами
+                            и содержать не более <b>8 символов</b>!
+
+                        </div>
+                        {% for err in form_create.dir_carousel.errors %}
+                        <div class="text-danger"><b>{{ err }}</b></div>
+                        <!--<p class="error alert alert-warning">{{ err }}</p>-->
+                        {% endfor %}
+
+                        <div>
+                            {{ form_create.dir_carousel(class="container-fluid mt-2 mb-3") }}
+                        </div>
+
+                        <div><b>
+                            {{ form_create.number_foto.label(class="text-success") }}
+                        </b></div>
+                        <div class="text-muted">
+                            Внимание! Не более 20!
+                        </div>
+                        <div>
+                            {{ form_create.number_foto(class="container-fluid py-1 mt-2 mb-2") }}
+                        </div>
+
+                        <!--Поле выбора файла-->
+                        <!--Поле выбора файла -  конец-->
+
+                        <!--Кнопка загрузки-->
+                        <div class="mt-4">
+                        {{ form_create.submit_create(class="form-control mb-4 btn-success btn-block") }}
+                        </d>
+                            <!--Кнопка загрузки -  конец-->
+                    </form>
+
+
+                </div>
+                <!--Загрузка файлов - конец-->
+            </div>
+
+            <div class="col-4 col-lg-4">
+            </div>
+        </div>
+
+    </div>
+</main>
+
+
+
+
+{% endblock %}

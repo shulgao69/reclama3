@@ -1,0 +1,49 @@
+{% for carousel in carousels_center %}
+	{% if carousel["base_position"]=='body' and carousel["vertical_position"]=='middle' %}
+	{% include 'carousel_shablon.html' %}
+	{% endif %}
+{% endfor %}
+
+{% if razdel %}
+<div class="container">
+	<div class="row">
+		<div class="col-3 container-fluid m-0">
+			{% for carousel in carousels_left %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='middle' %}
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+		<div class="col-9 container-fluid m-0">
+			{% for carousel in carousels_right %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='middle' %}
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% else %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-4 container-fluid m-0">
+			{% for carousel in carousels_left %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='middle' %}
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+		<div class="col-8 container-fluid m-0">
+			{% for carousel in carousels_right %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='middle' %}
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+
+{% endif %}
+

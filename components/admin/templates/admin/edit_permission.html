@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block container %}
+</head>
+
+<body>
+  <main class="container">
+
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+
+        <form class="form-signin pt-5" action="/login/" method="POST">
+          {{ form.csrf_token }}
+
+          <div class="text-center mt-5 b-1">
+            <h1 class="h3 mb-3 font-weight-normal">Отредактируйте разрешения роли</h1>
+          </div>
+
+            <div class="mt-5 form-label-group">
+                {% if err %}
+                <div class="alert alert-warning" role="alert">{{ err }}</div>
+                {% endif %}
+                {{ form.can_delete.label(class="text-muted") }}
+                {{ form.can_delete(class="form-control") }}
+            </div>
+            <div class="form-label-group">
+                {{ form.can_edit.label(class="text-muted") }}
+                {{ form.can_edit(class="form-control") }}
+            </div>
+            <div class="form-label-group">
+                {{ form.columns.label(class="text-muted") }}
+                {{ form.columns(class="form-control") }}
+            </div>
+            <div class="form-label-group">
+                {{ form.any.label(class="text-muted") }}
+                {{ form.any(class="form-control") }}
+            </div>
+          <div class="checkbox mb-3">
+
+          </div>
+          <button class="btn btn-lg btn-danger btn-block" type="submit">Сохранить</button>
+          </form>
+        <br>
+
+      </div>
+
+    </div>
+</main>
+{% endblock %}

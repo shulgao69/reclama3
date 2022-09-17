@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block container %}
+<main class="container my-5 py-5">
+  <div class="text-center my-5">
+
+    <!--дополнительный параметр ignore missing -->
+    <!--в случае отсутствие шаблона (как в нашем случае)
+    не будет приводить к появлению исключения TemplateNotFound-->
+    <!--{% include 'emodzicar.html' ignore missing %}-->
+
+    <p class="h4 font-weight-light mb-2 mt-5">Остановлена попытка</p>
+    <p class="h4 font-weight-light mb-5">перенаправления на другой сайт</p>
+    <div class="my-5">
+      <a href="/">Вернуться на главную страницу</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

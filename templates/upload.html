@@ -1,0 +1,28 @@
+
+
+{% extends 'base.html' %}
+{% block container %}
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.css">-->
+<main class="container my-5 py-5">
+  <div class="text-center my-5">
+
+    <!--дополнительный параметр ignore missing -->
+    <!--в случае отсутствие шаблона (как в нашем случае)
+    не будет приводить к появлению исключения TemplateNotFound-->
+    <!--{% include 'emodzicar.html' ignore missing %}-->
+    <h1>Вар1 Загрузите ваш файл</h1>
+    <form method="POST" action="" enctype="multipart/form-data">
+      <p class="my-2 py-2"><input type="file" name="file"></p>
+      <p class="my-2 py-2"><input type="submit" value="Загрузить"></p>
+    </form>
+        <!--<h1>Вар2 Через dropzone не грузит Почеиу не знаю File Upload</h1>-->
+    <!--<form action="{{ url_for('upload_files') }}" class="dropzone">-->
+      <!--<p class="my-2 py-2"><input type="file" name="file"></p>-->
+      <!--<p class="my-2 py-2"><input type="submit" value="Загрузить"></p>-->
+    <!--</form>-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.js"></script>-->
+  </div>
+</main>
+{% endblock %}
+
+

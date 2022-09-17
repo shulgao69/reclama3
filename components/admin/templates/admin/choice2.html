@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <!--На данной странице размещены 2 формы-->
+    <!--см https://fooobar.com/questions/140124/multiple-forms-in-a-single-page-using-flask-and-wtforms-->
+    <div class="container">
+
+        <h4 class="text-left pl-2 mt-4">Здесь можно загрузить фото в соответствующие разделы
+            (удаление пока не работает!!!)
+        </h4>
+        <div class="row p-3">
+
+            <div class="col-4 col-lg-4">
+                <!--Загрузка файлов - начало-->
+                <div class="mt-1 b-1">
+                    <!--Заголовки-->
+                    <h4 class="mb-2 font-weight-light">Выберите раздел и услугу,</h4>
+                    <h6 class="mb-3 font-weight-light">для которых вы хотите загрузить фото</h6>
+                    <!--Заголовки -  конец-->
+
+                    <!--Форма загрузки файла-->
+                    <form method="POST" action="/admin/foto/choice2/" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+
+                        <!--{{ form.menu(class="py-2 my-2", id='select_menu') }} не верно!-->
+                        <!--{{ form.usluga(class="py-2 my-2", id='select_usluga') }} не верно!-->
+                        <!--id='select_menu  и id='select_usluga' определены в форме class FormChoice1(FlaskForm):!!!-->
+                        <div>
+                            {{ form.menu.label(class="py-1 mt-0") }}
+                        </div>
+                        <div>
+                            {{ form.menu(class="container-fluid py-2 mt-0") }}
+                        </div>
+                        <div>
+                            {{ form.usluga.label(class="py-1 mt-2") }}
+                        </div>
+                        <div>
+                            {{ form.usluga(class="container-fluid py-2 mt-0") }}
+                        </div>
+
+
+                        <!--Поле выбора файла-->
+                        <div>
+                            {{ form.photo.label(class="py-0 mt-2") }}
+                            <!--{{ form.photo(class="form-control text-center pb-4 mb-4") }}-->
+                        </div>
+                        <div>
+                            {{ form.photo(class="py-2 mt-0") }}
+                            <!--Поле выбора файла -  конец-->
+                        </div>
+
+                        <div>
+                            {{ form.title.label(class="py-0 mt-2") }}
+                        </div>
+                        <div>
+                            {{ form.title(class="container-fluid py-1 my-1") }}
+                        </div>
+                        <div>
+                            {{ form.comments.label(class="py-1 my-1") }}
+                        </div>
+                        <div>
+                            {{ form.comments(class="container-fluid py-1 my-1") }}
+                        </div>
+
+
+                        <!--Кнопка загрузки-->
+                        <!--{{ form.submit }}-->
+                        {{ form.submit(class="form-control my-3 btn-success btn-block") }}
+                        <!--Кнопка загрузки -  конец-->
+
+                        <!--<div class="checkbox mb-3"></div>-->
+                        <!--<button class="btn btn-lg btn-danger btn-block" type="submit">DDDDDDDD</button>-->
+
+                    </form>
+                </div>
+                <!--Загрузка файлов - конец-->
+            </div>
+
+            <div class="col-4 col-lg-4">
+                <!--Удаление файлов - начало-->
+                <div class="mt-1 b-1">
+                    <!--Заголовки-->
+                    <h4 class="mb-2 font-weight-light">Выберите раздел и услугу,</h4>
+                    <h6 class="mb-3 font-weight-light">из которых вы хотите удалить фото</h6>
+                    <!--Заголовки -  конец-->
+
+                    <!--Можно оставить этот заголовок,
+                    <!--<h1 class="h4 mb-3 font-weight-light">Выберите файл для удаления</h1>-->
+                    <!--а можно взять из label формы и добавить класс ({{ form_delete.delete_file.label(class="h4 mb-3 font-weight-light") }})&ndash;&gt;-->
+                    <!--Мы взяли из формы (а текст там такой же) (вставить нужно в теге <form>)-->
+                    <!--Заголовки -  конец-->
+
+                    <!--Форма для удаления файла-->
+                    <!--<form method="POST" action="/admin/choice2/" enctype="multipart/form-data">-->
+                    <!--<form method="POST" action="/admin/choice2/" enctype="multipart/form-data">-->
+                    <form method="POST" action="/admin/foto/choice2/" enctype="multipart/form-data">
+                        {{ form_delete.csrf_token }}
+
+                        <div>
+                            {{ form_delete.menu.label(class="py-1 mt-0") }}
+                            </div>
+                            <div>
+                            {{ form_delete.menu(class="container-fluid py-2 mt-0") }}
+                        </div>
+                        <div>
+                            {{ form_delete.usluga.label(class="py-1 mt-2") }}
+                           </div>
+                            <div>
+                            {{ form_delete.usluga(class="container-fluid py-2 mt-0") }}
+                        </div>
+                        <div>
+                            {{ form_delete.names_files_for_delete.label(class="py-2 mt-1") }}
+                            </div>
+                            <div>
+                            {{ form_delete.names_files_for_delete(class="container-fluid py-2 mt-0") }}
+                        </div>
+                        <div>
+                            <!--Поле выбора удаляемого файла-->
+                        <!--{{ form_delete.delete_file.label(class="h4 mb-3 font-weight-light") }}-->
+                        {{ form_delete.delete_file(class="pt-4 pb-3 mt-3 mb-5") }}
+                        <!--Поле выбора удаляемого файла -  конец-->
+                        </div><br>
+                        <div>
+                            <!--Кнопка загрузки-->
+                        {{ form_delete.submit_delete_form(class="form-control my-5 btn-danger btn-block",
+                        value="Delete")
+                        }}
+                            </div>
+                        <!--Кнопка загрузки -  конец-->
+                    </form>
+                    <!--Форма для удаления файла - конец-->
+
+                </div>
+                <!--Удаление файлов - конец-->
+            </div>
+        </div>
+
+
+    </div>
+</main>
+
+ <!--Этот блок может стоять и в начале и в конце самой формы!!!-->
+
+<!--# ******-->
+<!--# Выбор из выпадающего списка и обновление другого списка в формах-->
+<!--# class Choice1, FormChoice1(form_name='FormChoice1Name') и-->
+<!--#  @app.route('/_get_usl_choice1_admin/')-->
+<!--#  def _get_usl_choice1_admin():-->
+<!--# Полностью основано на https://stackoverflow.com/questions/41232105/populate-wtforms-select-field-using-value-selected-from-previous-field-->
+<!--# Заменены переменные, названия функций, также в choice1.html добавлен-->
+<!--# # <script src="https://code.jquery.com/jquery-3.2.1.min.js"-->
+<!--#       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="-->
+<!--#       crossorigin="anonymous">-->
+<!--#     </script>!!!-->
+
+
+<!--Без этого подключения не работает!!!!-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous">
+    </script>
+<!--Без этого подключения не работает!!!! -  конец-->
+
+<!--***** Скрипт1 для выбора из меню и услуги для загрузки фото - начало-->
+<script charset="utf-8" type="text/javascript">
+
+$(function() {
+
+    // jQuery selection for the 2 select boxes (Выбор jQuery для 2 полей выбора)
+    var dropdown = {
+        menu: $('#select_menu'),
+        usluga: $('#select_usluga')
+    };
+
+    // call to update on load (вызов для обновления при загрузке)
+    updateUslugs();
+
+    // function to call XHR and update usluga dropdown (функция для вызова XHR и обновления раскрывающегося списка услуг)
+    function updateUslugs() {
+        var send = {
+            menu: dropdown.menu.val()
+        };
+        dropdown.usluga.attr('disabled', 'disabled');
+        dropdown.usluga.empty();
+        $.getJSON("{{ url_for('foto_manager_bp._get_usl_choice2_admin') }}", send, function(data) {
+            data.forEach(function(item) {
+                dropdown.usluga.append(
+                    $('<option>', {
+                        value: item[0],
+                        text: item[1]
+                    })
+                );
+            });
+            dropdown.usluga.removeAttr('disabled');
+        });
+    }
+
+    // event listener to state dropdown change (прослушиватель событий для изменения раскрывающегося списка состояния)
+    dropdown.menu.on('change', function() {
+        updateUslugs();
+    });
+
+});
+
+</script>
+<!--***** Скрипт1 для выбора из меню и услуги для загрузки фото - конец-->
+
+
+<!--***** Скрипт2 для выбора из меню и услуги для удаления фото - начало-->
+<!--<script charset="utf-8" type="text/javascript">-->
+
+<!--$(function() {-->
+
+    <!--// jQuery selection for the 2 select boxes (Выбор jQuery для 2 полей выбора)-->
+    <!--var dropdown = {-->
+        <!--menu: $('#select_menu_for_delete'),-->
+        <!--usluga: $('#select_usluga_for_delete')-->
+    <!--};-->
+
+    <!--// call to update on load (вызов для обновления при загрузке)-->
+    <!--updateUslugs();-->
+
+    <!--// function to call XHR and update usluga dropdown (функция для вызова XHR и обновления раскрывающегося списка услуг)-->
+    <!--function updateUslugs() {-->
+        <!--var send = {-->
+            <!--menu: dropdown.menu.val()-->
+        <!--};-->
+        <!--dropdown.usluga.attr('disabled', 'disabled');-->
+        <!--dropdown.usluga.empty();-->
+        <!--$.getJSON("{{ url_for('foto_manager_bp._get_usl_choice2_admin') }}", send, function(data) {-->
+            <!--data.forEach(function(item) {-->
+                <!--dropdown.usluga.append(-->
+                    <!--$('<option>', {-->
+                        <!--value: item[0],-->
+                        <!--text: item[1]-->
+                    <!--})-->
+                <!--);-->
+            <!--});-->
+            <!--dropdown.usluga.removeAttr('disabled');-->
+        <!--});-->
+    <!--}-->
+
+    <!--// event listener to state dropdown change (прослушиватель событий для изменения раскрывающегося списка состояния)-->
+    <!--dropdown.menu.on('change', function() {-->
+        <!--updateUslugs();-->
+    <!--});-->
+
+<!--});-->
+
+<!--</script>-->
+<!--***** Скрипт2 для выбора из меню и услуги для удаления фото - конец-->
+
+
+<!--***** Скрипт для выбора файла на основании выбора меню и услуги для удаления фото - начало-->
+<!--Попробовала по аналогии с загрузкой сделать выбор файлов. Но это не работает на 23.10.21!!!!!-->
+<!--Моя версия - надо сделать модель для загрузки с зависимостями от услуг и меню(меню не знаю может и не надо)-->
+<!--<script charset="utf-8" type="text/javascript">-->
+
+<!--$(function() {-->
+
+    <!--// jQuery selection for the 2 select boxes (Выбор jQuery для 2 полей выбора)-->
+    <!--var dropdown = {-->
+
+        <!--usluga: $('#select_usluga_for_delete'),-->
+        <!--names_files_for_delete: $('#select_files_for_delete')-->
+    <!--};-->
+
+    <!--// call to update on load (вызов для обновления при загрузке)-->
+    <!--updateUpload_files();-->
+
+    <!--// function to call XHR and update usluga dropdown (функция для вызова XHR и обновления раскрывающегося списка услуг)-->
+    <!--function updateUpload_files() {-->
+        <!--var send = {-->
+            <!--usluga: dropdown.usluga.val()-->
+        <!--};-->
+        <!--dropdown.names_files_for_delete.attr('disabled', 'disabled');-->
+        <!--dropdown.names_files_for_delete.empty();-->
+        <!--$.getJSON("{{ url_for('foto_manager_bp._get_usl_choice2_admin') }}", send, function(data) {-->
+            <!--data.forEach(function(item) {-->
+                <!--dropdown.names_files_for_delete.append(-->
+                    <!--$('<option>', {-->
+                        <!--value: item[0],-->
+                        <!--text: item[1]-->
+                    <!--})-->
+                <!--);-->
+            <!--});-->
+            <!--dropdown.names_files_for_delete.removeAttr('disabled');-->
+        <!--});-->
+    <!--}-->
+
+    <!--// event listener to state dropdown change (прослушиватель событий для изменения раскрывающегося списка состояния)-->
+    <!--dropdown.usluga.on('change', function() {-->
+        <!--updateUpload_files();-->
+    <!--});-->
+
+<!--});-->
+
+<!--</script>-->
+<!--***** Скрипт для выбора файла на основании выбора меню и услуги для удаления фото - конец-->
+
+
+<!--# Выбор из выпадающего списка и обновление другого списка в формах -  конец-->
+<!--# ******-->
+
+{% endblock %}
+
+

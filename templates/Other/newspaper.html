@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block container %}
+<div class="container">
+    <h1>Парсинг сайта 'https://www.afanasy.biz/'</h1>
+
+    <h2>1. Выводим url-адреса категорий с главной страницы</h2>
+    {% for category in cnn_paper.category_urls() %}
+    <p><a href="{{ category }}">{{ category }}</a></p>
+    {% endfor %}
+
+    <h2>2. Выводим url-адреса статей с главной страницы</h2>
+    {% for articl in cnn_paper.articles %}
+    <p><a href="{{ articl.url }}">{{ articl.url }}</a></p>
+    {% endfor %}
+
+    <h2>3. Выводим Статью по расположенную по адресу https://www.afanasy.biz/news/society/172369</h2>
+    <p>{{ article }} - это объект статья</p>
+    <p><a href="{{ article.url }}">{{ article.url }}</a> - адрес, по которому расположена статья</p>
+    <div><h4>{{ article.title }}</h4> - заголовок статьи</div>
+    <div>Текст статьи - <p>{{ article.text }}</p></div>
+    <div> Автор статьи - <p>{{ article.authors }}</p></div>
+    <p><a href="{{ article.top_image }}">{{ article.top_image }}</a></p>
+    <img src="{{ article.top_image }}">
+
+    <p>{{ article.html }}</p>
+
+</div>
+{% endblock %}

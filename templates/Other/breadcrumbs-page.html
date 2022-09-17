@@ -1,0 +1,26 @@
+<!--Хлебные крошки  на основе базы данных (навигационные цепочки)-->
+<ol class="breadcrumb breadcrumb-new">
+    <li class="breadcrumb-item"><a href="/">Главная</a></li>
+    <li class="breadcrumb-item"><a href="/{{ link.link }}/">{{ link.title }}</a></li>
+    <li class="breadcrumb-item active">{{ usluga_page.title }}</li>
+</ol>
+<!--Хлебные крошки на основе базы данных  (навигационные цепочки)-конец-->
+
+
+<!--&lt;!&ndash;Хлебные крошки  на основе JSON (навигационные цепочки)&ndash;&gt;-->
+<!--<ol class="breadcrumb breadcrumb-new">-->
+    <!--<li class="breadcrumb-item"><a href="/">Главная</a></li>-->
+    <!--{% for link in links %}-->
+    <!--{% if link.link == punkt_menu %}-->
+    <!--<li class="breadcrumb-item"><a href="/{{ link.link }}/">{{ link.title }}</a></li>-->
+    <!--<li class="breadcrumb-item active">-->
+        <!--{% for uslug in uslugi %}-->
+        <!--{% if uslug.punkt_menu == punkt_menu and uslug.link == category %}-->
+        <!--{{ uslug.title }}-->
+        <!--{% endif %}-->
+        <!--{% endfor %}-->
+    <!--</li>-->
+    <!--{% endif %}-->
+    <!--{% endfor %}-->
+<!--</ol>-->
+<!--&lt;!&ndash;Хлебные крошки на основе JSON  (навигационные цепочки)-конец&ndash;&gt;-->

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<div class="container">
+
+
+    <div>
+        {% if new_place==True %}
+        <h4 class="mt-5 text-center base_color_1">
+        {{ place_carousel.carousel }} успешно размещена  {{ place_carousel.place_model_element.place_element }}
+        </h4>
+            <div class="mt-5 text-center mb-5">
+            <a href="{{ url_for('carousel_manager_bp.show_all_carousel') }}">
+                Вернуться к списку всех каруселей
+            </a>
+        </div>
+        {% else %}
+        <h4 class="mt-5 text-center base_color_1">
+        Такое местоположение у данной карусели уже задано.
+            </h4>
+        <div class="mt-5 text-center mb-5">
+            <a href="{{ url_for('carousel_manager_bp.show_all_carousel') }}">
+                Вернуться к списку всех каруселей
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    </div>
+
+{% endblock %}

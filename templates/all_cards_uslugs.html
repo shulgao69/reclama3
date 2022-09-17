@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <!--Выборка только по карточкам услуг имеющих прайсы - начало-->
+    <div class="container">
+        {% for card_usluga in cards_uslugs %}
+
+        <!--d-inline позволяет разместить элементы на одной строке - начало-->
+        <!--<h5 class="base_color_1 d-inline">-->
+        <h5 class="pl-2 base_color_1">
+            {{ card_usluga.name_card_usluga }}
+        </h5>
+        <div class="plashka-grey mt-2">
+    </div>
+
+
+        <div class="pb-3 pl-2 d-inline">
+            <i>Раздел:</i> <i class="base_color_1">{{ card_usluga.usluga.punkt_menu }}</i>
+            <i>Вид услуги:</i> <i class="base_color_1">{{ card_usluga.usluga }}</i>
+        </div>
+        <!--d-inline позволяет разместить элементы на одной строке - конец-->
+
+
+
+        <div class="row pt-3">
+
+            <!--Изображения карточки услуг (в виде карусели) - начало-->
+            <div class="col-4">
+
+                {% if card_usluga.photos %}
+
+                <!--Карусель car - начало-->
+                <!--https://bootsnipp.com/snippets/NjR9z-->
+                <!--https://romanchueshov.ru/bootstrap-verstka/bootstrap-karusel-sozdaem-krasivyj-slajder.html-->
+                <!--https://itchief.ru/bootstrap/carousel#karusel-s-animaciey-poyavleniya-bootstrap-4-->
+                <!--https://bootstrap-4.ru/docs/4.0/components/carousel/-->
+                <!--https://bootstrap-4.ru/docs/4.1/components/carousel/#options-->
+                <!--class="w-100" позволяет сделать карусель, задуманную как на всю ширину (контейнер флюид) -->
+                <!--сделать ее без отступов с права и слева ПОЧЕМУ ТО этот метод НЕ РАБОТАЕТ ТЕПЕРЬ ИСКАТЬ ПРИЧИНУ!!!-->
+                <!--В противном случае есть небольшие отступы справа и слева-->
+
+                <div id="{{ card_usluga.id }}"
+                     data-interval="2400"
+                     class="carousel slide container-fluid mb-2 p-0 w-100"
+                     data-ride="carousel"
+                     data-wrap="true">
+                    <!--class="carousel-indicators" создает внизу слайда индикаторы, -->
+                    <!--показывающие количество слайдов-->
+                    <!--и на каком мы находимся-->
+                    <!--Индикаторы по умолчанию прямоугольныею Сделали их круглыми переопределив их в my.css-->
+                    <ul class="carousel-indicators">
+                        <li data-target="#{{ card_usluga.id  }}" data-slide-to=0 class="active"></li>
+                        {% for i in range(1, card_usluga.photos|length) %}
+                        <li data-target="#{{ card_usluga.id }}" data-slide-to=i></li>
+                        {% endfor %}
+                    </ul>
+                    <div class="carousel-inner w-100" role="listbox">
+                        <!--Класс active указывать обязательно иначе не будет видно
+                        он указывает с какого слайда начинается слайд-шоу-->
+                        <div class="carousel-item active">
+                            <!--Классы d-none - скрыто на всех размерах экрана
+                            d-block - показывать на всех размерах экрана
+                            d-md-block - показывать на размере md
+                            d-lg-none -  скрыто на размере экрана lg  и тд и тп-->
+
+                            <img class="img d-none d-md-block w-100"
+                                 src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[0].secure_name_photo }}"
+                                 alt="Название изображения"
+                                 width=""
+                                 height="">
+                            <!--<div class="carousel-caption">-->
+                                <!--<h1 class="text-center text-success">-->
+                                    <!--{{ card_usluga.photos[0].title }}-->
+                                <!--</h1>-->
+                                <!--<h5 class="text-center text-success">-->
+                                    <!--{{ card_usluga.photos[0].comments }}-->
+                                <!--</h5>-->
+                            <!--</div>-->
+                            <div  class="pt-2">
+                                <h5 class="text-center base_color_1">
+                                    {{ card_usluga.photos[0].title }}
+                                </h5>
+                                <div class="px-0 text-center">
+                                    {{ card_usluga.photos[0].comments }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% for i in range(1, card_usluga.photos|length) %}
+                        <div class="carousel-item">
+                            <img class="img d-none d-md-block w-100"
+                                 src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[i].secure_name_photo }}"
+                                 alt="слайд {{ i }}"
+                                 width=""
+                                 height="">
+                            <!--<div class="carousel-caption">-->
+                                <!--<h1 class="text-center text-success">-->
+                                    <!--{{ card_usluga.photos[i].title }}-->
+                                <!--</h1>-->
+                                <!--<h5 class="text-center text-success">-->
+                                    <!--{{ card_usluga.photos[i].comments }}-->
+                                <!--</h5>-->
+                            <!--</div>-->
+                            <div  class="pt-2">
+                                <h5 class="text-center base_color_1">
+                                    {{ card_usluga.photos[i].title }}
+                                </h5>
+                                <div class="text-center">
+                                    {{ card_usluga.photos[i].comments }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+                    <!--Элементы управления - начало -->
+                    <!--<a class="carousel-control-prev" href="#{{ card_usluga.id }}" role="button" data-slide="prev">-->
+                    <!--<span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+                    <!--<span class="sr-only text-success">Предыдущий</span>-->
+                    <!--</a>-->
+                    <!--<a class="carousel-control-next" href="#{{ card_usluga.id }}" role="button" data-slide="next">-->
+                    <!--<span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+                    <!--<span class="sr-only text-success">Следующий</span>-->
+                    <!--</a>-->
+                    <!--Элементы управления - конец -->
+
+                    <!--Элементы управления - начало -->
+                    <a class="left carousel-control" href="#{{ card_usluga.id }}" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only text-success">Предыдущий</span>
+                    </a>
+                    <a class="right carousel-control" href="#{{ card_usluga.id }}" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only text-success">Следующий</span>
+                    </a>
+                    <!--Элементы управления - конец -->
+
+
+                </div>
+                <!--Карусель car  - конец-->
+                {% endif %}
+
+            </div>
+            <!--Изображения карточки услуг (в виде карусели) - конец-->
+
+            <!--Прайсы карточки услуг - начало-->
+            <div class="col-8 container-fluid">
+                {% if card_usluga.comments %}
+                <div class="row pb-2">
+                    <div class="col-12">
+                        {{ card_usluga.comments }}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if card_usluga.prices %}
+                {% for price in card_usluga.prices %}
+                <h5 class="base_color_1">
+                    {{ price.name_price_table }}
+                </h5>
+
+                <!--class="table-responsive" - добавляет прокрутку-->
+                <!--см. https://bootstrap-4.ru/articles/cheatsheet/#table-reflow-->
+                <div class="table-responsive">
+                <table class="table table-reflow table-hover mb-5">
+
+                    {% for i in range(price.value_table|length) %}
+                    {% if i == 0 %}
+                    <thead>
+                    <tr>
+                        {% for val in price.value_table[i] %}
+                        <th>{{ val }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    {% else %}
+                    <tbody>
+                    <tr>
+                        {% for j in range(price.value_table[i]|length) %}
+                        {% if j == 0 %}
+                        <td>
+                            {{ price.value_table[i][j] }}
+                        </td>
+                        {% else %}
+                        <td><a data-toggle="tooltip"
+                               data-placement="bottom"
+                               title="Заказать"
+                                href="">
+                            {{ price.value_table[i][j] }}</a>
+                        </td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                    {% endif %}
+                    {% endfor %}
+
+                </table>
+                </div>
+
+                <br>
+                {% endfor %}
+                {% endif %}
+
+            </div>
+            <!--Прайсы карточки услуг - конец-->
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+    <!--Выборка только по карточкам услуг имеющих прайсы - конец-->
+
+    <!--Выборка из по пунктам меню, затем услугам, затем карточкам - начало-->
+    <!--<div class="container">-->
+        <!--{% for link in links_menu %}-->
+        <!--<div class="base_color_1">{{ link }}</div>-->
+        <!--{% for usluga in link.uslugs %}-->
+        <!--<div class="pl-2">{{ usluga }}</div>-->
+        <!--{% for card_usluga in usluga.cards_usluga %}-->
+        <!--<div class="pl-4">{{ card_usluga.name_card_usluga }}</div>-->
+
+
+        <!--<div class="row">-->
+
+            <!--&lt;!&ndash;Изображения карточки услуг (в виде карусели) - начало&ndash;&gt;-->
+            <!--<div class="col-4">-->
+                <!--{% if card_usluga.photos %}-->
+
+                <!--&lt;!&ndash;Карусель car - начало&ndash;&gt;-->
+                <!--&lt;!&ndash;https://bootsnipp.com/snippets/NjR9z&ndash;&gt;-->
+                <!--&lt;!&ndash;https://romanchueshov.ru/bootstrap-verstka/bootstrap-karusel-sozdaem-krasivyj-slajder.html&ndash;&gt;-->
+                <!--&lt;!&ndash;https://itchief.ru/bootstrap/carousel#karusel-s-animaciey-poyavleniya-bootstrap-4&ndash;&gt;-->
+                <!--&lt;!&ndash;https://bootstrap-4.ru/docs/4.0/components/carousel/&ndash;&gt;-->
+                <!--&lt;!&ndash;https://bootstrap-4.ru/docs/4.1/components/carousel/#options&ndash;&gt;-->
+                <!--&lt;!&ndash;class="w-100" позволяет сделать карусель, задуманную как на всю ширину (контейнер флюид) &ndash;&gt;-->
+                <!--&lt;!&ndash;сделать ее без отступов с права и слева ПОЧЕМУ ТО этот метод НЕ РАБОТАЕТ ТЕПЕРЬ ИСКАТЬ ПРИЧИНУ!!!&ndash;&gt;-->
+                <!--&lt;!&ndash;В противном случае есть небольшие отступы справа и слева&ndash;&gt;-->
+
+                <!--<div id="{{ card_usluga.id }}"-->
+                     <!--data-interval="2400"-->
+                     <!--class="carousel slide container-fluid mb-2 p-0 w-100"-->
+                     <!--data-ride="carousel"-->
+                     <!--data-wrap="true">-->
+                    <!--&lt;!&ndash;class="carousel-indicators" создает внизу слайда индикаторы, &ndash;&gt;-->
+                    <!--&lt;!&ndash;показывающие количество слайдов&ndash;&gt;-->
+                    <!--&lt;!&ndash;и на каком мы находимся&ndash;&gt;-->
+                    <!--&lt;!&ndash;Индикаторы по умолчанию прямоугольныею Сделали их круглыми переопределив их в my.css&ndash;&gt;-->
+                    <!--<ul class="carousel-indicators">-->
+                        <!--<li data-target="#{{ card_usluga.id  }}" data-slide-to=0 class="active"></li>-->
+                        <!--{% for i in range(1, card_usluga.photos|length) %}-->
+                        <!--<li data-target="#{{ card_usluga.id }}" data-slide-to=i></li>-->
+                        <!--{% endfor %}-->
+                    <!--</ul>-->
+                    <!--<div class="carousel-inner w-100" role="listbox">-->
+                        <!--&lt;!&ndash;Класс active указывать обязательно иначе не будет видно-->
+                        <!--он указывает с какого слайда начинается слайд-шоу&ndash;&gt;-->
+                        <!--<div class="carousel-item active">-->
+                            <!--&lt;!&ndash;Классы d-none - скрыто на всех размерах экрана-->
+                            <!--d-block - показывать на всех размерах экрана-->
+                            <!--d-md-block - показывать на размере md-->
+                            <!--d-lg-none -  скрыто на размере экрана lg  и тд и тп&ndash;&gt;-->
+
+                            <!--<img class="img d-none d-md-block w-100"-->
+                                 <!--src="/static/images/cards_uslugs/{{ link.link }}/{{ usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[0].secure_name_photo }}"-->
+                                 <!--alt="Название изображения"-->
+                                 <!--width=""-->
+                                 <!--height="">-->
+                            <!--&lt;!&ndash;<div class="carousel-caption">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<h1 class="text-center text-success">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;{{ card_usluga.photos[0].title }}&ndash;&gt;-->
+                                <!--&lt;!&ndash;</h1>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<h5 class="text-center text-success">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;{{ card_usluga.photos[0].comments }}&ndash;&gt;-->
+                                <!--&lt;!&ndash;</h5>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--<div  class="pt-2">-->
+                                <!--<h5 class="text-center base_color_1">-->
+                                    <!--{{ card_usluga.photos[0].title }}-->
+                                <!--</h5>-->
+                                <!--<div class="px-0 text-center">-->
+                                    <!--{{ card_usluga.photos[0].comments }}-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <!--{% for i in range(1, card_usluga.photos|length) %}-->
+                        <!--<div class="carousel-item">-->
+                            <!--<img class="img d-none d-md-block w-100"-->
+                                 <!--src="/static/images/cards_uslugs/{{ link.link }}/{{ usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[i].secure_name_photo }}"-->
+                                 <!--alt="слайд {{ i }}"-->
+                                 <!--width=""-->
+                                 <!--height="">-->
+                            <!--&lt;!&ndash;<div class="carousel-caption">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<h1 class="text-center text-success">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;{{ card_usluga.photos[i].title }}&ndash;&gt;-->
+                                <!--&lt;!&ndash;</h1>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<h5 class="text-center text-success">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;{{ card_usluga.photos[i].comments }}&ndash;&gt;-->
+                                <!--&lt;!&ndash;</h5>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--<div  class="pt-2">-->
+                                <!--<h5 class="text-center base_color_1">-->
+                                    <!--{{ card_usluga.photos[i].title }}-->
+                                <!--</h5>-->
+                                <!--<div class="text-center">-->
+                                    <!--{{ card_usluga.photos[i].comments }}-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--{% endfor %}-->
+
+                    <!--</div>-->
+                    <!--&lt;!&ndash;Элементы управления - начало &ndash;&gt;-->
+                    <!--&lt;!&ndash;<a class="carousel-control-prev" href="#{{ card_usluga.id }}" role="button" data-slide="prev">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<span class="carousel-control-prev-icon" aria-hidden="true"></span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<span class="sr-only text-success">Предыдущий</span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<a class="carousel-control-next" href="#{{ card_usluga.id }}" role="button" data-slide="next">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<span class="carousel-control-next-icon" aria-hidden="true"></span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<span class="sr-only text-success">Следующий</span>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;Элементы управления - конец &ndash;&gt;-->
+
+                    <!--&lt;!&ndash;Элементы управления - начало &ndash;&gt;-->
+                    <!--<a class="left carousel-control" href="#{{ card_usluga.id }}" role="button" data-slide="prev">-->
+                        <!--<span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+                        <!--<span class="sr-only text-success">Предыдущий</span>-->
+                    <!--</a>-->
+                    <!--<a class="right carousel-control" href="#{{ card_usluga.id }}" role="button" data-slide="next">-->
+                        <!--<span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+                        <!--<span class="sr-only text-success">Следующий</span>-->
+                    <!--</a>-->
+                    <!--&lt;!&ndash;Элементы управления - конец &ndash;&gt;-->
+
+
+                <!--</div>-->
+                <!--&lt;!&ndash;Карусель car  - конец&ndash;&gt;-->
+                <!--{% endif %}-->
+
+            <!--</div>-->
+            <!--&lt;!&ndash;Изображения карточки услуг (в виде карусели) - конец&ndash;&gt;-->
+
+            <!--&lt;!&ndash;Прайсы карточки услуг - начало&ndash;&gt;-->
+            <!--<div class="col-8 container-fluid">-->
+                <!--{% if card_usluga.comments %}-->
+                <!--<div class="row pb-2">-->
+                    <!--<div class="col-12">-->
+                        <!--{{ card_usluga.comments }}-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--{% endif %}-->
+
+                <!--{% if card_usluga.prices %}-->
+                <!--{% for price in card_usluga.prices %}-->
+                <!--<h5 class="base_color_1">-->
+                    <!--{{ price.name_price_table }}-->
+                <!--</h5>-->
+
+                <!--&lt;!&ndash;class="table-responsive" - добавляет прокрутку&ndash;&gt;-->
+                <!--&lt;!&ndash;см. https://bootstrap-4.ru/articles/cheatsheet/#table-reflow&ndash;&gt;-->
+                <!--<div class="table-responsive">-->
+                <!--<table class="table table-reflow table-hover mb-5">-->
+
+                    <!--{% for i in range(price.value_table|length) %}-->
+                    <!--{% if i == 0 %}-->
+                    <!--<thead>-->
+                    <!--<tr>-->
+                        <!--{% for val in price.value_table[i] %}-->
+                        <!--<th>{{ val }}</th>-->
+                        <!--{% endfor %}-->
+                    <!--</tr>-->
+                    <!--</thead>-->
+                    <!--{% else %}-->
+                    <!--<tbody>-->
+                    <!--<tr>-->
+                        <!--{% for j in range(price.value_table[i]|length) %}-->
+                        <!--{% if j == 0 %}-->
+                        <!--<td>-->
+                            <!--{{ price.value_table[i][j] }}-->
+                        <!--</td>-->
+                        <!--{% else %}-->
+                        <!--<td><a data-toggle="tooltip"-->
+                               <!--data-placement="bottom"-->
+                               <!--title="Заказать"-->
+                                <!--href="">-->
+                            <!--{{ price.value_table[i][j] }}</a>-->
+                        <!--</td>-->
+                        <!--{% endif %}-->
+                        <!--{% endfor %}-->
+                    <!--</tr>-->
+                    <!--</tbody>-->
+                    <!--{% endif %}-->
+                    <!--{% endfor %}-->
+
+                <!--</table>-->
+                <!--</div>-->
+
+                <!--<br>-->
+                <!--{% endfor %}-->
+                <!--{% endif %}-->
+
+            <!--</div>-->
+            <!--&lt;!&ndash;Прайсы карточки услуг - конец&ndash;&gt;-->
+
+        <!--</div>-->
+
+
+
+        <!--{% endfor %}-->
+        <!--{% endfor %}-->
+        <!--{% endfor %}-->
+    <!--</div>-->
+    <!--Выборка из по пунктам меню, затем услугам, затем карточкам - конец-->
+
+</main>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block container %}
+<main class="container my-5 py-5">
+  <div class="text-center my-5">
+из notactive
+      {% if err %}
+      <div class="alert alert-warning" role="alert">{{ err }}</div>
+      {% endif %}
+        <p class="h5 font-weight-light mb-5">Ваш аккаунт заблокирован</p>
+        <div class="my-5">
+      <p class="h5 font-weight-light mb-5"> За разъяснениями обратитесь в администрацию сайта</p>
+        <div class="my-5">
+      <a href="/">Вернуться на главную страницу</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

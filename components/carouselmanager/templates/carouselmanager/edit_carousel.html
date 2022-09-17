@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block container %}
+<div class="container">
+    <a class="mt-4" href="{{ url_for('carousel_manager_bp.show_all_carousel') }}">
+        Вернуться к списку каруселей
+    </a>
+   <h4 class="mt-3 base_color_1"> {{ carousel }} </h4>
+
+<a class="mt-4" href="{{ url_for('carousel_manager_bp.add_slaid_carousel', carousel_id=carousel.id) }}">
+        Добавить новый слайд (после имеющихся слайдов)
+    </a>
+
+    <div class="row">
+
+        </div>
+<div class="row">
+{% for i in range(spisok_foto_carousel|length) %}
+
+
+     <!--Модальное окно -->
+                <!--см.  - https://it-blog.ru/js/modalnoe-okno-bootstrap/-->
+                <!--https://bootstrap-4.ru/docs/5.1/components/modal/-->
+                <!--Можно использовать ссылку с атрибутом href или кнопку с атрибутом data-target.-->
+                <!--В обоих случаях требуется атрибут data-toggle="modal".-->
+                <!--https://bootstrap-4.ru/docs/4.0/components/collapse/-->
+
+
+        <!--Модальное окно 1  - начало-->
+        <!--Его не видно пока не нажать ссылку Удалить. т.е.активируется после нажатия на триггер(ссылку  Удалить))-->
+        <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+        <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+        <!--ставим модальное окно внутри цикла carousel in carousels -->
+
+        <!--Передача данных в модальное окно Важно!!!  - начало -->
+        <!--Для передачи данных (карусель кот.удаляем) в модальное окно нужно указать уникальный идентификатор удаляемого объекта!!-->
+        <!--и в тригере модального окна (data-target="#deleteCarousel{{ carousel.id }}")-->
+        <!--и в самом модальном окне id="deleteCarousel{{ carousel.id }}"-->
+        <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
+        <div class="modal fade" id="deleteSlaid{{ i }}" tabindex="-1" role="dialog"
+             aria-labelledby="deleteCarouselLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title base_color_1" id="deleteSlaid{{ i }}Label">Вы уверены, что хотите удалить
+                            слайд карусели?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <!--&times; - это крестик для закрытия-->
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="text-danger">
+                            <b>Внимание!</b>
+                        </h6>
+                        <b class="base_color_1">Данный слайд карусели будет безвозвратно удален!</b>
+                        <br><br>
+                        Если вы хотите <b>заменить фото</b> слайда или изменить его <b>заголовок или текст</b>
+                        выйдите из диалогового окна и нажмите кнопку
+                        <b class="base_color_1">Редактировать</b><br>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                        </button>
+                        <a class="btn btn-danger"
+                           href="{{ url_for('carousel_manager_bp.delete_slaid_carousel', carousel_id=carousel.id, slaid_number=i) }}"
+                           role="button">
+                            Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Передача данных в модальное окно Важно!!!  - конец -->
+        <!--Модальное окно 1 - конец-->
+
+
+
+
+        <div class="col-md-4 p-2">
+            <div class="border border-success p-2 h-100 ">
+                <div class="text-left text-danger my-3">
+                    <b>Слайд №  {{ i+1 }}</b>
+                </div>
+
+
+                <div class="card">
+                    <img class="card-img-top"
+                         src="/static/images/carousel/{{ carousel.dir_carousel }}/{{ spisok_foto_carousel[i]['photo'] }}"
+                         alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Данные слайда в базе</h5>
+                        <div class="card-text">
+                            <div class="my-1"><b>Заголовок слайда:</b> {{ spisok_foto_carousel[i]['title_foto_carousel'] }}</div>
+                            <div class="my-1"><b>Текст слайда:</b> {{ spisok_foto_carousel[i]['text_foto_carousel'] }}</div>
+                            <div class="my-1"><b>Имя фото:</b> {{ spisok_foto_carousel[i]['photo'] }}</div>
+                        </div>
+                        <div class="mt-3">
+
+                <!-- Триггер модального окна (Вариант: ссылка ) - начало -->
+                <!--<a class="text-white" href="" data-toggle="modal" data-target="#deleteCarousel{{ carousel.id }}">-->
+                    <!--Удалить-->
+                <!--</a>-->
+                <!--вариант - кнопка-->
+                <!--<button type="button" class="btn btn-success" data-toggle="modal" data-target="#deleteCarousel">-->
+                <!--Удалить карусель-->
+                <!--</button>-->
+                <!-- Триггер модального окна (Варианты ссылка или кнопка) - конец -->
+                            <a href=""
+                               class="btn btn-success mr-1"
+                                data-toggle="modal"
+                               data-target="#deleteSlaid{{ i }}">
+                                Удалить слайд
+                            </a>
+                            <a href="{{ url_for('carousel_manager_bp.replace_slaid_carousel', carousel_id=carousel.id, slaid_number=i) }}"
+                               class="btn btn-success">
+                                Заменить слайд
+                            </a>
+                            <a href="{{ url_for('carousel_manager_bp.edit_text_slaid_carousel', carousel_id=carousel.id, slaid_number=i) }}"
+                               class="btn btn-success mt-3">
+                                Редактировать текст слайда
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Загрузка файлов - конец-->
+
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

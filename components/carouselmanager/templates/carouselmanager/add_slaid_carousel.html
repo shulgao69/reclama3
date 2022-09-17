@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <div class="row">
+
+
+            <div class="col-md-4 p-2">
+                <div class="text-left text-danger my-3">
+                    <b>Добавить слайд</b>
+                </div>
+                <div class="border border-success p-2 h-100 ">
+                    <!--Форма добавления слайда-->
+                    <!--<form method="POST" action="/admin/carousel/upload/" enctype="multipart/form-data">-->
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {{ form_add_slaid.csrf_token }}
+                        <div class="mt-5"><b>Введите заголовок слайда:</b></div>
+                        <div class="text-success">
+                            {{ form_add_slaid.title_foto_carousel(class="container-fluid py-2 mt-2") }}
+                        </div>
+                        <div class="mt-4"><b>Введите текст слайда:</b></div>
+                        <div class="text-success">
+                            {{ form_add_slaid.text_foto_carousel(class="container-fluid py-2 mt-2") }}
+                        </div>
+                        <!--Поле выбора файла-->
+                        <div class="text-success">
+                            {{ form_add_slaid.photo(class="container-fluid py-2 mt-2") }}
+                        </div>
+                        <!--Поле выбора файла -  конец-->
+
+                        <!--Модальное окно -->
+                        <!--см.  - https://it-blog.ru/js/modalnoe-okno-bootstrap/-->
+                        <!--https://bootstrap-4.ru/docs/5.1/components/modal/-->
+                        <!--Можно использовать ссылку с атрибутом href или кнопку с атрибутом data-target.-->
+                        <!--В обоих случаях требуется атрибут data-toggle="modal".-->
+                        <!--https://bootstrap-4.ru/docs/4.0/components/collapse/-->
+
+
+                        <!--Модальное окно 1  - начало-->
+                        <!--Его не видно пока не нажать ссылку Удалить. т.е.активируется после нажатия на триггер(ссылку  Удалить))-->
+                        <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+                        <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+                        <!--ставим модальное окно внутри цикла carousel in carousels -->
+
+                        <!--Передача данных в модальное окно Важно!!!  - начало -->
+                        <!--Для передачи данных (карусель кот.удаляем) в модальное окно нужно указать уникальный идентификатор удаляемого объекта!!-->
+                        <!--и в тригере модального окна (data-target="#deleteCarousel{{ carousel.id }}")-->
+                        <!--и в самом модальном окне id="deleteCarousel{{ carousel.id }}"-->
+                        <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
+                        <div class="modal fade" id="AddSlaid" tabindex="-1" role="dialog"
+                             aria-labelledby="AddSlaidLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title base_color_1" id="AddSlaidLabel">Вы
+                                            уверены, что хотите добавить слайд карусели?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <!--&times; - это крестик для закрытия-->
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h6 class="text-danger">
+                                            <b>Внимание!</b>
+                                        </h6>
+                                        <b class="base_color_1">Новый слайд карусели будет добавлен последним!</b>
+                                        <br>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                                        </button>
+                                        <!--<a>-->
+                                            {{ form_add_slaid.submit_add_slaid(class='form-control my-3 btn-success
+                                            btn-block') }}
+                                        <!--</a>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Передача данных в модальное окно Важно!!!  - конец -->
+                        <!--Модальное окно 1 - конец-->
+
+
+                        <!--Кнопка загрузки-->
+                        <a class="mt-2" href="" data-toggle="modal"
+                           data-target="#AddSlaid" role="button">
+                            {{ form_add_slaid.submit_add_slaid(class='form-control my-3 btn-success btn-block') }}
+                        </a>
+                        <!--Кнопка загрузки -  конец-->
+
+                    </form>
+                    <br>
+                    <div class="text-center">
+                        <a href="{{ url_for('carousel_manager_bp.edit_carousel', carousel_id=carousel.id) }}">
+                            Вернуться к списку слайдов
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!--Загрузка файлов - конец-->
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}

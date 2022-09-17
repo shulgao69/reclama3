@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block container %}
+
+
+<main class="container">
+
+    <!--Хлебные крошки  (навигационные цепочки)-->
+    <ol class="breadcrumb breadcrumb-new">
+        <li class="breadcrumb-item"><a href="/">Вернуться на главную</a></li>
+    </ol>
+    <!--Хлебные крошки  (навигационные цепочки)-конец-->
+
+    <div class="px-3">
+
+    <!--Фото услуги и прикрепленные к ней прайсы - начало-->
+    <!--spisok_foto_for_usluga - это -->
+    <!--foto in spisok_foto_for_usluga - это....-->
+    {% if spisok_foto_for_usluga != None %}
+    {% for foto in spisok_foto_for_usluga %}
+    {{ foto.menu }}
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <img class="card-img-top"
+                     src="/static/images/uploads/{{ foto.dir_uploads }}{{ foto.secure_name_photo }}"
+                     alt="Card image">
+                <div class="card-body">
+                    {% if foto.title %}
+                    <h4 class="card-title">{{ foto.title}}</h4>
+                    {% endif %}
+                    {% if foto.comments %}
+                    <p class="card-text">
+                        {{ foto.comments }}
+                    </p>
+                    {% endif %}
+                    <a href="#!" class="btn btn-success">Заказать</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-8 container-fluid">
+            <!--foto.price - это.....-->
+
+            {% for name_foto, dict_prices_for_name_foto in show_foto_and_prices.items() %}
+            {% if name_foto == foto.secure_name_photo %}
+            {% for name_price, price in dict_prices_for_name_foto.items() %}
+            <div class="h5">{{ name_price }}</div>
+            <br>
+
+            <table class="table table-reflow mb-5">
+                {% for i in range(price|length) %}
+                {% if i == 0 %}
+                <thead>
+                <tr>
+                    {% for val in price[i] %}
+                    <th>{{ val }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                {% else %}
+                <tbody>
+                <tr>
+                    {% for val in price[i] %}
+                    <td>{{ val }}</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+                {% endif %}
+                {% endfor %}
+
+            </table>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+
+
+    </div>
+    {% endfor %}
+    {% endif %}
+    <!--Фото услуги и прикрепленные к ней прайсы - конец-->
+
+    <!--Прайсы без фото и прикреплению к разделам и услугам - начало-->
+    <div class="row mt-5">
+        <div class="col-4">
+            <div class="card">
+                <h4 class="mt-2 ml-3"> Прочие услуги </h4>
+                <div class="card-body">
+                   Кроме того компания оказывает следующие услуги:
+                </div>
+            </div>
+        </div>
+
+        <div class="col-8 container-fluid">
+            {% for price_name, price_value in deserialized_price_without_foto.items() %}
+            <div class="h5 mt-2">{{ price_name }}</div>
+            <table class="table table-reflow mb-5">
+                {% for i in range(price_value|length) %}
+                {% if i == 0 %}
+                <thead>
+                <tr>
+                    {% for val in price_value[i] %}
+                    <th>{{ val }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                {% else %}
+                <tbody>
+                <tr>
+                    {% for val in price_value[i] %}
+                    <td>{{ val }}</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+                {% endif %}
+                {% endfor %}
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+    <!--Прайсы без фото и прикреплению к разделам и услугам - конец-->
+
+    <!--Вернуться на главную-->
+    <ol class="breadcrumb breadcrumb-new">
+        <li class="breadcrumb-item "><a href="/">Вернуться на главную</a></li>
+    </ol>
+    <!--Вернуться на главную-->
+</div>
+</main>
+
+
+{% endblock %}

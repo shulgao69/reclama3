@@ -1,0 +1,58 @@
+    <div class="container" id="header-top">
+        <div class="row pt-1">
+            <div class="col-md-3">
+                <a href="/">
+                    <img src="/static/images/logo1.jpg" alt="Информ Центр" height="50">
+                </a>
+            </div>
+            <!--https://yournet.info/blog/js/skrytie-i-pokaz-elementov-v-bootstrap-4-->
+            <!--Класс d-none - элемент не видим на всех экрана
+            Класс d-md-block - элемент видим на экранах размера md и шире
+            Их комбинации позволяют создавать скрытие элементов в зависимости от ширины экрана-->
+            <div class="col-md-4 pt-3 d-none d-md-block">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0796a6"
+                     class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                </svg>
+                г. Тверь, Вагжановский пер., д.9, офис 509
+            </div>
+
+            <div class="col-md-2 text-righ pt-3 d-none d-md-block">
+                <!--Подключаем иконку с сайта https://icons.bootstrap-4.ru-->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0796a6"
+                     class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                    <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
+                </svg>
+                buminfo1@mail.ru
+            </div>
+
+            <div class="col-md-3 text-right d-none d-md-block">
+                <ul class="list-inline">
+                    <li class="list-inline-item text-right">
+                        <!--Подключаем иконку с сайта https://icons.bootstrap-4.ru-->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0796a6"
+                             class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                        </svg>
+                        (4822)
+                    </li>
+                    <li class="list-inline-item pt-2" id="phone"><strong>34-12-26</strong></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+<!--Класс sticky-top используют чтобы сделать блок фиксированным(оставаться в верхней части стр.),
+когда вы прокрутите страницу.
+Прим.: Этот класс не работает в Internet Explorer 11 и более ранних версиях
+(будет рассматривать его как position:relative).
+И почему-то не работал когда элемент был внутри header-->
+    <div class="sticky-top">
+
+        <!--Этим блоком <div> и стилем в my.css задаем тонкую полоску над плашкой меню-->
+        <div class="container-fluid plashka-f"></div>
+
+    </div>
+

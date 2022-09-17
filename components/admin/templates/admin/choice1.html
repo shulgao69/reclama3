@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main class="container">
+  <div class="row">
+    <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+      <div class="text-center mt-5 b-1">
+        <!--Заголовки-->
+        <h1 class="h4 mb-3 font-weight-light">Загрузка фото</h1>
+        <!--Заголовки -  конец-->
+
+        <!--Форма звгрузки файла-->
+        <form method="POST" action="/" enctype="multipart/form-data">
+          {{ form.csrf_token }}
+
+          <!--{{ form.menu(class="py-2 my-2", id='select_menu') }}-->
+          <!--{{ form.usluga(class="py-2 my-2", id='select_usluga') }}-->
+          <!--id='select_menu  и id='select_usluga' определены в форме class FormChoice1(FlaskForm):!!!-->
+          {{ form.menu(class="py-2 my-2") }}
+          {{ form.usluga(class="py-2 my-2") }}
+
+          <!--Кнопка загрузки-->
+          {{ form.submit(class="form-control mb-5 btn btn-lg btn-success btn-block") }}
+          <!--Кнопка загрузки -  конец-->
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+ <!--Этот блок может стоять и в начале и в конце самой формы!!!-->
+
+<!--# ******-->
+<!--# Выбор из выпадающего списка и обновление другого списка в формах-->
+<!--# class Choice1, FormChoice1(form_name='FormChoice1Name') и-->
+<!--#  @app.route('/_get_usl_choice1_admin/')-->
+<!--#  def _get_usl_choice1_admin():-->
+<!--# Полностью основано на https://stackoverflow.com/questions/41232105/populate-wtforms-select-field-using-value-selected-from-previous-field-->
+<!--# Заменены переменные, названия функций, также в choice1.html добавлен-->
+<!--# # <script src="https://code.jquery.com/jquery-3.2.1.min.js"-->
+<!--#       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="-->
+<!--#       crossorigin="anonymous">-->
+<!--#     </script>!!!-->
+
+
+<!--Без этого подключения не работает!!!!-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous">
+    </script>
+<!--Без этого подключения н работает!!!! -  конец-->
+
+
+<script charset="utf-8" type="text/javascript">
+
+$(function() {
+
+    // jQuery selection for the 2 select boxes
+    var dropdown = {
+        menu: $('#select_menu'),
+        usluga: $('#select_usluga')
+    };
+
+    // call to update on load
+    updateUslugs();
+
+    // function to call XHR and update county dropdown
+    function updateUslugs() {
+        var send = {
+            menu: dropdown.menu.val()
+        };
+        dropdown.usluga.attr('disabled', 'disabled');
+        dropdown.usluga.empty();
+        $.getJSON("{{ url_for('_get_usl_choice1_admin') }}", send, function(data) {
+            data.forEach(function(item) {
+                dropdown.usluga.append(
+                    $('<option>', {
+                        value: item[0],
+                        text: item[1]
+                    })
+                );
+            });
+            dropdown.usluga.removeAttr('disabled');
+        });
+    }
+
+    // event listener to state dropdown change
+    dropdown.menu.on('change', function() {
+        updateUslugs();
+    });
+
+});
+
+</script>
+
+<!--# Выбор из выпадающего списка и обновление другого списка в формах -  конец-->
+<!--# ******-->
+
+{% endblock %}
+
+

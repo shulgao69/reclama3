@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-5">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Перейти к карточкам услуг
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <!--Навигационные ссылки вар 1 - начало-->
+        <!--<div class="row pt-2 pb-3">-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('admin.index') }}">-->
+                    <!--Вернуться в панель администратора-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+                    <!--Перейти к карточкам услуг-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки вар 1 - конец-->
+
+
+        <div class="row">
+            <div class="col-6 col-lg-6 col-sm-12">
+                <!--<h5 mb-4>-->
+                <!--create_carousel.html (Форма CreateCarouselForm)-->
+                <!--</h5>-->
+                <h3 class="text-success">
+                   <b> Шаг 1 </b>
+                </h3>
+
+                <h5 class="text-left pl-0 my-2">
+                    Заполните форму
+                </h5>
+
+
+                <div class="mt-3 mb-1">
+
+                    <form method="POST" action="/admin/card_usluga/create/" enctype="multipart/form-data">
+                        {{ form_create_card_usluga.csrf_token }}
+
+                        <div><b>
+                            {{ form_create_card_usluga.name_card_usluga.label(class="text-success") }}
+                        </b></div>
+                        <div class="text-muted">
+                            Внимание! <br> <b>Наименование</b> карточки услуг должно быть <b>уникальным!</b>
+                        </div>
+                        {% for err in form_create_card_usluga.name_card_usluga.errors %}
+                        <div class="text-danger"><b>
+                            {{ err }}</b>
+                        </div>
+                        {% endfor %}
+                        {% if message_name_1 and message_name_2 %}
+                        <div class="text-danger pt-1"><b>
+                            {{ message_name_1 }}</b>
+                        </div>
+                        <div class="text-danger"><b>
+                            {{ message_name_2 }}</b>
+                        </div>
+                        {% endif %}
+                        <div>
+                            {{ form_create_card_usluga.name_card_usluga(class="container-fluid mt-2 mb-3  form-control") }}
+                        </div>
+
+                        <div class="pt-2"><b>
+                            {{ form_create_card_usluga.comments.label(class="text-success") }}
+                        </b></div>
+                        <div>
+                            {{ form_create_card_usluga.comments(class="container-fluid mt-2 mb-3  form-control") }}
+                        </div>
+
+                        <!--Директория загрузки фото - начало-->
+                        <!--dir_photos убрала тк сделала автоматическое создание директории по имени -->
+                        <!--карточки услуги-->
+                        <!--{#<div>-->
+                        <!--<div class="pt-2">-->
+                            <!--<b>{{ form_create_card_usluga.dir_photos.label(class="text-success") }}</b>-->
+                        <!--</div>-->
+
+                        <!--{% for err in form_create_card_usluga.dir_photos.errors %}-->
+                        <!--<div class="text-danger">-->
+                            <!--<b>{{ err }}</b>-->
+                        <!--</div>-->
+                        <!--{% endfor %}-->
+
+                        <!--{% if message_dir_1 and message_dir_2 %}-->
+                        <!--<div class="text-danger"><b>-->
+                            <!--{{ message_dir_1 }}</b>-->
+                        <!--</div>-->
+                        <!--<div class="text-danger"><b>-->
+                            <!--{{ message_dir_2 }}</b>-->
+                        <!--</div>-->
+                        <!--{% endif %}-->
+
+                        <!--<div>-->
+                            <!--{{ form_create_card_usluga.dir_photos(class="container-fluid mt-2 mb-3  form-control") }}#}-->
+                        <!--</div>-->
+                        <!--</div>#}-->
+                        <!--Директория загрузки фото - конец-->
+
+
+                        <div  class="pt-1">
+                            <!--Заголовки-->
+                            <h5 class="mb-2 base_color_1"><b>Выберите раздел и услугу,</b></h5>
+                            <!--<h6 class="mb-3 font-weight-light">для которых вы создаете карточку услуг</h6>-->
+                            <div class="mb-3 text-muted">для которых вы создаете карточку услуг</div>
+                            <!--Заголовки -  конец-->
+
+                            <div>
+                                {{ form_create_card_usluga.menu.label(class="py-1 mt-0") }}
+                            </div>
+                            <div>
+                                {{ form_create_card_usluga.menu(class="container-fluid py-2 mt-0 form-control") }}
+                            </div>
+                            <div>
+                                {{ form_create_card_usluga.usluga.label(class="py-1 mt-2") }}
+                            </div>
+                            <div>
+                                {{ form_create_card_usluga.usluga(class="container-fluid py-2 mt-0 form-control") }}
+                            </div>
+
+                        </div>
+                        <!--Загрузка файлов - конец-->
+
+
+
+                        <!--Кнопка загрузки-->
+                        <div class="mt-4">
+                        {{ form_create_card_usluga.submit_create(class="form-control mb-4 btn-success btn-block") }}
+                        </div>
+                            <!--Кнопка загрузки -  конец-->
+                    </form>
+
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-lg-6 col-sm-12">
+            </div>
+        </div>
+
+
+    </div>
+</main>
+
+<!--Без этого подключения не работает!!!!-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous">
+    </script>
+<!--Без этого подключения не работает!!!! -  конец-->
+
+
+<!--***** Скрипт1 для выбора из меню и услуги для загрузки фото - начало-->
+<script charset="utf-8" type="text/javascript">
+
+$(function() {
+
+    // jQuery selection for the 2 select boxes (Выбор jQuery для 2 полей выбора)
+    var dropdown = {
+        menu: $('#select_menu'),
+        usluga: $('#select_usluga')
+    };
+
+    // call to update on load (вызов для обновления при загрузке)
+    updateUslugs();
+
+    // function to call XHR and update usluga dropdown (функция для вызова XHR и обновления раскрывающегося списка услуг)
+    function updateUslugs() {
+        var send = {
+            menu: dropdown.menu.val()
+        };
+        dropdown.usluga.attr('disabled', 'disabled');
+        dropdown.usluga.empty();
+        $.getJSON("{{ url_for('card_usluga_bp._get_usl_choice_card_usluga') }}", send, function(data) {
+            data.forEach(function(item) {
+                dropdown.usluga.append(
+                    $('<option>', {
+                        value: item[0],
+                        text: item[1]
+                    })
+                );
+            });
+            dropdown.usluga.removeAttr('disabled');
+        });
+    }
+
+    // event listener to state dropdown change (прослушиватель событий для изменения раскрывающегося списка состояния)
+    dropdown.menu.on('change', function() {
+        updateUslugs();
+    });
+
+});
+
+</script>
+
+
+
+{% endblock %}

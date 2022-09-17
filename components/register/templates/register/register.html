@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main class="container">
+  <div class="row">
+    <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+      <form method="POST" action="/register/" class="form-signin pt-5">
+        {{ form.csrf_token }}
+        <div class="text-center mt-5 b-1">
+          <!--emodzicar.html не существует ignore missing позволяет игнорировать эту ошибку-->
+          {% include 'emodzicar.html' ignore missing %}
+
+          <h1 class="h3 mb-3 font-weight-normal">Зарегистрируйтесь</h1>
+          <p class="h5 font-weight-light">и получите дополнительные возможности1</p>
+        </div>
+
+        <!--Вывод ошибок:-->
+        <!--Ошибки можем сформировать разными способами:-->
+        <!--1) валидация, кот. делаем внутри формы, с помощью валидаторов формы. Там можем задать сообщение.-->
+        <!--2) условия, кот. накладываем на данные внутри роута и передаем на страницу с помощью переменных            -->
+        <!--Затем на стр. выводим ошибки и 1) и 2)-->
+        <!--Вывод ошибок, формируемых внутри роута, кот. рендерит эту стр. - начало-->
+        {% if err %}
+        <div>{{ err }}</div>
+        {% endif %}
+        <!--Вывод ошибок, формируемых внутри роута, кот. рендерит эту стр. - конец-->
+
+        {{ form.hidden_tag() }}
+        <div class="mt-5 form-label-group">
+
+          <!--Вывод ошибок, формируемых на основе валидаторов формы - начало-->
+          {% for err in form.username.errors %}
+          <p class="error alert alert-warning" role="alert">{{ err }}</p>
+          {% endfor %}
+          <!--Вывод ошибок, формируемых на основе валидаторов формы - конец-->
+
+          {{ form.username.label(class="text-muted") }}
+          {{ form.username(class="form-control") }}
+
+        </div>
+        <div class="form-label-group">
+          <!--Вывод ошибок, формируемых на основе валидаторов формы - начало-->
+          {% for err in form.password.errors %}
+          <p class="error alert alert-warning">{{ err }}</p>
+          {% endfor %}
+          <!--Вывод ошибок, формируемых на основе валидаторов формы - конец-->
+
+          {{ form.password.label(class="text-muted pt-3") }}
+          {{ form.password(class="form-control") }}
+        </div>
+
+
+
+    <div class="form-label-group">
+          <!--Вывод ошибок, формируемых на основе валидаторов формы - начало-->
+          {% for err in form.user_organization.errors %}
+          <p class="error alert alert-warning">{{ err }}</p>
+          {% endfor %}
+          <!--Вывод ошибок, формируемых на основе валидаторов формы - конец-->
+
+          {{ form.user_organization.label(class="text-muted pt-3") }}
+          {{ form.user_organization(class="list-unstyled") }}
+        </div>
+        <!--</div>-->
+
+
+        <div class="checkbox mb-3"></div>
+        <button class="btn btn-lg btn-danger btn-block" type="submit">Зарегистрироваться</button>
+      </form>
+      <br>
+      <div class="text-center px-5"><a href="/">Вернуться на главную</a></div>
+      <br>
+      <div class="text-center px-5"><a href="/login/">Войти</a></div>
+    </div>
+  </div>
+
+</main>
+{% endblock %}

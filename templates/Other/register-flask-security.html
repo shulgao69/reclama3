@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block container %}
+</head>
+
+<body>
+  <main class="container">
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+        <form method="POST" action="/register/" class="form-signin pt-5">
+          {{ form.csrf_token }}
+          <div class="text-center mt-5 b-1">
+            {% include 'emodzicar.html' ignore missing %}
+             <h1 class="h3 mb-3 font-weight-normal">Форма</h1>
+            <p class="h5 font-weight-light">для регистрации</p>
+          </div>
+          {% if err %}
+          <div>{{ err }}</div>
+          {% endif %}
+          {{ form.hidden_tag() }}
+          <div class="mt-5 form-label-group">
+
+            {% for err in form.username.errors %}
+              <p class="error alert alert-warning" role="alert" >{{ err }}</p>
+              {% endfor %}
+
+            {{ form.username.label(class="text-muted") }}
+            {{ form.username(class="form-control") }}
+
+          </div>
+          <div class="form-label-group">
+              {% for err in form.password.errors %}
+              <p class="error alert alert-warning">{{ err }}</p>
+              {% endfor %}
+
+            {{ form.password.label(class="text-muted") }}
+            {{ form.password(class="form-control") }}
+
+          </div>
+          <div class="checkbox mb-3"></div>
+          <button class="btn btn-lg btn-danger btn-block" type="submit">Зарегистрироваться</button>
+        </form>
+        <br>
+        <div class="text-center px-5"><a href="/">Вернуться на главную</a></div><br>
+        <div class="text-center px-5"><a href="/login/">Войти</a></div>
+      </div>
+    </div>
+</main>
+{% endblock %}

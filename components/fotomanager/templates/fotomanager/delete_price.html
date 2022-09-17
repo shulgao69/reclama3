@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+
+    <div class="container">
+        <div class="py-3">
+            <a href="{{ url_for('foto_manager_bp.manager_foto') }}">Вернуться к списку фото</a>
+        </div>
+        <h5 class="base_color_1">
+            Карточка услуги
+        </h5>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Раздел меню сайта:
+            </b></div>
+            <div class="col-3">
+                {{ foto.menu }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Услуга выбранного Раздела:
+            </b></div>
+            <div class="col-3">
+                {{ foto.usluga }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Имя файла:
+            </b></div>
+            <div class="col-3">
+                {{ foto.secure_name_photo }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Заголовок фото:
+            </b></div>
+            <div class="col-3">
+                {{ foto.title }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Сопроводительный текст к фото:
+            </b></div>
+            <div class="col-3">
+                {{ foto.comments }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 base_color_1"><b>
+                Прикрепленные прайсы:
+            </b></div>
+            <div class="col-3">
+                {% for price in foto.price %}
+                {{ price }},
+                {% endfor %}
+            </div>
+        </div>
+
+        <h5 class="pt-4 base_color_1">Выбрать прайс из списка прикрепленных прайсов для удаления из карточки услуги</h5>
+        <div class="pt-2 pb-4">
+            <h6 class="text-danger">Внимание!</h6>
+            <b>
+            <div>
+                    При нажатии кнопки <i class="base_color_1"> Удалить прайс из карточки услуги </i>
+                    вы удаляете его только из карточки данной услуги.
+                </div>
+                <div>
+                    Если вы хотите удалить сам Прайс,
+                    вы должны зайти в панель администратора - Управление прайсами.
+                </div>
+            </b>
+
+            <br>
+
+        </div>
+        <h5 class="pb-4 base_color_1">Список прайсов, доступных к удалению</h5>
+
+
+        {% for price in prices %}
+        {% if price in foto.price %}
+
+        <!--Модальное окно  - начало-->
+        <!--Его не видно пока не нажать ссылку Удалить2 !!!!!!!-->
+        <!--активируется после нажатия на триггер(он выше (ссылка - удалить карусель)-->
+        <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+        <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+        <!--ставим модальное окно внутри цикла car in carousel -->
+        <div class="modal fade" id="deletePrice{{ price['id'] }}" tabindex="-1" role="dialog"
+             aria-labelledby="deletePrice{{ price['id'] }}Label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title base_color_1" id="deletePrice{{ price['id'] }}Label">
+                            Подтвердите удаление прайса {{ price }} <br>из карточки услуги {{ foto }}
+                        </h6>
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                            <!--&times; - это крестик для закрытия-->
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="text-success">
+                            <b>Внимание!</b><br>
+                        </h6>
+
+
+                        <div>
+                            После подтверждения удаления  <br>
+                                <b>прайс {{ price }} </b><br>
+                                будет удален из карточки услуги!
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Закрыть
+                        </button>
+
+                        <a class="btn btn-danger"
+                           href="{{ url_for('foto_manager_bp.detach_price', foto_id=foto['id'], price_id=price['id']) }}"
+                           role="button">
+                            Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Модальное окно - конец-->
+        <!--Передача данных в модальное окно Важно!!!  - конец -->
+
+
+        <div class="row">
+            <div class="col-4">
+                <h5>
+                    {{ price['name_price_table'] }}
+                </h5>
+            </div>
+
+            <div class="col-8">
+                <!-- Триггер модального окна 2 (Вариант: ссылка) - начало -->
+                <a class="text-right"
+                   href="{{ url_for('foto_manager_bp.detach_price', foto_id=foto['id'], price_id=price['id']) }}"
+                   data-toggle="modal"
+                   data-target="#deletePrice{{ price['id'] }}">
+                    Удалить прайс {{ price }} из карточки услуги {{ foto.title }}
+                </a>
+                <!--Триггер модального окна 2 (Вариант: ссылка) - конец&#45;&#45;-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-8 container-fluid">
+                <!--<div class="h5">{{ price['name_price_table'] }}{{ price['id'] }}</div>-->
+                <!--<div>{{ price['value_table'] }}</div>-->
+                <table class="table table-reflow mb-5">
+                    {% for i in range(price['value_table']|length) %}
+                    {% if i == 0 %}
+                    <thead>
+                    <tr>
+                        {% for val in price['value_table'][i] %}
+                        <th>{{ val }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    {% else %}
+                    <tbody>
+                    <tr>
+                        {% for val in price['value_table'][i] %}
+                        <td>{{ val }}</td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-4 container-fluid">
+            </div>
+        </div>
+
+            <br>
+
+            {% endif %}
+            {% endfor %}
+        </div>
+
+
+</main>
+
+
+{% endblock %}

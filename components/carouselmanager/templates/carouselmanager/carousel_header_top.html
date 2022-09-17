@@ -1,0 +1,25 @@
+{% for carousel in carousels_center %}
+	{% if carousel["base_position"]=='header' and carousel["vertical_position"]=='top' %}
+	{% include 'carousel_shablon.html' %}
+	{% endif %}
+{% endfor %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-4 container-fluid m-0">
+			{% for carousel in carousels_left %}
+            {% if carousel["base_position"]=='header' and carousel["vertical_position"]=='top' %}
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+		<div class="col-8 container-fluid m-0">
+			{% for carousel in carousels_right %}
+            {% if carousel["base_position"]=='header' and carousel["vertical_position"]=='top' %}
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+	</div>
+</div>
+

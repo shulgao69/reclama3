@@ -1,0 +1,117 @@
+{% for carousel in carousels_first_page_center %}
+	<div>
+	{{ carousel["carousel"] }}
+	<!--{{ carousel["base_location"] }}-->
+	<!--{{ carousel["base_position"] }}-->
+	<!--{{ carousel["horizontal_position"] }}-->
+	<!--{{ carousel["vertical_position"] }}-->
+	<!--{{ carousel["container_element"] }}-->
+	<!--{{ carousel["column_element"] }}-->
+	<!--{{ carousel["width_element"] }}-->
+	<!--{{ carousel["height_element"] }}-->
+	</div>
+	{% if carousel["base_position"]=='body' and carousel["vertical_position"]=='top' %}
+	{% include 'carousel_shablon.html' %}
+	{% endif %}
+{% endfor %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-4 container-fluid">
+			{% for carousel in carousels_first_page_left %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='top' %}
+			<div>
+				{{ carousel["carousel"] }}
+				<!--{{ carousel["base_location"] }}-->
+				<!--{{ carousel["base_position"] }}-->
+				<!--{{ carousel["horizontal_position"] }}-->
+				<!--{{ carousel["vertical_position"] }}-->
+				<!--{{ carousel["container_element"] }}-->
+				<!--{{ carousel["column_element"] }}-->
+				<!--{{ carousel["width_element"] }}-->
+				<!--{{ carousel["height_element"] }}-->
+			</div>
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+		<div class="col-8 container-fluid">
+			{% for carousel in carousels_first_page_right %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='top' %}
+			<div>
+				{{ carousel["carousel"] }}
+				<!--{{ carousel["base_location"] }}-->
+				<!--{{ carousel["base_position"] }}-->
+				<!--{{ carousel["horizontal_position"] }}-->
+				<!--{{ carousel["vertical_position"] }}-->
+				<!--{{ carousel["container_element"] }}-->
+				<!--{{ carousel["column_element"] }}-->
+				<!--{{ carousel["width_element"] }}-->
+				<!--{{ carousel["height_element"] }}-->
+			</div>
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+
+
+{% for carousel in carousels_first_page_center %}
+	<!--<div>-->
+	<!--{{ carousel["carousel"] }}-->
+	<!--&lt;!&ndash;{{ carousel["base_location"] }}&ndash;&gt;-->
+	<!--&lt;!&ndash;{{ carousel["base_position"] }}&ndash;&gt;-->
+	<!--&lt;!&ndash;{{ carousel["horizontal_position"] }}&ndash;&gt;-->
+	<!--&lt;!&ndash;{{ carousel["vertical_position"] }}&ndash;&gt;-->
+	<!--&lt;!&ndash;{{ carousel["container_element"] }}&ndash;&gt;-->
+	<!--&lt;!&ndash;{{ carousel["column_element"] }}&ndash;&gt;-->
+	<!--&lt;!&ndash;{{ carousel["width_element"] }}&ndash;&gt;-->
+	<!--&lt;!&ndash;{{ carousel["height_element"] }}&ndash;&gt;-->
+	<!--</div>-->
+	{% if carousel["base_position"]=='body' and carousel["vertical_position"]=='bottom' %}
+	{% include 'carousel_shablon.html' %}
+	{% endif %}
+{% endfor %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-4 container-fluid">
+			{% for carousel in carousels_first_page_left %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='bottom' %}
+			<!--<div>-->
+				<!--{{ carousel["carousel"] }}-->
+				<!--&lt;!&ndash;{{ carousel["base_location"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["base_position"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["horizontal_position"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["vertical_position"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["container_element"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["column_element"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["width_element"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["height_element"] }}&ndash;&gt;-->
+			<!--</div>-->
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+		<div class="col-8 container-fluid">
+			{% for carousel in carousels_first_page_right %}
+            {% if carousel["base_position"]=='body' and carousel["vertical_position"]=='bottom' %}
+			<!--<div>-->
+				<!--{{ carousel["carousel"] }}-->
+				<!--&lt;!&ndash;{{ carousel["base_location"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["base_position"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["horizontal_position"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["vertical_position"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["container_element"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["column_element"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["width_element"] }}&ndash;&gt;-->
+				<!--&lt;!&ndash;{{ carousel["height_element"] }}&ndash;&gt;-->
+			<!--</div>-->
+			{% include 'carousel_shablon.html' %}
+            {% endif %}
+			{% endfor %}
+		</div>
+	</div>
+</div>

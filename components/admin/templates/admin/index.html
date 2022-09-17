@@ -1,0 +1,162 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+
+<!--мое содержимое-->
+<div class="container">
+    <div class="row">
+         <div class="col-4">
+            <div class="card my-2 p-4">
+            <h5>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#0796a6"
+                     class="bi bi-fan" viewBox="0 0 16 16">
+  <path d="M10 3c0 1.313-.304 2.508-.8 3.4a1.991 1.991 0 0 0-1.484-.38c-.28-.982-.91-2.04-1.838-2.969a8.368 8.368 0 0 0-.491-.454A5.976 5.976 0 0 1 8 2c.691 0 1.355.117 1.973.332.018.219.027.442.027.668Zm0 5c0 .073-.004.146-.012.217 1.018-.019 2.2-.353 3.331-1.006a8.39 8.39 0 0 0 .57-.361 6.004 6.004 0 0 0-2.53-3.823 9.02 9.02 0 0 1-.145.64c-.34 1.269-.944 2.346-1.656 3.079.277.343.442.78.442 1.254Zm-.137.728a2.007 2.007 0 0 1-1.07 1.109c.525.87 1.405 1.725 2.535 2.377.2.116.402.222.605.317a5.986 5.986 0 0 0 2.053-4.111c-.208.073-.421.14-.641.199-1.264.339-2.493.356-3.482.11ZM8 10c-.45 0-.866-.149-1.2-.4-.494.89-.796 2.082-.796 3.391 0 .23.01.457.027.678A5.99 5.99 0 0 0 8 14c.94 0 1.83-.216 2.623-.602a8.359 8.359 0 0 1-.497-.458c-.925-.926-1.555-1.981-1.836-2.96-.094.013-.191.02-.29.02ZM6 8c0-.08.005-.16.014-.239-1.02.017-2.205.351-3.34 1.007a8.366 8.366 0 0 0-.568.359 6.003 6.003 0 0 0 2.525 3.839 8.37 8.37 0 0 1 .148-.653c.34-1.267.94-2.342 1.65-3.075A1.988 1.988 0 0 1 6 8Zm-3.347-.632c1.267-.34 2.498-.355 3.488-.107.196-.494.583-.89 1.07-1.1-.524-.874-1.406-1.733-2.541-2.388a8.363 8.363 0 0 0-.594-.312 5.987 5.987 0 0 0-2.06 4.106c.206-.074.418-.14.637-.199ZM8 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14Zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16Z"/>
+</svg>&nbsp
+                Управление каруселями
+            </h5>
+            <div class="mt-4">Создайте карусель и выберите местоположение на сайте</div>
+                <a class="btn btn-success container-fluid mt-2" href="{{ url_for('carousel_manager_bp.render_create_carousel') }}">Создать карусель</a>
+                    <div class="mt-4">Перейте к списку каруселей, чтобы отредактировать, удалить или задать местоположение карусели<br> </div>
+                <a class="btn btn-success container-fluid mt-2" href="{{ url_for('carousel_manager_bp.show_all_carousel') }}">Перейти к выбору карусели</a>
+            </div>
+        </div>
+
+
+        <div class="col-4">
+            <div class="card my-2 p-4">
+            <h5>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#0796a6"
+                 class="bi bi-file-text-fill" viewBox="0 0 16 16">
+  <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM5 4h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z"/>
+</svg>&nbsp
+                Управление прайсами
+            </h5>
+            <div class="mt-4">Создать таблицу прайса и внести данные</div>
+                <!--<a class="btn btn-success container-fluid mt-2" href="/admin/priceprefix/priceroute/">Создать таблицу</a>-->
+                <a class="btn btn-success container-fluid mt-2" href="{{ url_for('price_bp.priceindex') }}">Создать таблицу</a>
+                <div class="mt-4">Перейте к списку прайсов для последующего редактирования, удаления или копирования</div>
+                <!--<a class="btn btn-success container-fluid mt-2" href="/admin/priceprefix/chooseprice/">Перейти к выбору прайса</a>-->
+                <a class="btn btn-success container-fluid mt-2" href="{{ url_for('price_bp.choose_price') }}">Перейти к выбору прайса</a>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="card my-2 p-4">
+            <h5>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#0796a6"
+                     class="bi bi-receipt-cutoff" viewBox="0 0 16 16">
+  <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zM11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+  <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1 2v13H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1H15V2a.5.5 0 0 0-.053-.224l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293 8.354.646a.5.5 0 0 0-.708 0L7 1.293 6.354.646a.5.5 0 0 0-.708 0L5 1.293 4.354.646a.5.5 0 0 0-.708 0L3 1.293 2.354.646zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274V15H2V2.118l.137-.274z"/>
+</svg>
+               Управление карточками усл.
+            </h5>
+            <div class="mt-4">Создать карточку, выбрав раздел и услугу</div>
+            <!--<a class="btn btn-success container-fluid mt-2" href="/admin/foto/choice/">Загрузить фото</a>-->
+             <a class="btn btn-success container-fluid mt-2" href="{{ url_for('card_usluga_bp.create_card_usluga') }}">Создать карточку услуги</a>
+                <div class="mt-4">Перейти к карточкам услуг, чтобы<br>удалить, добавлять или редактировать данные<br></div>
+            <!--<a class="btn btn-success container-fluid mt-2" href="/admin/foto/fotomanager/">Удалить или редактировать фото</a>-->
+            <a class="btn btn-success container-fluid mt-2" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">Перейти к карточкам услуг</a>
+            </div>
+        </div>
+
+
+        <div class="col-4">
+            <div class="card my-2 p-4">
+            <h5>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#0796a6"
+                     class="bi bi-image-fill" viewBox="0 0 16 16">
+  <path d="M.002 3a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V3zm1 9v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12zm5-6.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z"/>
+</svg>
+                Управление фото услуг
+            </h5>
+            <div class="mt-4">Загрузите фото, выбрав раздел и услугу</div>
+            <!--<a class="btn btn-success container-fluid mt-2" href="/admin/foto/choice/">Загрузить фото</a>-->
+             <a class="btn btn-success container-fluid mt-2" href="{{ url_for('foto_manager_bp.choice') }}">Загрузить фото</a>
+                <div class="mt-4">Перейти к списку изображений, чтобы<br>удалить или редактировать данные,<br>добавить прайс</div>
+            <!--<a class="btn btn-success container-fluid mt-2" href="/admin/foto/fotomanager/">Удалить или редактировать фото</a>-->
+            <a class="btn btn-success container-fluid mt-2" href="{{ url_for('foto_manager_bp.manager_foto') }}">Перейти к карточкам услуг</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div>
+        Получаем данные о пользователе, загруженным с помощью переменной
+                current_user, в которой храняться данные о пользователе.
+        <div class="row my_body p-4">
+            <div class="col-3">
+
+                {% if current_user.is_authenticated %}
+                {{ current_user }}
+                <div>
+                    Здравствуйте {{ current_user.email }}!
+                </div>
+                {% else %}<br>
+                Пользователь не авторизован
+                {% endif %}
+            </div>
+            <div class="col-5">
+                <div>id пользователя {{ current_user }}: {{ current_user.id }}</div>
+                <div>email пользователя {{ current_user }}: {{ current_user.email }}</div>
+                <div>password пользователя {{ current_user }}: {{ current_user.password|truncate(8) }}</div>
+                <div>roles пользователя {{ current_user }}: {{ current_user.roles }}</div>
+                <div>описание ролей {{ current_user.roles }}:
+                    <div>
+                    {% for role in current_user.roles %}
+                        <div>
+                    {{role.description }}
+                            </div>
+                    {% endfor %}
+                    </div>
+
+                </div>
+
+                <!--<div>атрибуты : {{ current_user.__dict__ }}</div>-->
+            </div>
+            <div class="col-4">
+               <div> current_user.is_authenticated: {{ current_user.is_authenticated }}</div>
+                <div> current_user.is_active: {{ current_user.is_active }}</div>
+                <div> current_user.is_anonymous: {{ current_user.is_anonymous }}</div>
+                <div> current_user.get_id(): {{ current_user.get_id() }}</div>
+                <div> current_user.id: {{ current_user.id }}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4">
+                <h1>Flask-Admin example</h1>
+                <p class="lead">Customize the layout</p>
+                <p>This example shows how you can customize the look & feel of the admin interface.</p>
+                <p>This is done by overriding some of the built-in templates.</p>
+                <a class="btn btn-primary" href="/">Выйти</a>
+            </div>
+            <div class="col-8">
+                Дополнительные функции админки
+                <div class="row-fluid">
+                    <div>
+                        {% if current_user.is_authenticated %}
+                        <div>
+                            <h2>Logged in User details</h2>
+                            <ul>
+                                <li>Username: {{ current_user.username }}</li>
+                                <li>Email: {{ current_user.email }}</li>
+                                <li>Created on: {{ current_user.created_on }}</li>
+                                <li>Updated on: {{ current_user.updated_on }}</li>
+                            </ul>
+                            <h2>Основные ваши настройки</h2>
+                            <p class="lead">Вы можете:</p>
+                            <p><a href="/change_password/">Изменить пароль</a></p>
+                        </div>
+                        {% else %}
+                        <button class="btn" type="submit">Submit</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--мое содержимое - конец-->
+
+
+{% endblock %}

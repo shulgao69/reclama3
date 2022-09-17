@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+            Вернуться в панель администратора
+        </a>
+        <a class="pl-4" href="{{ url_for('price_bp.choose_price') }}">
+            Посмотреть список прайсов
+        </a>
+        {% if session.get('card_usluga_id') %}
+        {{ session.get('card_usluga_id') }}
+        <a class="pl-4" href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=session.get('card_usluga_id')) }}">
+            Вернуться к карточке услуги
+        </a>
+        {% else %}
+        <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+            Перейти к карточкам услуг
+        </a>
+        {% endif %}
+    </div>
+    <!--Навигационные ссылки вар 3- конец-->
+
+
+    <!--Навигационные ссылки - начало-->
+    <!--<div class="row px-3 pb-2">-->
+        <!--<div class="col-4">-->
+            <!--<a href="{{ url_for('admin.index') }}">-->
+                <!--Вернуться в панель администратора-->
+            <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-4">-->
+            <!--<a href="{{ url_for('price_bp.choose_price') }}">-->
+                <!--Посмотреть список прайсов-->
+            <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-4">-->
+            <!--{% if session.get('card_usluga_id') %}-->
+            <!--{{ session.get('card_usluga_id') }}-->
+            <!--<a href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=session.get('card_usluga_id')) }}">-->
+                <!--Вернуться к карточке услуги-->
+            <!--</a>-->
+            <!--{% else %}-->
+            <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+                <!--Перейти к карточкам услуг-->
+            <!--</a>-->
+            <!--{% endif %}-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--Навигационные ссылки - конец-->
+
+    <div class="row p-3">
+        <div class="col-4 col-lg-4">
+            <h3 class="text-success">
+                   <b> Шаг 1 </b>
+                </h3>
+
+                <h5 class="text-left pl-0 my-2">
+                    Заполните форму
+                </h5>
+            <div class="mt-1 b-1">
+                <!--Форма создания таблицы - начало-->
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+
+                    <!--<div>-->
+                        <!--{{ form.name_price_table.label(class="py-0 mt-2") }}-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--{{ form.name_price_table(class="container-fluid py-1 my-1") }}-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--{{ form.comments_table.label(class="py-1 my-1") }}-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--{{ form.comments_table(class="container-fluid py-1 my-1") }}-->
+                    <!--</div>-->
+                    <div>
+                        {{ form.row_table.label(class="py-1 my-1") }}
+                    </div>
+                    <div>
+                        {{ form.row_table(class="container-fluid py-1 my-1") }}
+                    </div>
+                    <div>
+                        {{ form.col_table.label(class="py-1 my-1") }}
+                    </div>
+                    <div>
+                        {{ form.col_table(class="container-fluid py-1 my-1") }}
+                    </div>
+
+
+                    <!--Кнопка загрузки-->
+                    {{ form.submit(class="form-control my-3 btn-success btn-block") }}
+                    <!--Кнопка загрузки -  конец-->
+
+                    <!--<div class="checkbox mb-3"></div>-->
+                    <!--<button class="btn btn-lg btn-danger btn-block" type="submit">DDDDDDDD</button>-->
+
+                </form>
+                <!--Форма создания таблицы - конец-->
+            </div>
+        </div>
+
+        <div class="col-4 col-lg-4">
+            <!--<table>-->
+            <!--<tr>-->
+            <!--<td>-->
+            <!--<div contenteditable>I'm editable</div>-->
+            <!--</td>-->
+            <!--<td>-->
+            <!--<div contenteditable>I'm also editable</div>-->
+            <!--</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+            <!--<td>I'm not editable</td>-->
+            <!--</tr>-->
+            <!--</table>-->
+        </div>
+
+        <div class="col-4 col-lg-4">
+        </div>
+
+    </div>
+
+</div>
+</main>
+
+{% endblock %}

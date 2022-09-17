@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block container %}
+</head>
+
+<body>
+  <main class="container">
+
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+
+        <!--{% with messages = get_flashed_messages() %}-->
+        <!--{% if messages %}-->
+        <!--<div class="notification is-danger">-->
+          <!--{{ messages[0] }}-->
+        <!--</div>-->
+        <!--{% endif %}-->
+        <!--{% endwith %}-->
+
+
+        <!--Парамер next-->
+        <!--# Обязательно нужно прописать в login.html-->
+        <!--# <form action="" method="post" class="form-contact">-->
+        <!--# (см. # https://proproprogs.ru/flask/uluchshenie-processa-avtorizacii-flask-login)-->
+        <!--# Здесь происходит дублирование обратного URL-адреса, который был в браузере.-->
+        <!--# Далее, в обработчике /login сделаем перенаправление с учетом наличия этого параметра
+        <!--БЕЗ ЭТОЙ СТРОКИ парамер next для получения обратного вызова НЕ РАБОТАЕТ!!!-->
+        <!--этот параметр нужен тогда, когда незарегистрированный пользователь пытается зайти на защищенную-->
+        <!--декоратором @login_requared на страницу, перенаправляется на login, а потом попадает на ту страницу-->
+        <!--на которую пытался зайти&ndash;&gt;-->
+            <!--# РАЗБИРАТЬСЯ!!!!-->
+        <!--БЕЗ ЭТОЙ СТРОКИ НЕ РАБОТАЕТ!!!-->
+        <form action="" method="post" class="form-contact">
+          <!--Парамер next - конец-->
+
+        <form class="form-signin pt-5" action="/login/" method="POST">
+          {{ form.csrf_token }}
+
+          <div class="text-center mt-5 b-1">
+            <!--Нижеуказанной страницы emodzicar.html не существует и при ссылке на эту стр./-->
+            <!--должна быть ошибка, но параметр ignore missing позволяет игнорировать ошибку-->
+            <!--и пропускать этот модуль без ущерба для отображения остального содержимого страницы-->
+            {% include 'emodzicar.html' ignore missing %}
+
+            <h1 class="h3 mb-3 font-weight-normal">Войдите</h1>
+            <p class="h5 font-weight-light">или зарегистрируйтесь</p>
+          </div>
+
+          <div class="mt-5 form-label-group">
+
+            <!--Вывод ошибок (вар2) - начало-->
+            <!--{% if form.errors %}-->
+            <!--<ul class="errors">-->
+              <!--{% for field_name, field_errors in form.errors|dictsort if field_errors %}-->
+                <!--{% for error in field_errors %}-->
+                  <!--<li>{{ form[field_name].label }}: {{ error }}</li>-->
+                <!--{% endfor %}-->
+              <!--{% endfor %}-->
+            <!--</ul>-->
+            <!--{% endif %}-->
+            <!--Вывод ошибок (вар2) - конец-->
+
+            <!--Вывод ошибок:-->
+            <!--Ошибки можем сформировать разными способами:-->
+            <!--1) валидация, кот. делаем внутри формы, с помощью валидаторов формы. Там можем задать сообщение.-->
+            <!--2) условия, кот. накладываем на данные внутри роута и передаем на страницу с помощью переменных            -->
+            <!--Затем на стр. выводим ошибки и 1) и 2)-->
+            <!--Вывод ошибок, формируемых внутри роута, кот. рендерит эту стр. - начало-->
+            {% if err %}
+              <div class="alert alert-warning" role="alert">{{ err }}</div>
+            {% endif %}
+            <!--Вывод ошибок, формируемых внутри роута, кот. рендерит эту стр. - конец-->
+
+            <!--Вывод ошибок, формируемых на основе валидаторов формы - начало-->
+            {% for err in form.username.errors %}
+              <p class="error alert alert-warning" role="alert" >{{ err }}</p>
+            {% endfor %}
+            <!--Вывод ошибок, формируемых на основе валидаторов формы - конец-->
+
+            {{ form.username.label(class="text-muted") }}
+            {{ form.username(class="form-control") }}
+          </div>
+          <div class="form-label-group">
+
+            <!--Вывод ошибок, формируемых на основе валидаторов формы - начало-->
+            {% for err in form.password.errors %}
+              <p class="error alert alert-warning" role="alert" >{{ err }}</p>
+            {% endfor %}
+            <!--Вывод ошибок, формируемых на основе валидаторов формы - конец-->
+
+            {{ form.password.label(class="text-muted pt-3") }}
+            {{ form.password(class="form-control") }}
+          </div>
+          <div class="checkbox mb-3"></div>
+          <button class="btn btn-lg btn-danger btn-block" type="submit">Войти</button>
+          </form>
+        <br>
+        <div class="text-center px-5"><a href="/">Вернуться на главную</a></div><br>
+        <div class="text-center px-5"><a href="/register/">Зарегистрироваться</a></div>
+      </div>
+
+    </div>
+</main>
+{% endblock %}

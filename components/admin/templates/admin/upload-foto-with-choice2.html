@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block container %}
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous">
+    </script>
+<main class="container">
+
+    <div class="row">
+        <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+            <div class="text-center mt-5 b-1">
+                <!--Заголовки-->
+                <h1 class="h4 mb-3 font-weight-light">Загрузка фото</h1>
+                <!--Заголовки -  конец-->
+
+
+                <form method="POST">
+                    {{ form.csrf_token }}
+                    {{ form.menu(id='menu') }}
+                    {{ form.usluga(id='usluga') }}
+                    <input type="submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<!--Основано на https://www.youtube.com/watch?v=I2dJuNwlIH0-->
+<!--Но не получилось(10.08.21) - пока оставить и пропробовать позже (см LoadPhotoWithChoice2 в admin/init.py-->
+<script charset="utf-8" type="text/javascript">
+    let menu_select = getElementBiId('menu');
+    let usluga_select = getElementBiId('usluga');
+
+    usluga_select.onchange = function() {
+        menu = menu_select.value;
+
+        fetch('/usluga/' + menu).then(function(response) {
+            response.json().then(function(data) {
+                let optionHTML = '';
+
+                for (let usluga of data.uslugs) {
+                optionHTML += '<option value="' + usluga.id +'"> + usluga.title + '<option>';
+                }
+
+                usluga_select.innerHTML = optionHTML;
+            });
+        });
+
+    }
+</script>
+
+
+{% endblock %}
+

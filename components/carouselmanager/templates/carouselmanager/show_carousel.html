@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container">
+		<div class="row">
+
+			<div class="col-10 col-lg-10 my-3 text-left">
+				<a class="my-2" href="{{ url_for('admin.index') }}">
+					Перейти в панель администратора</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				<a class="my-2" href="{{ url_for('carousel_manager_bp.show_all_carousel') }}">
+					 Перейти к списку каруселей</a>
+                &nbsp;&nbsp;&nbsp;
+			<a href="{{ url_for('carousel_manager_bp.render_create_carousel') }}">
+				Создать новую карусель
+			</a>&nbsp;
+
+			</div>
+			<div class="col-2 col-lg-2 my-3 text-right">
+			</div>
+		</div>
+
+
+
+		<h3 class="text-success">
+                   <b> Шаг 3 </b>
+                </h3>
+		<h5>
+			Поздравляем! Карусель успешно создана!
+		</h5>
+
+		<h5 class="text-danger mt-4">Обратите внимание!</h5>
+		<div>Чтобы увидеть данную карусель на сайте необходимо <b>задать ее местоположение</b> и <b>активировать</b>!
+			</div>
+		<div>Вы можете сделать это позднее через панель администратора в списке всех каруселей
+		(кнопка Перейти к выбору карусели).</div>
+
+		<div class="pt-4"><b>Если вы готовы сделать это прямо сейчас:</b></div>
+		<p>
+		<div>
+			Чтобы <b class="base_color_1">задать местоположение карусели, активировать или редактировать</b>
+			данные -
+			<a class="my-2" href="{{ url_for('carousel_manager_bp.show_all_carousel') }}">
+				Перейдите к списку каруселей
+			</a>
+		</div>
+		<div>
+			Если вы хотите только <b class="base_color_1">задать местоположение</b> карусели -
+			<a class="my-2" href="{{ url_for('carousel_manager_bp.place_carousel', id=carousel.id) }}">Укажите
+					местоположение карусели</a>
+		</div>
+		</p>
+
+
+			<!--Для того, чтобы оценить внешний вид карусели <br>-->
+			<!--1. Зайдите в административной панели в <b>Управление каруселями</b>,<br>-->
+			<!--2. Нажмите кнопку <b>Перейти к выбору карусели</b><br>-->
+			<!--3. Выберите нужную локацию и нажмите кнопку <b class="text-success">Preview</b></div>-->
+
+		<!--<div>Данный внешний вид карусели не отражает реальный! <br>-->
+			<!--Для того, чтобы оценить внешний вид карусели <br>-->
+			<!--1. Зайдите в административной панели в <b>Управление каруселями</b>,<br>-->
+			<!--2. Нажмите кнопку <b>Перейти к выбору карусели</b><br>-->
+			<!--3. Выберите нужную локацию и нажмите кнопку <b class="text-success">Preview</b></div>-->
+
+		<!--<div class="text-danger"><b>-->
+			<!--Если местоположение(локация) карусели не задана - предварительно задайте там же ее местоположение.-->
+		<!--</b></div>-->
+		<!--<div class="mt-2"> После того, как вы убедитесь, что внешний вид карусели вас устраивает - сделайте ее активной к просмотру на сайте.</div>-->
+		<!--<div class="mt-2"> Если внешний вид карусели вас НЕ устраивает - -->
+			<!--создайте новую карусель с учетом рекомендуемых размеров слайдов.</div>-->
+		<!--<div class="mt-2"> Если вы хотите отредактировать заголовки и подписи к слайдам - -->
+			<!--нажмите кнопку <b>Редактировать </b>в списке каруселей.</div>-->
+
+
+		<div class="row">
+            <div class="col-3 col-lg-3">
+				<div class="text-left mt-3 text-success"><b>
+                    Наименование карусели:
+                </b></div>
+			<div>
+            {{ carousel.name_carousel }}
+        	</div>
+				</div>
+			<div class="col-3 col-lg-3">
+		<div class="text-left mt-3 text-success"><b>
+                    Директория загрузки карусели:
+                </b></div>
+		<div>
+		     {{ carousel.dir_carousel }}
+		</div>
+				</div>
+			<div class="col-3 col-lg-3">
+		<div class="text-left mt-3 text-success"><b>
+                    Кол-во изображений в карусели:
+                </b></div>
+		<div>
+		     {{ carousel.number_foto }}
+		</div>
+		</div>
+			<div class="col-3 col-lg-3">
+		<div class="text-left mt-3 text-success"><b>
+                    Дата создания карусели:
+                </b></div>
+		<div>
+		     {{ carousel.date_create }}
+		</div>
+				</div>
+			</div>
+
+        <div id="demo" class="carousel slide container mt-3 p-0" data-ride="carousel">
+		<!--class="carousel-indicators" создает внизу слайда индикаторы, показывающие количество слайдов
+		и на каком мы находимся-->
+		<ul class="carousel-indicators">
+			<li data-target="#demo" data-slide-to=0 class="active"></li>
+			{% for i in range(1, dict_all_foto_carousel_name|length) %}
+			<li data-target="#demo" data-slide-to=i></li>
+			<!--<li data-target="#demo" data-slide-to="2"></li>-->
+			{% endfor %}
+		</ul>
+		<div class="carousel-inner" role="listbox">
+			<!--Класс active указывать обязательно иначе не будет видно
+			он указывает с какого слайда начинается слайд-шоу-->
+			<div class="carousel-item active">
+				<!--Классы d-none - скрыто на всех размерах экрана
+				d-block - показывать на всех размерах экрана
+				d-md-block - показывать на размере md
+				d-lg-none -  скрыто на размере экрана lg  и тд и тп-->
+
+				<img class="img d-none d-md-block w-100" src="/static/images/carousel/{{ carousel.dir_carousel }}/{{ dict_all_foto_carousel_name[0]['photo'] }}" data-src="holder.js/900x400?theme=social" alt="Los Angeles" width="1500" height="300">
+				<div class="carousel-caption">
+					<h1 class="text-center text-success">{{ dict_all_foto_carousel_name[0]['title_foto_carousel'] }}</h1>
+					<h5 class="text-center text-success">{{ dict_all_foto_carousel_name[0]['text_foto_carousel'] }}</h5>
+				</div>
+			</div>
+			{% for i in range(1, dict_all_foto_carousel_name|length) %}
+			{{ i }}
+			<div class="carousel-item">
+				<img class="img d-none d-md-block w-100" src="/static/images/carousel/{{ carousel.dir_carousel }}/{{ dict_all_foto_carousel_name[i]['photo'] }}" alt="слайд {{ i }}" width="1500" height="300">
+				<div class="carousel-caption">
+					<h1 class="text-center text-success">{{ carousel.dict_all_foto_carousel_name[i]['title_foto_carousel'] }}</h1>
+					<h5 class="text-center text-success">{{ carousel.dict_all_foto_carousel_name[i]['text_foto_carousel'] }}</h5>
+				</div>
+			</div>
+			{% endfor %}
+
+		</div>
+		<!-- Элементы управления -->
+		<a class="carousel-control-prev" href="#demo" role="button" data-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			<span class="sr-only">Предыдущий</span>
+		</a>
+		<a class="carousel-control-next" href="#demo" role="button" data-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+			<span class="sr-only">Следующий</span>
+		</a>
+	</div>
+
+		<!--<div class="m-4">-->
+			<!--<a href="{{ url_for('carousel_manager_bp.render_upload_carousel', dir_carousel=carousel.dir_carousel, name_carousel=carousel.name_carousel, number_foto=carousel.number_foto) }}">Редактировать карусель</a>-->
+		<!--</div>-->
+	</div>
+
+</main>
+{% endblock %}

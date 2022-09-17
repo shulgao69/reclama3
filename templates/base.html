@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title> Май </title>
+    <meta charset="UTF-8">
+
+    <!--Раньше этот тег был очень важен для поисковиков. Каково положение дел сейчас?
+    https://htmlacademy.ru/courses/299/run/15?skipReg=1
+    Мы бы с удовольствием вам поведали, но это большой секрет Яндекса и Гугла.
+    Ключевые слова (самые важные слова из содержания стр.) перечисляются в атрибуте content через запятую-->
+    <meta name="keywords" content="важные, ключевые, слова">
+
+    <!--   Метатег Description
+    Содержимое метатега Description является одним из источников, на основе которых формируются описания страниц сайта
+    в результатах поиска Яндекса. В сниппет попадает наиболее информативный и релевантный поисковому запросу текст.
+    Если метатега Description нет на страницах, в Яндекс.Вебмастере в разделе Диагностика появится уведомление об этом
+    Метаописание должно:
+    быть уникальным для каждой страницы сайта;
+    быть емким и содержательным, с правильно выстроенными предложениями, без злоупотреблений ключевыми словами,
+    фразами, заглавными буквами, рекламными лозунгами и пр.;
+    отражать текущее состояние страницы;
+    соответствовать языку документа;
+    отличаться от содержимого элемента title.
+    Внимание!!! Доработать этот тег согласно требованиям выше!!!!!-->
+    <!--<meta name="Description" content="..."/>-->
+    <!--https://htmlacademy.ru/courses/299/run/15?skipReg=1
+   Краткое описание стр.задаётся похожим образом, только значение атрибута name меняется на description:
+   Краткое описание (или аннотация) стр. часто используется поисковиками при отображении результатов поиск-->
+    <meta name="description" content="краткое описание">
+
+    <!--Подключаем адаптивную верстку-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Подключаем бутстреп-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">&ndash;&gt;-->
+
+    <!--Подключаем плагин jquery bootstrap-formhelpers - начало -->
+    <!--используем этот плагин на 15.04.22 только для примеров в test_form.html-->
+    <!--https://cdnjs.com/libraries/bootstrap-formhelpers-->
+    <!--https://github.com/winmarkltd/BootstrapFormHelpers?utm_source=cdnjs&utm_medium=cdnjs_link&utm_campaign=cdnjs_library-->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.min.css"
+          integrity="sha512-fHutzlvDWRXol9PbR1+DHHLgwFCwkN730wN2HAeioUopGWuOk7jz0Mo4yXf/J4T7YrHISYWL0DF/73VmM3FcZw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <!--Подключаем плагин jquery bootstrap-formhelpers - конец -->
+
+    <!--Про бесплатные шрифты и лицензии читать https://skillbox.ru/media/design/litsenzii-na-shrifty-bolshoy-obzor/#stk-1-->
+    <!--Теоретически (на 2021 г.) коллекция Google Fonts бесплатная!-->
+    <!--Подключаем шрифты Roboto и Fira+Sans c сайта https://fonts.googleapis.com
+    Для этого заходим на сайт https://fonts.google.com, выбираем шрифт. нажимаем на + справа появляется код,
+     вставляем в сайт-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap">
+    <!--<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet">-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+          rel="stylesheet">
+
+    <!--Подключаем иконки и шрифты-->
+    <!--<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css?ver=5.0.3' type='text/css' media='all' />-->
+    <!--<link rel='stylesheet' id='art_net_theme-material-icons-css' href='https://fonts.googleapis.com/icon?family=Material+Icons&#038;ver=5.0.3' type='text/css' media='all' />-->
+    <!--<link rel="preconnect" href="https://fonts.gstatic.com">-->
+
+    <!--Подключаем файлы собственных стилей my.css, cookie.css для изменения стилей Бутстреп -->
+    <link rel="stylesheet" type="text/css" href="/static/css/my.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/cookie.css">
+    <!--<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/my.css') }}">-->
+
+    <!--Подключаем иконку сайта
+    (Favicon.ico. Если не подключить, то выдает кучу ошибок(и зависит от браузера)
+    причем ошибки неожиданные. Почему - не знаю!!!-->
+
+    <!--Это пустая иконка. Создаем ее только чтобы не показывало кучу ошибок.
+    Но нужно создавать свою!!!-->
+    <!--<link rel="icon" href="data:;base64,=">-->
+
+    <!--Можно (и нужно!) создать свою. ВНИМАТЕЛЬНО ЧИТАТЬ https://habr.com/ru/post/522844/-->
+    <!--Это иконка, сделанная с помощью конвертирования своего файла PNG в файл ico (https://habr.com/ru/post/522844/, https://icoconvert.com-->
+    <!--<link rel="icon" href="/static/images/logo.ico">-->
+
+    <!--Можно использовать просто файл PNG. ЧИТАТЬ https://habr.com/ru/post/522844/!!!
+    (нужно квадратный,смотреть как будет выглядеть в разных браузерах и устройствах,
+    как подключить правильно для разных браузеров
+    В этом случае не все проверено и приведено в соответствие!!!-->
+    <link rel="icon" href="/static/images/logo-favicon2.png">
+
+    <!--Подключаем иконку сайта - конец-->
+
+    <!--Подключить для Варианта 1 cookies-->
+    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.css">-->
+    <!---->
+
+</head>
+
+<body>
+
+<header>
+    <div class="mt-2">
+        <!--это мой блок - вставка каруселей из блюпринта - начало-->
+        {% include 'carousel_header_top.html' %}
+        <!--это мой блок - вставка каруселей из блюпринта - конец-->
+    </div>
+
+    <div class="container px-0" id="header-top">
+        <div class="row pt-1">
+            <div class="col-md-3">
+                <a href="/">
+                    <img src="/static/images/logo1.jpg" alt="Информ Центр" height="50">
+                </a>
+            </div>
+            <!--https://yournet.info/blog/js/skrytie-i-pokaz-elementov-v-bootstrap-4-->
+            <!--Класс d-none - элемент не видим на всех экрана
+            Класс d-md-block - элемент видим на экранах размера md и шире
+            Их комбинации позволяют создавать скрытие элементов в зависимости от ширины экрана-->
+            <div class="col-md-4 pt-3 d-none d-md-block">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0796a6"
+                     class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                </svg>
+                г. Тверь, Вагжановский пер., д.9, офис 509
+            </div>
+
+            <div class="col-md-2 text-right pt-3 d-none d-md-block">
+                <!--Подключаем иконку с сайта https://icons.bootstrap-4.ru-->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0796a6"
+                     class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                    <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
+                </svg>
+                buminfo1@mail.ru
+            </div>
+
+            <div class="col-md-3 text-right d-none d-md-block">
+                <ul class="list-inline">
+                    <li class="list-inline-item text-right">
+                        <!--Подключаем иконку с сайта https://icons.bootstrap-4.ru-->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0796a6"
+                             class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                        </svg>
+                        (4822)
+                    </li>
+                    <li class="list-inline-item pt-2" id="phone"><strong>34-12-26</strong></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <nav class="navbar navbar-expand-md navbar-light pt-0 pb-0">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('test_form_bp.test_form') }}"><br>Формы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/advertising/"><br>Контрольн. точки</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+
+                <!--показываем кнопку доступа к панели администратора только тем пользователям, которые-->
+                <!--аутентифицированы, активны и имеют любую!!! не пустую роль-->
+                {% if current_user.is_authenticated and current_user.is_active and
+                not current_user.roles == [] %}
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="/admin/">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0796a6"
+                             class="bi bi-person-workspace" viewBox="0 0 16 16">
+                            <path d="M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H4Zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+                            <path d="M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.373 5.373 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2H2Z"/>
+                        </svg>
+                        <br>
+                        Управление
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="#0796a6"
+                             class="bi bi-cart-fill" viewBox="0 0 15 15">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+<!--                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0796a6"-->
+<!--                             class="bi bi-cart4" viewBox="0 0 16 16">-->
+<!--                            <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>-->
+<!--                        </svg>-->
+                        <br>
+                        Корзина
+                    </a>
+                </li>
+
+
+                {% if current_user.is_authenticated %}
+                {% if current_user.is_active %}
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="/profil/">
+                        <!--Подключаем иконку с сайта https://icons.bootstrap-4.ru-->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0796a6"
+                             class="bi bi-person-fill " viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        </svg>
+                        <br>
+                        Кабинет клиента
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link  text-center" href="/logout/">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0796a6"
+                             class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
+                        </svg>
+                        <br>
+                        Выйти
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="/login/">
+                        <!--Подключаем иконку с сайта https://icons.bootstrap-4.ru-->
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0796a6"
+                             class="bi bi-house-door" viewBox="0 0 16 16">
+                            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+                        </svg>
+                        <br>
+                        Войти
+                    </a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+    </div>
+
+    <!--это мой блок - вставка каруселей из блюпринта - начало-->
+    {% include 'carousel_header_middle.html' %}
+    <!--это мой блок - вставка каруселей из блюпринта - конец-->
+</header>
+
+<!--Класс sticky-top используют чтобы сделать блок фиксированным(оставаться в верхней части стр.),
+когда вы прокрутите страницу.
+Прим.: Этот класс не работает в Internet Explorer 11 и более ранних версиях
+(будет рассматривать его как position:relative).
+И почему-то не работал когда элемент был внутри header-->
+<div class="sticky-top">
+
+    <!--Этим блоком <div> и стилем в my.css задаем тонкую полоску над плашкой меню-->
+    <div class="container-fluid plashka-f"></div>
+
+    <!--shadow- классы для добавления теней к элементу:
+    Добавляем тень снизу к навбару
+    Класс bg-white меняет цвет фона на белый (https://html-plus.in.ua/bootstrap-4-helper-color-classes/)-->
+
+    <!--Меню с использованием базы данных-->
+    <div class="shadow bg-white mb-2">
+
+        <!--<nav class="navbar"></nav> - обертка для навигационного меню-->
+        <!--navbar-expand-lg - добавляет гибкую функциональность, отвечает за расширение или свертывание навигации -->
+        <!--в зависимости от размера экрана. Вместо -lg, чтобы быть большим, -->
+        <!--можно выбрать -md(средние экраны), -sm(маленькие экраны) и -xl(очень большие)-->
+        <!--navbar-light - вид навигационного мень - светлая тема-->
+        <!--<div>-->
+        
+        <nav class="navbar navbar-expand-md navbar-light" id="nav-plashka1">
+            <div class="container pl-0">
+                <!--class="navbar-toggler" - Эта кнопка видна только на маленьких экранах, и используется для включения и
+                выключения видимости меню data-target=»#navbarSupportedContent»,
+                что является ссылкой на значение идентификатора элемента «div», содержащего это меню.
+                pt-0 не убирать, так как видимо по умолчанию в классе navbar-toggler pt больше нуля-->
+                <button class="navbar-toggler pt-0" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- div containing the toggable navigation -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                    <!--Выравнивание по левому и правому краю -->
+                    <!--mr-auto - выравнивает пункты навбара влево, а справа пустое место остается-->
+                    <!--ml-auto - выравнивает пункты навбара вправо, а слева пустое место остается-->
+                    <!--https://for-web.ru/posobie-bootstrap/1087-rukovodstvo-bootstrap-navbar.html-->
+
+                    <ul class="navbar-nav mr-auto">
+
+                        <!--Показ ссылки на главную стр. в меню сайта в зависимости от стр. сайта
+                        (если главная стр. то слово главная не показывать-->
+                        {% if request.path != url_for('render_main') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('render_main') }}">Главная </a>
+                        </li>
+                        {% endif %}
+                        <!--Показ ссылки на главную стр. в меню сайта конец-->
+
+
+                        <!--Меню сайта из базы + выпадающие списки (вар 1)- начало-->
+
+                        <!--ПРОБЛЕМЫ не решенные есть !-->
+                        <!--1) В этом вар.не получается сделать так чтобы если много пунктов меню они бы переходили&ndash;&gt;-->
+                        <!--на вторую строку. Сейчас получается что эта строка выходит за пределы контейнера-->
+                        <!--2) На узких экранах при нажатии на свернувшееся меню (кнопку toggler) -->
+                        <!--меню разворачивается вертикально а под ним прозрачный фон, -->
+                        <!--получается что меню поверх страницы и ничего не видно. Как поменять фон-->
+                        <!--только под меню когда оно на узких экранах равзорачивается по нажатию?-->
+                        <!--&lt;!&ndash;ВАЖНОЕ! В стандартном виде меню с dropdown открывается по событию click и не позволяет перейти по ссылке&ndash;&gt;-->
+                        <!--самого пункта меню, а только по ссылкам из выпадающего списка-->
+                        <!--Чтобы меню раскрывалось и скрывалось при наведении (событие hover) а не на клике(click)-->
+                        <!--внесем в наш файл стилей css my.css:-->
+                        <!--nav.navbar .dropdown:hover > .dropdown-menu {-->
+                                <!--display: block;-->
+                                <!--}-->
+                        <!--см. https://alexfine.ru/rubriki/web-stati/bootstrap/193-vypadayushchee-menyu-na-bootstrap-4-pri-navedenii-sobytie-hover-->
+                        <!--а потом уберем атрибут «data-toggle="dropdown"» который устанавливает JQeury методы
+                        «event.stopPropagation()» и «event.preventDefault()» где:
+                        - event.stopPropagation() — предотвращает дальнейшую передачу текущего события, вверх по иерархии
+                        дерева DOM (некоторые события, такие как click, после выполнения на самом элементе, передают
+                        его родительским, что повторяется до самого основания дерева DOM).
+                        - event.preventDefault() — отменяет действие события по умолчанию. Если этот метод вызывается,
+                        то действие события по умолчанию не будет срабатывать. Событие продолжает распространяться
+                        как обычно, только с тем исключением, что событие ничего не делает.-->
+                        <!--см. https://alexfine.ru/rubriki/web-stati/bootstrap/194-perekhod-po-ssylke-glavnogo-verkhnego-menyu-raskryvayushchego-spiska-v-bootstrap-4-->
+                        <!--см. https://alexfine.ru/rubriki/web-stati/bootstrap/193-vypadayushchee-menyu-na-bootstrap-4-pri-navedenii-sobytie-hover-->
+                        <!--см https://bootstrap-4.ru/docs/4.0/components/navbar/#-->
+
+
+                        <!--{#{% if links_menu|length < 7 %}#}-->
+
+                        {% for link in links_menu %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"
+                               href="{{ url_for('render_menu', punkt_menu=link.link) }}"
+                               id="{{ link.id }}"
+                               aria-haspopup="true"
+                               aria-expanded="false">
+                                {{ link.title }}
+                            </a>
+                            {% if link.uslugs %}
+                            <div class="dropdown-menu background_base_color_1" aria-labelledby="{{ link.id }}">
+                                {% for usluga in link.uslugs %}
+                                <a class="dropdown-item base_color_white px-3"
+                                   href="{{ url_for('render_uslugi_link', punkt_menu=link.link, category=usluga.link) }}">
+                                    {{ usluga.title }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+
+                        <!--{#{% else %}#}-->
+
+                        <!--{#{% endif %}#}-->
+                        <!--Меню сайта из базы + выпадающие списки (вар 1) - конец-->
+
+                        <!--Меню сайта из базы без выпадающих списков (вар 2)- начало-->
+                        <!--В этом варианте 2 пункты меню если их много переходят на вторую строку-->
+                        <!--а в варианте 1 пока не получилось сделать-->
+                        <!--ПОКА ОСТАВИТЬ!-->
+                        <!--{% for link in links_menu %}-->
+                        <!--<li class="nav-item">-->
+                            <!--&lt;!&ndash;конструкция {% if request.path == link.link %}active{% endif %}&ndash;&gt;-->
+                            <!--&lt;!&ndash;позволяет отметить, на какой стр. находится пользователь – например выделить цветом, рамкой или жирностью.&ndash;&gt;-->
+                            <!--&lt;!&ndash;В верстке для этого обычно используется class=active.&ndash;&gt;-->
+                            <!--&lt;!&ndash;В моем случае почему-то не работаетю Может потому что использую Бутстреп? Разобраться!&ndash;&gt;-->
+                            <!--&lt;!&ndash;<a class="nav-link {% if request.path == link.link %}activemenu{% endif %}" href="/{{ link.link }}/">{{ link.title }}</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;{% if request.path == link.link %}&ndash;&gt;-->
+                            <!--&lt;!&ndash;<a class="nav-link" href="/{{ link.link }}/">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div id="menu">{{ link.title }}</div></a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;{% else %}&ndash;&gt;-->
+                            <!--&lt;!&ndash;{% endif %}&ndash;&gt;-->
+                            <!--<a class="nav-link" href="/{{ link.link }}/">{{ link.title }}</a>-->
+                        <!--</li>-->
+                        <!--{% endfor %}-->
+                        <!--Меню сайта из базы без выпадающих списков (вар 2) - конец -->
+
+                        <!--Показ ссылки на стр. Все услуги в меню сайта в зависимости от стр. начало-->
+                        {% if request.path != url_for('all_cards_uslugs') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('all_cards_uslugs') }}">Все услуги</a>
+                        </li>
+                        {% endif %}
+                        <!--Показ ссылки на стр. Все услуги в меню сайта в зависимости от стр. конец-->
+
+                    </ul>
+
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contacts/">Контакты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/order/">Заказать</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/uslugi/">Цены</a>
+                        </li>
+
+
+
+
+
+
+                        <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" href="/register/">Зарегистрироваться</a>-->
+                        <!--</li>-->
+
+                        <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" href="/testprefix/testroute/">Тест</a>-->
+                        <!--</li>-->
+
+                        <!--Эта кнопка загрузки прайсов с главной страницы из блюпринта price_tb-->
+                        <!--Блюпринт price_tb работает! НО! перенесла все в админку для защиты,-->
+                        <!--поэтому здесь эту кнопку отключаю!! Хотя в базу можно загружать и отсюда!-->
+                        <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" href="/priceprefix/priceroute/">Price</a>-->
+                        <!--</li>-->
+
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+
+    </div>
+</div>
+    <!--Меню с использованием базы данных - конец-->
+
+    <!--это мой блок - вставка каруселей из блюпринта - начало-->
+    {% include 'carousel_header_bottom.html' %}
+    <!--это мой блок - вставка каруселей из блюпринта - конец-->
+</div>
+
+
+
+{% block container %}
+{% endblock %}
+
+<!--это мой блок - вставка каруселей из блюпринта - начало-->
+{% include 'carousel_footer_top.html' %}
+<!--это мой блок - вставка каруселей из блюпринта - конец-->
+
+<footer class="mt-4 pt-3">
+    <div class="container-fluid footer-fon">
+        <!--это мой блок - вставка каруселей из блюпринта - начало-->
+            {% include 'carousel_footer_middle.html' %}
+        <!--это мой блок - вставка каруселей из блюпринта - конец-->
+
+        <div class="container">
+            <div class="row pt-4 text-light">
+                <!-- <div class="visible-xs-inline-block">
+                     Блок для маленьких экранов
+                 </div>-->
+                <div class="col-md-4">
+                    Информ Центр
+                    <div>г. Тверь, Вагжановский пер., д.9</div>
+                    <div>тел.: 8 (4822) 34-12-26</div>
+                    <div>e-mail: buminfo1@mail.ru</div>
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <!--class="list-unstyled" убирает круглые точки в теге li
+                            в начале строки-->
+                            <ul class="list-unstyled">
+                                <li>Штендеры</li>
+                                <li>Баннеры</li>
+                                <li>Наклейки</li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Реклама</li>
+                                <li>Листовки</li>
+                                <li>Плакаты</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div>Услуги</div>
+                    <div>О нас</div>
+                    <div>Портфолио</div>
+                    <div>Контакты</div>
+                    <div>Услуги</div>
+                    <div>О нас</div>
+                    <div>Портфолио</div>
+                </div>
+                <div class="col-md-2">
+                    <div>Партнеры</div>
+                    <div>Сотрудничество</div>
+                    <div>Доставка</div>
+                    <div>Услуги</div>
+                    <div>О нас</div>
+                    <div>Портфолио</div>
+                    <div>Контакты</div>
+
+                </div>
+                <div class="col-md-4 text-right">
+                    <div>Полезные ссылки</div>
+                    <ul class="list-unstyled mb-0">
+                        <li class="nav-item">
+                            <!--Атрибут data-toggle="tooltip" создает подсказку при наведении на элемент
+                            title - атрибут для указания текста, который должен отображаться в подсказке
+                            data-placement="top" - атрибут указывает положение всплывающей посказки (top, bottom, left, right)
+                            Примечание: Подсказки должны быть инициализированы с помощью jQuery:
+                            выберите указанный элемент и вызовите tooltip() метод Пример:
+                            <script>
+                            $(document).ready(function(){
+                            $('[data-toggle="tooltip"]').tooltip();
+                             });
+                            </script>-->
+                            <!--Этот код вставляем перед </body> включая таким образом все подсказки-->
+                            <a class="nav-link" href="" data-toggle="tooltip" data-placement="bottom"
+                               title="Какая-то полезная ссылка">Полезная ссылка</a>
+                        </li>
+                        <!---->
+                        <!--<li class="nav-item">                            -->
+                            <!--<a class="nav-link" href="/newspaper/" data-toggle="tooltip" data-placement="bottom"-->
+                               <!--title="Парсинг с помощью библиотеки newspaper">Newspaper</a>-->
+                        <!--</li>-->
+                        <!--<li class="nav-item">-->
+                            <!--<a class="nav-link" href="/BeatifulSoap/" data-toggle="tooltip" data-placement="bottom"-->
+                               <!--title="Парсинг с помощью библиотеки BeatifulSoap">BeatifulSoap</a>-->
+                        <!--</li>-->
+                        <!--<li class="nav-item">-->
+                            <!--<a class="nav-link" href="/pandas/" data-toggle="tooltip" data-placement="bottom"-->
+                               <!--title="Парсинг с помощью библиотеки Pandas">Pandas</a>-->
+                        <!--</li>-->
+
+                    </ul>
+
+                    <p id="demo-gradus" class="text-center"></p>
+                    <div>Социальные сети</div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="yellow"
+                             class="bi bi-facebook" viewBox="0 0 16 16">
+                            <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!--Вариант 1 cookies сайт https://github.com/Wruczek/Bootstrap-Cookie-Alert-->
+            <!--<div class="alert text-center cookiealert" role="alert">-->
+            <!--<b>Вариант1 cookies Do you like cookies?</b> &#x1F36A; We use cookies to ensure you get the best experience on our-->
+            <!--website. <a href="https://cookiesandyou.com/" target="_blank">Learn more</a>-->
+            <!--<button type="button" class="btn btn-primary btn-sm acceptcookies">-->
+            <!--I agree-->
+            <!--</button>-->
+            <!--</div>-->
+            <!---->
+
+            <!--Вариант 2 cookies сайт -->
+
+            <!---->
+<!--это мой блок - вставка каруселей из блюпринта - начало-->
+            {% include 'carousel_footer_bottom.html' %}
+            <!--это мой блок - вставка каруселей из блюпринта - конец-->
+
+        </div>
+        <div class="container">
+            {% if session.get("cookies_success")==False %}
+            <div class="rounded cookie-form">
+                <div class="row">
+                    <div class="col-9 pl-4 text-center">
+                        <a href="/politic/" class="text-white">
+                            <div>Для корректной работы сайта и его взаимодействия с пользователями мы используем файлы
+                                cookie. <br> Продолжая работу с сайтом, Вы разрешаете использование cookie-файлов.<br>
+                                Вы можете отключить файлы cookie в настройках Вашего браузера или покинуть сайт.
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3 btn-inline text-right pt-3">
+                        <a href="/cookies-success/">
+                            <button class="btn btn-success mr-2">Спасибо, понятно</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!--<div class="rounded cookie-form">-->
+                <div class="row">
+                    <div class="col-12 p-4 text-center" id="cookies-success">
+                        <a href="/politic/" class="text-white">
+                            <div>Вы согласились на использование файлов cookie, которые нужны для корректной
+                                работы сайта и его взаимодействия с пользователями.<br> Продолжая работу с сайтом, Вы
+                                разрешаете использование cookie-файлов.
+                                Вы можете отключить файлы cookie в настройках Вашего браузера или покинуть сайт.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            <!--</div>-->
+            {% endif %}
+
+                            <!--Классы button rounded (классы css) и btn (класс butstrap) дают разный вид кнопок-->
+                            <!--<button class="button rounded btn-success mr-2">Подробнее</button>-->
+                            <!--<button class="btn btn-success mr-2">Подробнее</button>-->
+
+        </div>
+    </div>
+</footer>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!--Используется для бутстрап форм ? - начало-->
+<!--вроде все и так работает поэтому отключила -
+(м.быть это просто часть jquery, который и так подключен - не знаю?)-->
+<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>-->
+<!--Используется для бутстрап форм - конец-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>-->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+<!--**** плагин maskedinput jquery который позволяет делать маски для разных целей, - начало-->
+
+<!--в том числе для ввода  телефона-->
+<!--https://webstool.ru/jquery.maskedinput.html-->
+<!--https://github.com/digitalBush/jquery.maskedinput-->
+<!--http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html-->
+<!--https://snipp.ru/jquery/masked-input-->
+
+<!--*** подключаем плагин maskedinput - начало-->
+<!--для того чтобы плагин работал надо обязательно подключать jquery-->
+<!--Но jquery у нас был подключен ранее поэтому повторно его не подключаем-->
+<!--https://cdnjs.com/libraries/jquery.maskedinput/1.4.1-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js" type="text/javascript"></script>
+<!--*** подключаем плагин maskedinput - конец-->
+
+<!--создаем маску телефона для использования в форме в input на стр. order_val-->
+
+
+
+<!--**** Примеры использования maskedinput из - начало-->
+<!--https://github.com/digitalBush/jquery.maskedinput/blob/master/demo/index.html-->
+<!--html см в components/test_form/templates/test_form.html-->
+<script type="text/javascript">
+    $(function() {
+        $.mask.definitions['~'] = "[+-]";
+        $("#date-1").mask("99/99/9999",{placeholder:"mm/dd/yyyy",completed:function(){alert("completed!");}});
+        $(".phone").mask("(999) 999-9999");
+        $("#phoneExt").mask("(999) 999-9999? x99999");
+        $("#iphone").mask("+33 999 999 999");
+        $("#tin").mask("99-9999999");
+        $("#ssn").mask("999-99-9999");
+        $("#product").mask("a*-999-a999", { placeholder: " " });
+        $("#eyescript").mask("~9.99 ~9.99 999");
+        $("#po").mask("PO: aaa-999-***");
+        $("#pct").mask("99%");
+        $("#phoneAutoclearFalse").mask("(999) 999-9999", { autoclear: false, completed:function(){alert("completed autoclear!");} });
+        $("#phoneExtAutoclearFalse").mask("(999) 999-9999? x99999", { autoclear: false });
+        $("input").blur(function() {
+            $("#info").html("Unmasked value: " + $(this).mask());
+        }).dblclick(function() {
+            $(this).unmask();
+        });
+    });
+</script>
+<!--html см в components/test_form/templates/test_form.html-->
+<!--**** Примеры использования maskedinput из - конец-->
+
+<!--**** плагин maskedinput jquery который позволяет делать маски для разных целей, - конец-->
+
+
+
+<!--*******jQuery-плагин для установки курсора в определенной позиции pos: - начало-->
+
+<!--для того чтобы при попытке исправления неверно введенного номера курсор устанавливался куда надо-->
+<!--https://webstool.ru/jquery.maskedinput.html-->
+<!--http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html-->
+<!--Это рабочий вариант, который используется в проекте - начало-->
+<script type="text/javascript">
+$.fn.setCursorPosition = function(pos) {
+  if ($(this).get(0).setSelectionRange) {
+    $(this).get(0).setSelectionRange(pos, pos);
+  } else if ($(this).get(0).createTextRange) {
+    var range = $(this).get(0).createTextRange();
+    range.collapse(true);
+    range.moveEnd('character', pos);
+    range.moveStart('character', pos);
+    range.select();
+  }
+};
+</script>
+<!--Это рабочий вариант, который используется в проекте - конец-->
+<!--*******jQuery-плагин для установки курсора в определенной позиции pos: - конец-->
+
+<!--Скрипты, в кот.объединены jQuery-плагин для установки курсора в определенной позиции pos:
+ и маска (maskedinput jquery) - начало-->
+
+<!--Цифра при вызове .setCursorPosition(3) указывает на позицию, -->
+<!--в которой должен быть поставлен курсор:-->
+<!--phone_4 и user_phone - это id элементов к которым применяем функцию-->
+<!--У нас эти элементы находятся в order_val.html и test_form.html (в формах ввода данных)-->
+
+<!--<script type="text/javascript">-->
+<!--$("#phone_4").autofocus(function(){-->
+  <!--$(this).setCursorPosition(3);-->
+<!--}).mask("+7(999) 999-99-99");-->
+<!--</script>-->
+
+<script type="text/javascript">
+$("#input_phone").click(function(){
+  $(this).setCursorPosition(3);
+}).mask("+7(999) 999-99-99");
+</script>
+
+
+<script type="text/javascript">
+$("#date").click(function(){
+  $(this).setCursorPosition(0);
+}).mask("99/99/9999");
+</script>
+
+<!--Это рабочий вариант, который используется в проекте - начало-->
+<script type="text/javascript">
+$("#user_phone").click(function(){
+  $(this).setCursorPosition(3);
+}).mask("+7(999) 999-99-99");
+</script>
+<!--Это рабочий вариант, который используется в проекте - конец-->
+<!--Скрипты, в которых объединены функции установки фокуса при исправлении и маска - конец-->
+
+<!--Пример использования maskedinput без использования wtforms -начало-->
+<script>
+$('#mask-phone').mask('+7 (999) 999-99-99');
+</script>
+<!--Пример использования maskedinput без использования wtforms -конец-->
+
+<!--*******jQuery-плагин - конец
+
+
+<!--Подключить для Варианта 1 cookies (1 или 2 скрипта(можно без второго))-->
+<!--<script src="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.js"></script>-->
+<!--<script>-->
+<!--window.addEventListener("cookieAlertAccept", function() {-->
+    <!--alert("cookies приняты")-->
+<!--})-->
+<!--</script>-->
+<!---->
+
+ <!--Подключить для Варианта 2 cookies-->
+    <!---->
+
+
+<!--Скрипт запуска кнопки сворачивания пунктов меню в кнопку при маленьких экранах-->
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+
+
+<!--<script src="/static/js/myScript.js"></script>-->
+
+<!--Подключаем Bootstrap Form Helpers - начало-->
+<!--используем этот плагин на 15.04.22 только для примеров в test_form.html-->
+<!--https://cdnjs.com/libraries/bootstrap-formhelpers-->
+<!--https://question-it.com/tags/bootstrap-form-helper/info-->
+<!--https://bootstrapformhelpers.com-->
+<!--https://cdnjs.com/libraries/bootstrap-formhelpers-->
+<!--https://github.com/winmarkltd/BootstrapFormHelpers?utm_source=cdnjs&utm_medium=cdnjs_link&utm_campaign=cdnjs_library-->
+<!--Это набор плагинов jQuery, предназначенных для внешней среды Bootstrap для удобного создания форм-->
+<!--Плагины могут использоваться по отдельности, но некоторые из них работают вместе, например, Страны и Штаты.-->
+<!--Помощники по формам начальной загрузки поддерживают все основные браузеры, но официально не поддерживают браузеры на платформах Linux.-->
+<!--Требуется jQuery 1.10.2 или выше и Bootstrap 3.0.0 или лучше.-->
+<!--Коллекция включает в себя:-->
+<!--Пользовательский элемент выбора, Слайдер, Палитра цветов, Выбор страны, Государственный сборщик,-->
+<!--Выбор валюты, Телефонный вход, Ввод числа, Средство выбора языка, Выбор часового пояса,-->
+<!--Выбор шрифтов Google, Выбор даты, Сборщик времени, Выбор шрифта, Выбор размера шрифта-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/js/bootstrap-formhelpers.min.js" integrity="sha512-m4xvGpNhCfricSMGJF5c99JBI8UqWdIlSmybVLRPo+LSiB9FHYH73aHzYZ8EdlzKA+s5qyv0yefvkqjU2ErLMg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--этот скрипт если скачан на комп как я понимаю-->
+<!--<script src="dist/js/bootstrap-formhelpers.min.js"></script>-->
+<script>
+	function getVal() {
+		// This will get the value of #timepicker
+		alert($("#timepicker").val())
+	}
+	</script>
+<!--Подключаем Bootstrap Form Helpers - конец-->
+
+</body>
+
+</html>
+
+
+<!--Меню с использованием файлов JSON-->
+    <!--<div class="shadow bg-white mb-3">-->
+        <!--&lt;!&ndash;<nav class="navbar"></nav> - обертка для навигационного меню&ndash;&gt;-->
+        <!--&lt;!&ndash;navbar-expand-lg - добавляет гибкую функциональность, отвечает за расширение или свертывание навигации &ndash;&gt;-->
+        <!--&lt;!&ndash;в зависимости от размера экрана. Вместо -lg, чтобы быть большим, &ndash;&gt;-->
+        <!--&lt;!&ndash;можно выбрать -md(средние экраны), -sm(маленькие экраны) и -xl(очень большие)&ndash;&gt;-->
+        <!--&lt;!&ndash;navbar-light - вид навигационного мень - светлая тема&ndash;&gt;-->
+        <!--<nav class="navbar navbar-expand-md navbar-light" id="nav-plashka1">-->
+            <!--<div class="container">-->
+
+                <!--&lt;!&ndash;class="navbar-toggler" - Эта кнопка видна только на маленьких экранах, и используется для включения и-->
+                <!--выключения видимости меню data-target=»#navbarSupportedContent»,-->
+                <!--что является ссылкой на значение идентификатора элемента «div», содержащего это меню.-->
+                <!--pt-0 не убирать, так как видимо по умолчанию pt больше нуля&ndash;&gt;-->
+                <!--<button class="navbar-toggler pt-0" type="button" data-toggle="collapse"-->
+                        <!--data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"-->
+                        <!--aria-expanded="false" aria-label="Toggle navigation">-->
+                    <!--<span class="navbar-toggler-icon"></span>-->
+                <!--</button>-->
+
+                <!--&lt;!&ndash; div containing the toggable navigation &ndash;&gt;-->
+                <!--<div class="collapse navbar-collapse" id="navbarSupportedContent">-->
+
+                    <!--<ul class="navbar-nav mr-auto">-->
+
+                        <!--&lt;!&ndash;&lt;!&ndash; Dropdown &ndash;&gt;&ndash;&gt;-->
+                        <!--&lt;!&ndash;<li class="nav-item dropdown">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a class="nav-link dropdown-toggle" href="/uslugi/" id="navbardrop"&ndash;&gt;-->
+                        <!--&lt;!&ndash;data-toggle="dropdown">&ndash;&gt;-->
+                        <!--&lt;!&ndash;Услуги&ndash;&gt;-->
+                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="dropdown-menu">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a class="dropdown-item" href="/uslugi/<1>">Услуга 1</a>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a class="dropdown-item" href="/uslugi/<2>">Услуга 2</a>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a class="dropdown-item" href="/uslugi/<2>">Услуга 3</a>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                        <!--<li class="nav-item">-->
+                            <!--<a class="nav-link" href="/">Главная</a>-->
+                        <!--</li>-->
+                        <!--{% for link in links %}-->
+                        <!--<li class="nav-item">-->
+
+                            <!--конструкция {% if request.path == link.link %}active{% endif %}-->
+                            <!--позволяет отметить, на какой стр. находится пользователь – например выделить цветом, рамкой или жирностью.-->
+                            <!--В верстке для этого обычно используется class=active.-->
+                            <!--В моем случае почему-то не работаетю Может потому что использую Бутстреп? Разобраться!-->
+                            <!--&lt;!&ndash;<a class="nav-link {% if request.path == link.link %}activemenu{% endif %}" href="/{{ link.link }}/">{{ link.title }}</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;{% if request.path == link.link %}&ndash;&gt;-->
+                            <!--&lt;!&ndash;<a class="nav-link" href="/{{ link.link }}/">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div id="menu">&ndash;&gt;-->
+                            <!--&lt;!&ndash;{{ link.title }}&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;{% else %}&ndash;&gt;-->
+                            <!--&lt;!&ndash;{% endif %}&ndash;&gt;-->
+                            <!--<a class="nav-link" href="/{{ link.link }}/">{{ link.title }}</a>-->
+                        <!--</li>-->
+                        <!--{% endfor %}-->
+                    <!--</ul>-->
+                    <!--<ul class="navbar-nav ml-auto">-->
+                        <!--<li class="nav-item">-->
+                            <!--<a class="nav-link" href="/order/">Заказать</a>-->
+                        <!--</li>-->
+                        <!--<li class="nav-item">-->
+                            <!--<a class="nav-link" href="/edit/">Войти для редактирования</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+
+                <!--</div>-->
+            <!--</div>-->
+        <!--</nav>-->
+    <!--</div>-->
+    <!--Меню с использованием файлов JSON - конец-->
+

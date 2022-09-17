@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+    <!--Хлебные крошки + бегущая строка(ее можно убрать) - начало-->
+        <div class="row">
+
+            <!--Хлебные крошки  - начало-->
+            <div class="col-md-4">
+                <!--Хлебные крошки  на основе базы данных (навигационные цепочки)-->
+                {% include 'breadcrumbs-menu.html' %}
+                <!--Хлебные крошки на основе базы данных (навигационные цепочки)-конец-->
+            </div>
+            <!--Хлебные крошки - конец-->
+
+            <!--бегущая строка(ее можно убрать) - начало-->
+            <!--<div class="col-md-8">-->
+                <!--<div class="container-fluid">-->
+                    <!--&lt;!&ndash;тег <marquee> создает бегущую строку начало&ndash;&gt;-->
+                    <!--&lt;!&ndash;Данный тег считается устаревшим!!!(хотя работает)&ndash;&gt;-->
+                    <!--&lt;!&ndash;http://htmlbook.ru/html/marquee&ndash;&gt;-->
+                    <!--&lt;!&ndash;https://andrewrochev.ru/ticker/&ndash;&gt;-->
+                    <!--<marquee bgcolor="white" scrollamount="6" width="110%">-->
+                        <!--<div>-->
+                            <!--{% for usluga in uslugi_id_link %}-->
+                            <!--<a href="/{{ punkt_menu }}/{{ usluga.link }}/">-->
+                                <!--{{ usluga.title }}-->
+                            <!--</a>-->
+                            <!--&lt;!&ndash;Пробел неразрывный&ndash;&gt;-->
+                            <!--&emsp;-->
+                            <!--{% endfor %}-->
+                            <!--<img src="/static/images/logo1.jpg" width="10%"> &emsp;-->
+                            <!--<span style="color:#FF0000;">Последние новости:</span>-->
+                        <!--</div>-->
+                    <!--</marquee>-->
+                    <!--&lt;!&ndash;тег <marquee> создает бегущую строку конец&ndash;&gt;-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--бегущая строка(ее можно убрать) - конец-->
+
+        </div>
+    <!--Хлебные крошки + бегущая строка(ее можно убрать) - конец-->
+
+    {% include 'carousel_body_top.html' %}
+
+        <div class="row">
+
+            <!--Пункт меню + услуги - начало-->
+            {% if link.uslugs %}
+            <div class="col-3">
+
+                <!--Пункт меню на основе базы данных (заголовоек) - начало-->
+                <!--<div class="container-fluid rounded-pill text-center zag-katalog">-->
+                <div class="container-fluid rounded text-center zag-katalog">
+                    <div class="py-2">
+                        {{ link.title }}
+                    </div>
+                </div>
+                <!--Пункт меню на основе базы данных - конец-->
+
+                <!--Услуги пункта меню на основе базы данных - начало-->
+                <div class="menu-katalog pl-4">
+                    <ul class="list-unstyled mt-4 font-weight-normal bg-light">
+                        {% for usluga in uslugs_punkt_menu %}
+
+                        <li>
+                            <a href="{{ url_for('render_uslugi_link', punkt_menu=punkt_menu, category=usluga.link) }}">{{ usluga.title }} </a>
+                            <!--<a href="/{{ punkt_menu }}/{{ usluga.link }}/">{{ usluga.title }} </a>-->
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <!--Услуги пункта меню на основе базы данных - конец-->
+
+                <!--Комментарий 1 пункта меню на основе базы данных (если есть) - начало-->
+                {% if link.comments_1 %}
+                <div class="base_color_1 px-2 pt-5">
+                    <b>{{ link.comments_1 }}</b>
+                </div>
+                {% endif %}
+                <!--Комментарий 1 пункта меню на основе базы данных (если есть) - конец-->
+
+            </div>
+
+            {% else %}
+            <div class="col-12">
+                <div class="pl-3">
+                В данном разделе меню пока нет актуальных услуг.
+                </div>
+            </div>
+            {% endif %}
+            <!--Пункт меню + услуги - конец-->
+
+            <!--Выборка по одной карточке из каждой услуги - начало-->
+            <div class="col-9">
+                <!--Комментарий 2 пункта меню на основе базы данных (если есть) - начало-->
+                {% if link.comments_2 %}
+                <div class="base_color_1 pb-2">
+                    <b>{{ link.comments_2 }}</b>
+                </div>
+                {% endif %}
+                <!--Комментарий 2 пункта меню на основе базы данных (если есть) - конец-->
+
+                <!--Карточки услуг - начало-->
+                <div class="row">
+                    {% for usluga_and_card in list_dict_cards %}
+                    <div class="col-4">
+
+                            <div class="card h-100">
+
+                                <!--Заголовок Услуга + Первое фото карточки услуг - начало-->
+
+                                <div class="card-body px-2 py-3">
+                                    <!--Заголовок Услуга - начало-->
+                                    <a href="{{ url_for('render_uslugi_link', punkt_menu=punkt_menu, category=usluga_and_card['usluga'].link) }}">
+                                        <h6 class="base_color_1">
+                                            {{ usluga_and_card['usluga'] }}
+                                        </h6>
+                                    </a>
+                                    <!--Заголовок Услуга - конец-->
+
+
+                                    <!--Первое фото карточки услуг - начало-->
+                                    <a href="{{ url_for('render_uslugi_link', punkt_menu=punkt_menu, category=usluga_and_card['usluga'].link) }}">
+                                        <div>
+                                            <img class="card-img-top rounded"
+                                                 src="/static/images/cards_uslugs/{{ punkt_menu }}/{{ usluga_and_card['card'].usluga.link }}/{{ usluga_and_card['card'].dir_photos }}/{{ usluga_and_card['card'].photos[0].secure_name_photo }}"
+                                                 alt="photos {{ usluga_and_card['card'].name_card_usluga }}">
+                                        </div>
+                                    </a>
+                                    <!--Первое фото карточки услуг - конец-->
+                                    </div>
+
+                                <!--Заголовок Услуга + Первое фото карточки услуг - конец-->
+
+                                <!--Кнопка - подробнее - начало-->
+                                <div class="card-footer px-2">
+                                    <a class="btn btn-success container-fluid"
+                                       href="{{ url_for('render_uslugi_link', punkt_menu=punkt_menu, category=usluga_and_card['usluga'].link) }}">
+                                        Подробнее
+                                    </a>
+                                </div>
+                                <!--Кнопка - подробнее - конец-->
+
+                            </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
+                 <!--Карточки услуг - конец-->
+
+                <!--Комментарий 3 пункта меню на основе базы данных (если есть) - начало-->
+                {% if link.comments_3 %}
+                <div class="base_color_1 pb-2">
+                    <b>{{ link.comments_3 }}</b>
+                </div>
+                {% endif %}
+                <!--Комментарий 3 пункта меню на основе базы данных (если есть) - конец-->
+
+                <!--Комментарий 4 пункта меню на основе базы данных (если есть) - начало-->
+                {% if link.comments_4 %}
+                <div class="pb-2">
+                    <b>{{ link.comments_4 }}</b>
+                </div>
+                {% endif %}
+                <!--Комментарий 4 пункта меню на основе базы данных (если есть) - конец-->
+
+            </div>
+            <!--Выборка по одной карточке из каждой услуги - начало-->
+
+        </div>
+
+    </div>
+
+</main>
+
+{% include 'carousel_body_middle.html' %}
+{% include 'carousel_body_bottom.html' %}
+
+
+{% endblock %}

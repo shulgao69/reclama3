@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+                <a href="{{ url_for('admin.index') }}">
+                    Вернуться в панель администратора
+                </a>
+                <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                    Перейти к карточкам услуг
+                </a>
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <!--Навигационные ссылки - начало-->
+        <!--<div class="row pt-2 pb-3">-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('admin.index') }}">-->
+                    <!--Вернуться в панель администратора-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+                    <!--Перейти к карточкам услуг-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки - конец-->
+
+        <div class="row">
+            <div class="col-6 col-lg-6 col-sm-12">
+                <h3 class="text-success pt-2">
+                    <b> Шаг 2 </b>
+                </h3>
+                <h6 class="text-left base_color_1 pl-0">
+                    Загрузка фото в карточку услуг
+                </h6>
+                <div class="pt-2">
+                    Вы можете пропустить Шаг 2 и
+                    <a href="{{ url_for('card_usluga_bp.upload_prices_in_card_usluga', card_usluga_id=card_usluga.id) }}">
+                        перейти к следующему шагу
+                    </a>
+                </div>
+
+                <h5 class="text-left base_color_1 pl-0 pt-3">
+                    Загрузите изображение
+                </h5>
+
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+
+                    <div class="pt-2">
+                        {{ form.title.label }}
+                    </div>
+                    <div>
+                        {{ form.title(class="form-control") }}
+                    </div>
+                    <div class="pt-3">
+                        {{ form.comments.label }}
+                    </div>
+                    <div>
+                        {{ form.comments(class="form-control") }}
+                    </div>
+                    <div class="pt-3">
+                        {{ form.photo.label }}
+                    </div>
+                    <div>
+                        {{ form.photo() }}
+                    </div>
+
+                    <div class="pt-4">
+                        {{ form.submit_upload(class="form-control btn-success btn-block") }}
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="col-6 col-lg-6 col-sm-12">
+                <div class="row pt-5">
+                    <div class="col-12">
+                    <h6 class="base_color_1">Карточка услуги:</h6>
+                        <div>
+                            <b class="base_color_1">Имя:</b>
+                            "{{ card_usluga.name_card_usluga }}".
+                            <b class="base_color_1">Id:</b> "{{ card_usluga.id }}".
+                        </div>
+                        <div>
+                            <b class="base_color_1">Раздел:</b> {{ menu }}.
+                            <b class="base_color_1">Услуга:</b> {{ usluga }}.
+                        </div>
+                    </div>
+
+
+                    {% if card_usluga.photos %}
+                    <div class="col-12">
+                       <h6 class="pt-3">Уже загруженные изображения</h6>
+                    </div>
+                    {% for photo in card_usluga.photos %}
+                    <div class="col-3 pt-3">
+                        <img class="card-img-top"
+                             width="25"
+                             src="/static/images/cards_uslugs/{{ photo.dir_uploads }}{{ photo.secure_name_photo }}"
+                             alt="фото услуги">
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block container %}
+
+
+<div class="container">
+	<!--Хлебные крошки  (навигационные цепочки)-->
+	<ol class="breadcrumb breadcrumb-new">
+		<li class="breadcrumb-item"><a href="/">Главная</a></li>
+		<li class="breadcrumb-item active">Дизайн</li>
+	</ol>
+	<!--Хлебные крошки  (навигационные цепочки)-конец-->
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="poligraf">
+				<div class="container-fluid rounded-pill text-center zag-katalog">
+					Дизайн
+				</div>
+				<div class="menu-katalog pl-4">
+					<ul class="list-unstyled mt-4 font-weight-normal bg-light">
+						{% for dizain in dizains %}
+						<li>
+							<a href="/dizain/{{ dizain.link }}.html/">{{ dizain.title }}</a>
+						</li>
+						{% endfor %}
+
+					</ul>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="col-9">
+
+			<!-- column content here -->
+			<a href="#">
+				<img class="img-fluid mx-auto d-block mt-4 mb-2 rounded" src="/static/pictures/4.jpg" alt="">
+			</a>
+			<h3 class="text-center mb-2">Фото 2</h3>
+			<p>
+				Описание продукта 2
+			</p>
+			<button class="btn btn-success">$299></button>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+{% endblock %}

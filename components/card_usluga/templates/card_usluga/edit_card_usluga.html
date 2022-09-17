@@ -1,0 +1,644 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 1 - начало-->
+        <!--<div class="row pt-1 pb-4">-->
+        <!--<div class="col-4">-->
+        <!--<a href="{{ url_for('admin.index') }}">-->
+        <!--Вернуться в панель администратора-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-4">-->
+        <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">Вернуться к карточкам услуг</a>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки вар 1 - конец-->
+
+        <!--Навигационные ссылки вар 2 - начало-->
+        <!--<div class="row pt-1 pb-4">-->
+        <!--<div class="col-6">-->
+        <!--&lt;!&ndash;class="d-flex см https://bootstrap-4.ru/docs/4.0/utilities/flex/&ndash;&gt;-->
+        <!--<div class="d-flex justify-content-between">-->
+        <!--<a href="{{ url_for('admin.index') }}">-->
+        <!--Вернуться в панель администратора-->
+        <!--</a>-->
+        <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+        <!--Вернуться к карточкам услуг-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки вар 2- конец-->
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pl-2 pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Вернуться к карточкам услуг
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <!--рамка - начало-->
+        <div class="card border-success p-3 h-100">
+
+            <!--Сведения о карточке услуги - начало-->
+            <div>
+                <!--<h5 class="base_color_1">Сведения о карточке услуги</h5>-->
+                <h5>Сведения о карточке услуги</h5>
+                <div class="text-success">
+                    Раздел:
+                    <b class="base_color_1">
+                        {{ card_usluga.usluga.punkt_menu.title }}
+                    </b><br>
+                    Услуга раздела:
+                    <b class="base_color_1">
+                        {{ card_usluga.usluga }}
+                    </b>
+                </div>
+                <div class="text-success">Карточка услуги:
+                    {% if card_usluga.name_card_usluga %}
+                    <b class="base_color_1">
+                        {{ card_usluga.name_card_usluga }}
+                    </b>
+                    {% endif %}
+
+                    (Id карточки:
+                    <b class="base_color_1">
+                        {{ card_usluga.id }}
+                    </b>
+                    )
+                </div>
+                <div class="text-success">
+                    Директория загрузки изображений:
+                    <b class="base_color_1">
+                        /static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link
+                        }}/{{ card_usluga.dir_photos }}
+                    </b>
+                </div>
+                <div class="text-success">
+                    Сопроводительный текст:
+                    {% if card_usluga.comments %}
+                    <b class="base_color_1">
+                        {{ card_usluga.comments }}
+                    </b>
+                    {% endif %}
+                </div>
+
+                <div class="text-success">
+                    Статусы:
+                    <!--Информация о статусах - начало-->
+                            <div>
+                            {% if card_usluga.statuses_card_usluga %}
+                            <div>
+                                <!--<div class="pt-2 pb-1">Статусы:</div>-->
+                                <!--Статусы карточки (СтатусКардУслуг) сортируем по атрибуту номер(вес) статуса в модели Статус-->
+                                <div class="base_color_1">
+                                {% for status_card_usluga in (card_usluga.statuses_card_usluga|sort(attribute="status.number")) %}
+
+                                    "{{ status_card_usluga }}" -
+
+
+                                {% endfor %}
+                                </div>
+
+                            </div>
+                            {% endif %}
+                            </div>
+                            <!--Информация о статусах - конец-->
+                </div>
+
+
+            </div>
+            <!--Сведения о карточке услуги - конец-->
+
+
+            <!--Полезное-->
+            <!--https://bootsnipp.com/snippets/NjR9z-->
+            <!--https://romanchueshov.ru/bootstrap-verstka/bootstrap-karusel-sozdaem-krasivyj-slajder.html-->
+            <!--https://itchief.ru/bootstrap/carousel#karusel-s-animaciey-poyavleniya-bootstrap-4-->
+            <!--https://bootstrap-4.ru/docs/4.0/components/carousel/-->
+            <!--https://bootstrap-4.ru/docs/4.1/components/carousel/#options-->
+            <!--class="w-100" позволяет сделать карусель, задуманную как на всю ширину (контейнер флюид) -->
+            <!--сделать ее без отступов с права и слева ПОЧЕМУ ТО этот метод НЕ РАБОТАЕТ ТЕПЕРЬ ИСКАТЬ ПРИЧИНУ!!!-->
+            <!--В противном случае есть небольшие отступы справа и слева-->
+
+
+            <div>
+                <!--Заголовок Вид карточки услуги на сайте - начало-->
+                <div class="row pt-5">
+                    <div class="col-12">
+                        <!--<h5 class="base_color_1">Вид карточки услуги на сайте</h5>-->
+                        <h5>Вид карточки услуги на сайте</h5>
+                    </div>
+                </div>
+                <!--Заголовок Вид карточки услуги на сайте - конец-->
+
+                <!--Навигация для редактирования карточки - начало-->
+
+                <!--Модальное окно при ссылке Создать новый прайс  - начало-->
+                <!--Его не видно пока не нажать (активировать) на ссылку-тригер  !!!!!!!-->
+                <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+
+                <div class="modal fade" id="createNewPrice" tabindex="-1" role="dialog"
+                     aria-labelledby="createNewPriceLabel" aria-hidden="true">
+
+                    <div class="modal-dialog" role="document">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <div class="modal-title" id="createNewPriceLabel">
+                                    Если вы не нашли нужный прайс в списке прайсов
+                                    (ссылка <b class="base_color_1">Добавить прайс</b>) , создайте новый.
+                                </div>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                    <!--&times; - это крестик для закрытия-->
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <h6 class="text-success">
+                                    <b>Внимание!</b><br>
+                                </h6>
+                                <div>
+                                    После создания нового прайса:
+                                    <div>1. Вернитесь в карточку услуги (ссылка
+                                        <b class="base_color_1">Вернуться в карточку услуги</b>),
+                                    </div>
+                                    <div>
+                                        2. Присоедините вновь созданный прайс к карточке услуги
+                                        <b class="base_color_1">
+                                            "{{ card_usluga.name_card_usluga }}"
+                                        </b>
+                                        (ссылка <b class="base_color_1">Добавить прайс</b>).
+
+
+                                    </div>
+
+                                </div>
+
+                                <br>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Отменить
+                                </button>
+
+                                <a class="btn btn-danger"
+                                   href="{{ url_for('price_bp.priceindex') }}"
+                                   role="button">
+                                    Создать
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <!--Модальное окно - конец-->
+
+                <!--Ссылки редактирования карточки услуг- начало-->
+                <div class="d-flex justify-content-between">
+                    <!--Ссылка - Редактировать имя и текст карточки - начало-->
+                    <a class='text-right'
+                       href="{{ url_for('card_usluga_bp.edit_name_and_text_card', card_usluga_id=card_usluga.id) }}">
+                        Редактировать имя и текст карточки
+                    </a>
+                    <!--Ссылка - Редактировать имя и текст карточки - конец-->
+
+                    <!--Ссылка - Редактировать изображения - начало-->
+                    <a class='text-right'
+                       href="{{ url_for('card_usluga_bp.edit_photos_in_card_usluga', card_usluga_id=card_usluga.id) }}">
+                        Редактировать изображения
+                    </a>
+                    <!--Ссылка - Редактировать изображения - конец-->
+
+                    <!--Ссылка - Добавить фото - начало-->
+                    <a href="{{ url_for('card_usluga_bp.upload_photos_in_card_usluga',
+                            card_usluga_id=card_usluga.id) }}">
+                        Добавить фото
+                    </a>
+                    <!--Ссылка - Добавить фото - конец-->
+
+                    <!--Ссылка - Добавить прайс - начало-->
+                    <a class='text-right'
+                       href="{{ url_for('card_usluga_bp.upload_prices_in_card_usluga',
+                            card_usluga_id=card_usluga.id) }}">
+                        Добавить прайс
+                    </a>
+                    <!--Ссылка - Добавить прайс - конец-->
+
+                    <!--Триггер модального окна -->
+                    <!--Ссылка - Создать новый прайс - начало-->
+                    <a class='text-right'
+                       type="button" data-toggle="modal"
+                       data-target="#createNewPrice"
+                       href="">
+                        Создать новый прайс
+                    </a>
+                    <!--Ссылка - Создать новый прайс - конец-->
+
+                </div>
+                <!--Ссылки редактирования карточки услуг- конец-->
+
+                <!--Навигация для редактирования карточки  - конец-->
+
+                <div class="pt-2">
+                    <div class="base_color_1">
+                        {{ card_usluga.name_card_usluga }}
+                    </div>
+                    {% if card_usluga.comments %}
+                    <div>
+                        {{ card_usluga.comments }}
+                    </div>
+                    {% endif %}
+                </div>
+
+
+                <!--Вид карточки услуги на сайте  - начало-->
+                <div class="row pt-2">
+
+
+                    <!--Карусель карточки услуг- начало-->
+                    <div class="col-4">
+                        {% if card_usluga.photos %}
+                        <div id="{{ card_usluga.id }}"
+                             data-interval="2000"
+                             class="carousel slide mb-2 p-0 w-100"
+                             data-ride="carousel"
+                             data-wrap="true">
+                            <!--class="carousel-indicators" создает внизу слайда индикаторы, -->
+                            <!--показывающие количество слайдов-->
+                            <!--и на каком мы находимся-->
+                            <!--Индикаторы по умолчанию прямоугольныею Сделали их круглыми переопределив их в my.css-->
+                            <ul class="carousel-indicators">
+                                <li data-target="#{{ card_usluga.id }}" data-slide-to=0 class="active"></li>
+                                {% for i in range(1, card_usluga.photos|length) %}
+                                <li data-target="#{{ card_usluga.id }}" data-slide-to=i></li>
+                                {% endfor %}
+                            </ul>
+                            <div class="carousel-inner w-100" role="listbox">
+                                <!--Класс active указывать обязательно иначе не будет видно
+                                он указывает с какого слайда начинается слайд-шоу-->
+                                <div class="carousel-item active">
+                                    <!--Классы d-none - скрыто на всех размерах экрана
+                                    d-block - показывать на всех размерах экрана
+                                    d-md-block - показывать на размере md
+                                    d-lg-none -  скрыто на размере экрана lg  и тд и тп-->
+
+                                    <img class="img d-none d-md-block w-100"
+                                         src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[0].secure_name_photo }}"
+                                         alt="Название изображения">
+
+                                    <!--Текст на изображении - начало-->
+                                    <div class="carousel-caption">
+                                        <!--<h1 class="text-center text-success">-->
+                                        <!--{{ card_usluga.photos[0].secure_name_photo }}-->
+                                        <!--</h1>-->
+                                        <!--<h5 class="text-center text-success">-->
+                                        <!--{{ card_usluga.photos[0].comments }}-->
+                                        <!--</h5>-->
+                                    </div>
+                                    <!--Текст на изображении - конец-->
+                                    <div class="pt-2">
+                                        <h5 class="text-center base_color_1">
+                                            {{ card_usluga.photos[0].title }}
+                                        </h5>
+                                        <div class="px-0 text-center">
+                                            {{ card_usluga.photos[0].comments }}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                {% for i in range(1, card_usluga.photos|length) %}
+                                <div class="carousel-item">
+                                    <img class="img d-none d-md-block w-100"
+                                         src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[i].secure_name_photo }}"
+                                         alt="слайд {{ i }}">
+
+                                    <!--Текст на изображении - начало-->
+                                    <!--<div class="carousel-caption">-->
+                                    <!--<h1 class="text-center text-success">-->
+                                    <!--{{ card_usluga.photos[i].secure_name_photo }}-->
+                                    <!--</h1>-->
+                                    <!--<h5 class="text-center text-success">-->
+                                    <!--{{ card_usluga.photos[i].comments }}-->
+                                    <!--</h5>-->
+                                    <!--</div>-->
+                                    <!--Текст на изображении - конец-->
+                                    <div class="pt-2">
+                                        <h5 class="text-center base_color_1">
+                                            {{ card_usluga.photos[i].title }}
+                                        </h5>
+                                        <div class="text-center">
+                                            {{ card_usluga.photos[i].comments }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                                {% endfor %}
+
+                            </div>
+                            <!--Элементы управления - начало -->
+                            <a class="carousel-control-prev" href="#{{ card_usluga.id }}" role="button"
+                               data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only text-success">Предыдущий</span>
+                            </a>
+                            <a class="carousel-control-next" href="#{{ card_usluga.id }}" role="button"
+                               data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only text-success">Следующий</span>
+                            </a>
+                            <!--Элементы управления - конец -->
+                        </div>
+
+
+                        {% endif %}
+                    </div>
+                    <!--Карусель карточки услуг- конец-->
+
+                    <!--Прайсы карточки услуг (с ссылками редактирования прайсов) - начало-->
+                    <div class="col-8 container-fluid">
+                        {% if card_usluga.prices %}
+
+
+                        <!--класс class="d-inline" см https://bootstrap-4.ru/docs/5.0/utilities/display/-->
+                        <!--https://bootstrap-4.ru/articles/cheatsheet/#d-inline-->
+                        {% for price in card_usluga.prices %}
+
+                        <!--Имя прайса и id - начало-->
+                        <div class="row">
+                            <div class="col-8">
+                                <h5 class="d-inline">Имя прайса:
+                                    <b class="base_color_1">
+                                        {{ price.name_price_table }}
+                                    </b>
+                                </h5>
+                                <div class="d-inline">id:
+                                    <b class="base_color_1">
+                                        {{ price.id }}
+                                    </b>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Имя прайса и id - начало-->
+
+                        <!--Ссылки - Редактировать и удалить прайс - начало-->
+                        <div class="row py-2">
+
+                            <!--Ссылка - Редактировать прайс - начало-->
+                            <div class="col-4">
+
+                                <!--Триггер модального окна - редактировать прайс - начало-->
+                                <a type="button" data-toggle="modal"
+                                   data-target="#editPrice{{ price.id }}"
+                                   href="">
+                                    Редактировать прайс
+                                </a>
+                                <!--Триггер модального окна - редактировать прайс - конец-->
+
+
+                                <!--Модальное окно при ссылке Создать новый прайс  - начало-->
+                                <!--Его не видно пока не нажать ссылку  !!!!!!!-->
+                                <!--активируется после нажатия на триггер-->
+                                <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+
+                                <div class="modal fade" id="editPrice{{ price.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="createNewPriceLabel" aria-hidden="true">
+
+                                    <div class="modal-dialog" role="document">
+
+                                        <div class="modal-content">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title base_color_1" id="editPrice{{ price.id }}Label">
+                                                    Вы уверены, что хотите изменить данные прайса?
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <!--&times; - это крестик для закрытия-->
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <h6 class="text-success">
+                                                    <b>Внимание!</b><br>
+                                                </h6>
+                                                <div>
+                                                    После редактирования прайса
+                                                    вернитесь в карточку услуги (ссылка
+                                                    <b class="base_color_1">Вернуться в карточку услуги</b>).
+                                                </div>
+
+                                                <br>
+
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Отменить
+                                                </button>
+
+                                                <a class="btn btn-danger"
+                                                   href="{{ url_for('price_bp.edit_price', id=price.id) }}"
+                                                   role="button">
+                                                    Редактировать
+                                                </a>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!--Модальное окно - конец-->
+                            </div>
+                            <!--Ссылка - Редактировать прайс - конец-->
+
+                            <div class="col-6">
+
+                                <!--Передача данных в модальное окно Важно!!!  - начало -->
+                                <!--Для передачи данных (фото которое удаляем) в модальное окно нужно -->
+                                <!-- обязательно указать идентификатор удаляемого объекта!!-->
+                                <!--и в тригере модального окна (data-target="#deletePrice{{ price.id }}")-->
+                                <!--и в самом модальном окне id="deletePrice{{ price.id }}"-->
+                                <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
+
+                                <!--Триггер модального окна - начало-->
+                                <a type="button" data-toggle="modal"
+                                   data-target="#deletePrice{{ price.id }}"
+                                   href="">
+                                    Удалить прайс из карточки
+                                </a>
+                                <!--Триггер модального окна - конец-->
+
+
+                                <!--Модальное окно  - начало-->
+                                <!--Его не видно пока не нажать ссылку Удалить2 !!!!!!!-->
+                                <!--активируется после нажатия на триггер(он выше (ссылка - удалить карусель)-->
+                                <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+                                <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+                                <!--ставим модальное окно внутри цикла car in carousel -->
+                                <div class="modal fade" id="deletePrice{{ price.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="deletePriceLabel" aria-hidden="true">
+
+                                    <div class="modal-dialog" role="document">
+
+                                        <div class="modal-content">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title base_color_1" id="deletePriceLabel">
+                                                    Вы уверены, что хотите удалить прайс?
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <!--&times; - это крестик для закрытия-->
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <h6 class="text-success">
+                                                    <b>Внимание!</b><br>
+                                                </h6>
+                                                <div>
+                                                    Прайс
+                                                    <b class="base_color_1">
+                                                        "{{ price }}"
+                                                    </b>
+                                                    (id:
+                                                    <b class="base_color_1">
+                                                        {{ price.id }}
+                                                    </b>)
+                                                </div>
+
+                                                <div class="text-danger">
+                                                    <b>будет удален только из карточки услуг!</b>
+                                                </div>
+                                                <!--<div class="text-danger">-->
+                                                <!--<b>При удалении прайса из карточки услуг сам прайс удален не-->
+                                                <!--будет!</b>-->
+                                                <!--</div>-->
+                                                <br>
+                                                Для редактирования прайса,
+                                                выйдите из диалогового окна и нажмите ссылку
+                                                <b class="base_color_1">Редактировать прайс</b>
+                                                <div class="pt-2">
+                                                    Для удаления прайса выйдите из диалогового окна,
+                                                    перейдите в панель администратора и нажмите кнопку
+                                                    <b class="base_color_1">
+                                                        Перейти к выбору прайса
+                                                    </b>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Отменить
+                                                </button>
+
+                                                <a class="btn btn-danger"
+                                                   href="{{ url_for('card_usluga_bp.delete_price_from_card_usluga', card_usluga_id=card_usluga.id, price_id=price.id) }}"
+                                                   role="button">
+                                                    Удалить
+                                                </a>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!--Модальное окно - конец-->
+                                <!--Передача данных в модальное окно Важно!!!  - конец -->
+
+                            </div>
+
+                        </div>
+                        <!--Ссылки - Редактировать и удалить прайс - начало-->
+
+                        <!--Таблица прайса - начало-->
+                        <div class="pb-4">
+
+                            <!--class="table-responsive" - добавляет прокрутку-->
+                            <!--см. https://bootstrap-4.ru/articles/cheatsheet/#table-reflow-->
+                            <div class="table-responsive">
+                                <table class="table table-reflow table-hover mb-5">
+
+                                    {% for i in range(price.value_table|length) %}
+                                    {% if i == 0 %}
+                                    <thead>
+                                    <tr>
+                                        {% for val in price.value_table[i] %}
+                                        <th>{{ val }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    {% else %}
+                                    <tbody>
+
+                                    <tr>
+                                        {% for j in range(price.value_table[i]|length) %}
+                                        {% if j == 0 %}
+                                        <td>
+                                            {{ price.value_table[i][j] }}
+                                        </td>
+                                        {% else %}
+                                        <td>
+                                            {{ price.value_table[i][j] }}
+                                        </td>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tr>
+
+
+                                    </tbody>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                </table>
+                            </div>
+                        </div>
+                        <!--Таблица прайса - конец-->
+
+                        {% endfor %}
+
+
+                        {% endif %}
+                    </div>
+                    <!--Прайсы карточки услуг (с ссылками редактирования прайсов) - конец-->
+                </div>
+                <!--Вид карточки услуги на сайте - конец-->
+
+            </div>
+            <!--Ссылки редактирования карточки услуг - конец-->
+
+
+            <!--<div class="card-header"></div>-->
+            <!--<div class="card-body">-->
+            <!--<div class="card-text"></div>-->
+            <!--</div>-->
+            <!--<div class="card-footer"></div>-->
+
+        </div>
+        <!--рамка - конец-->
+
+
+    </div>
+</main>
+
+{% endblock %}

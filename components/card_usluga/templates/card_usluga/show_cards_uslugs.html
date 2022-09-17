@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+                <a href="{{ url_for('admin.index') }}">
+                    Вернуться в панель администратора
+                </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.create_card_usluga') }}">
+                Создать новую карточку услуг
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3 - конец-->
+
+
+        <!--Навигационные ссылки - начало-->
+        <!--<div class="row pt-2">-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('admin.index') }}">-->
+                    <!--Вернуться в панель администратора-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<a href="{{ url_for('card_usluga_bp.create_card_usluga') }}">-->
+                <!--Создать новую карточку услуг-->
+            <!--</a>-->
+        <!--</div>-->
+        <!--Навигационные ссылки - конец-->
+
+        <h5 class="text-left base_color_1">Карточки услуг</h5>
+        <br>
+
+        {% for menu in menus %}
+        {% if menu.uslugs %}
+        <div class="pl-4 py-1 text-left bg-success text-white">
+            Раздел: <b>{{ menu }}</b>
+        </div>
+
+        <!--Модуль Карточки услуг - начало-->
+        <div class="row pt-2">
+            {% for usluga in menu.uslugs %}
+                {% if usluga.cards_usluga %}
+                    {% for card_usluga in (usluga.cards_usluga|sort(attribute="name_card_usluga")) %}
+
+                <div class="col-md-4 p-2 pb-4">
+                <!--Внимание!!! класс h-100 помог выровнять по высоте!!!-->
+                <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
+                <!--отступов между колонками а при попытке задать margin (m-1 например)-->
+                <!--приводило к тому что отступ появлялся но 4 колонки не помещались на 1 строке(ьтолько 3)-->
+                <!--<div class="border border-success p-2 h-100">-->
+
+
+                <div class="card border-success m-2 p-3 h-100">
+                    <div class="text-success">Услуга раздела: <b>{{ usluga }}</b></div>
+
+                    <div class="card-body pt-2 pl-2">
+                        <div class="card-text">
+                            <div>Карточка услуги:
+                                <!--{% if card_usluga.name_card_usluga %}-->
+                                <b class="base_color_1">{{ card_usluga.name_card_usluga }}</b>
+                                <!--{% endif %}-->
+                            </div>
+                            <div>Уникальный номер карточки (id):
+                                <b class="base_color_1"> {{ card_usluga.id }}</b>
+                            </div>
+                            <div>Сопроводительный текст:
+                                <b class="base_color_1">{{ card_usluga.comments }}</b>
+                            </div>
+
+                            <!--Информация о прайсах - начало-->
+                            {% if card_usluga.prices %}
+                            <div>  Прайсы:
+                                {% for price in card_usluga.prices %}
+                                <b class="base_color_1">{{ price }}, </b>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <!--Информация о прайсах - конец-->
+
+
+                            <!--Информация о фото - начало-->
+                            <div>
+                                {% if card_usluga.photos %}
+
+                                <div class="pt-2 pb-1">
+                                    Прикрепленные изображения:
+                                </div>
+
+                                <div class="row">
+                                    {% for photo in card_usluga.photos %}
+                                    <div class="col-3 pr-0 pb-3">
+                                        <img class="card-img-top"
+                                             src="/static/images/cards_uslugs/{{ menu.link }}/{{ usluga.link }}/{{ card_usluga.dir_photos }}/{{ photo.secure_name_photo }}"
+                                             alt="фото услуги">
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                {% endif %}
+                                <div>
+                                    Директория загрузки изображений:
+                                    <b class="base_color_1">
+                                        /static/images/cards_uslugs/{{ menu.link }}/{{ usluga.link }}/{{
+                                        card_usluga.dir_photos }}
+                                    </b>
+                                </div>
+                            </div>
+                            <!--Информация о фото - конец-->
+
+
+                            <!--Информация о статусах - начало-->
+                            <div>
+                            {% if card_usluga.statuses_card_usluga %}
+                            <div>
+                                <div class="pt-2 pb-1">Статусы:</div>
+                                <!--Статусы карточки (СтатусКардУслуг) сортируем по атрибуту номер(вес) статуса в модели Статус-->
+                                {% for status_card_usluga in (card_usluga.statuses_card_usluga|sort(attribute="status.number")) %}
+                                <div class="base_color_1">
+                                    {{ status_card_usluga }}
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+                            {% endif %}
+                            </div>
+                            <!--Информация о статусах - конец-->
+
+                        </div>
+                    </div>
+
+                    <div class="card-footer p-0">
+                        <a class="btn btn-success container-fluid"
+                                href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">
+                            Редактировать карточку услуг
+                        </a>
+                        <div class="pt-2">
+
+                        <!--Триггер модального окна - удалить карточку услуги - начало-->
+                            <a class="btn btn-danger container-fluid"
+                               data-toggle="modal"
+                               data-target="#deleteCardUsluga{{ card_usluga.id }}"
+                               href="">
+                            Удалить карточку услуг
+                            </a>
+                            <!--Триггер модального окна - Удалить карточку услуги - конец-->
+
+                            <!--Модальное окно при ссылке Удалить карточку услуги  - начало-->
+                            <!--активируется после нажатия на триггер-->
+                            <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+
+                        <div class="modal fade" id="deleteCardUsluga{{ card_usluga.id }}" tabindex="-1" role="dialog"
+                             aria-labelledby="deleteCardUsluga{{ card_usluga.id }}Label" aria-hidden="true">
+
+                            <div class="modal-dialog" role="document">
+
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <div class="modal-title" id="deleteCardUsluga{{ card_usluga.id }}Label">
+                                            <b class="base_color_1">
+                                                Вы уверены, что хотите удалить карточку услуги?
+                                            </b>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close">
+                                            <!--&times; - это крестик для закрытия-->
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <h6 class="text-success">
+                                            <b>Внимание!</b><br>
+                                        </h6>
+                                        <div>
+                                            При удалении карточки услуги ВСЕ ФОТО данной карточки также будут удалены.
+                                            <br>
+                                            Прайсы карточки услуги удалены не будут!!!
+                                        </div>
+                                        <div>
+                                            <b class="base_color_1">Если вы хотите отредактировать данные карточки,
+                                                закройти диалоговое окно и нажмите кнопку Редактировать карточку
+                                                услуги.</b>
+                                        </div>
+
+
+                                    </div>
+
+                                    <br>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Отменить
+                                        </button>
+
+                                        <a class="btn btn-danger"
+                                           href="{{ url_for('card_usluga_bp.delete_card_usluga', card_usluga_id=card_usluga.id) }}"
+                                           role="button">
+                                            Удалить
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <!--Модальное окно при ссылке Удалить карточку услуги - конец-->
+
+                        </div>
+                        <!--<button type="button" -->
+                                <!--class="btn btn-success container-fluid" -->
+                                <!--data-toggle="modal"-->
+                                <!--data-target="#deleteFoto"-->
+                                <!--href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">-->
+                            <!--Удалить карточку услуг-->
+                        <!--</button>-->
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+                     {% endfor %}
+                 {% endif %}
+            {% endfor %}
+        </div>
+        <!--Модуль Карточки услуг- конец-->
+
+
+
+        {% endif %}
+        {% endfor %}
+
+    </div>
+</main>
+
+{% endblock %}

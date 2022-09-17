@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% block container %}
+ <!--Данная страница - копия choice2 без формы удаления файлов-->
+<main>
+    <!--Для размещения 2 форм см.-->
+    <!--см https://fooobar.com/questions/140124/multiple-forms-in-a-single-page-using-flask-and-wtforms-->
+
+    <div class="container pl-3">
+        <div class="row pb-3 pt-2">
+            <div class="col-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            </div>
+            <a href="{{ url_for('foto_manager_bp.manager_foto') }}">
+            Перейти к списку изображений
+            </a>
+        </div>
+
+
+
+
+        {% if message %}
+        <div class="text-success">
+            Изображение успешно загружено.
+        </div>
+        <div class="text-success">
+            Загрузите следующее изображение
+        </div>
+        {% endif %}
+
+        <div class="row">
+
+            <div class="col-4 col-lg-4 mt-1">
+
+
+
+                <!--<h5 class="text-left mt-4">-->
+                    <!--Загрузите изображение в соответствующий раздел-->
+                <!--</h5>-->
+                <!--Загрузка файлов - начало-->
+                <div class="b-1">
+                    <!--Заголовки-->
+                    <h4 class="mb-2 font-weight-light base_color_1"><b>Выберите раздел и услугу,</b></h4>
+                    <h6 class="mb-3 font-weight-light">для которых вы хотите загрузить изображение</h6>
+                    <!--Заголовки -  конец-->
+
+                    <!--Форма загрузки файла-->
+                    <form method="POST" action="/admin/foto/choice/" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+
+                        <!--Модальное окно 1  - начало-->
+                        <!--Его не видно пока не нажать кнопку Загрузить т.е.активируется после нажатия на триггер(у нас кнопка Загрузить))-->
+                        <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+
+                        <!--Передача данных в модальное окно Важно!!!  - начало -->
+                        <!--Для передачи данных в модальное окно нужно указать уникальный идентификатор объекта!!-->
+                        <!--и в тригере модального окна (data-target="#UploadFoto")-->
+                        <!--и в самом модальном окне id="UploadFoto"-->
+                        <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
+                        <div class="modal fade"
+                             id="UploadFoto"
+                             tabindex="-1"
+                             role="dialog"
+                             aria-labelledby="UploadFotoLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+
+                                <div class="modal-content">
+                                    <div class="modal-header">
+
+                                        <h5 class="modal-title base_color_1" id="UploadFotoLabel">
+                                            Подтвердите загрузку изображения</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <!--&times; - это крестик для закрытия-->
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h6 class="text-danger">
+                                            <b>Внимание!</b>
+                                        </h6>
+                                        <b class="base_color_1">После подтверждения загрузки</b>
+                                        <br>
+                                        изображение </b> будет загружено<br>
+                                        <b class="base_color_1">в выбранный раздел и услугу</b><br>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                                        </button>
+                                        <!--<a>-->
+                                        {{ form.submit(class='form-control my-3 btn-success btn-block') }}
+                                        <!--</a>-->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!--Передача данных в модальное окно Важно!!!  - конец -->
+                        <!--Модальное окно 1 - конец-->
+
+
+
+                        <!--{{ form.menu(class="py-2 my-2", id='select_menu') }} не верно!-->
+                        <!--{{ form.usluga(class="py-2 my-2", id='select_usluga') }} не верно!-->
+                        <!--id='select_menu  и id='select_usluga' определены в форме class FormChoice1(FlaskForm):!!!-->
+                        <div>
+                            {{ form.menu.label(class="py-1 mt-0") }}
+                        </div>
+                        <div>
+                            {{ form.menu(class="container-fluid py-2 mt-0") }}
+                        </div>
+                        <div>
+                            {{ form.usluga.label(class="py-1 mt-2") }}
+                        </div>
+                        <div>
+                            {{ form.usluga(class="container-fluid py-2 mt-0") }}
+                        </div>
+
+                        <!--Поле выбора файла-->
+                        <div>
+                            {{ form.photo.label(class="py-0 mt-2") }}
+                            <!--{{ form.photo(class="form-control text-center pb-4 mb-4") }}-->
+                        </div>
+                        <div>
+                            {{ form.photo(class="py-2 mt-0") }}
+                        </div>
+                        <!--Поле выбора файла -  конец-->
+
+                        <div>
+                            {{ form.title.label(class="py-0 mt-2") }}
+                        </div>
+                        <div>
+                            {{ form.title(class="container-fluid py-1 my-1") }}
+                        </div>
+                        <div>
+                            {{ form.comments.label(class="py-1 my-1") }}
+                        </div>
+                        <div>
+                            {{ form.comments(class="container-fluid py-1 my-1") }}
+                        </div>
+
+
+
+                        <!--Кнопка загрузки-->
+                        <a class="mt-2" href="" data-toggle="modal"
+                           data-target="#UploadFoto" role="button">
+                        {{ form.submit(class="form-control my-3 btn-success btn-block") }}
+                        </a>
+                        <!--Кнопка загрузки -  конец-->
+
+                    </form>
+                </div>
+                <!--Загрузка файлов - конец-->
+            </div>
+
+            <div class="col-8 col-lg-8 mt-1">
+                <div>
+                При загрузке изображения обратите внимание
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+ <!--Этот блок может стоять и в начале и в конце самой формы!!!-->
+
+<!--# ******-->
+<!--# Выбор из выпадающего списка и обновление другого списка в формах-->
+<!--# файл __init__.py в components/admin  - class Choice1, FormChoice1(form_name='FormChoice1Name') и-->
+<!--#  @app.route('/_get_usl_choice1_admin/')-->
+<!--#  def _get_usl_choice1_admin():-->
+<!--# Полностью основано на https://stackoverflow.com/questions/41232105/populate-wtforms-select-field-using-value-selected-from-previous-field-->
+<!--# Заменены переменные, названия функций, также в choice1.html добавлен-->
+<!--# # <script src="https://code.jquery.com/jquery-3.2.1.min.js"-->
+<!--#       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="-->
+<!--#       crossorigin="anonymous">-->
+<!--#     </script>!!!-->
+
+
+<!--Без этого подключения не работает!!!!-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous">
+    </script>
+<!--Без этого подключения не работает!!!! -  конец-->
+
+<!--***** Скрипт1 для выбора из меню и услуги для загрузки фото - начало-->
+<script charset="utf-8" type="text/javascript">
+
+$(function() {
+
+    // jQuery selection for the 2 select boxes (Выбор jQuery для 2 полей выбора)
+    var dropdown = {
+        menu: $('#select_menu'),
+        usluga: $('#select_usluga')
+    };
+
+    // call to update on load (вызов для обновления при загрузке)
+    updateUslugs();
+
+    // function to call XHR and update usluga dropdown (функция для вызова XHR и обновления раскрывающегося списка услуг)
+    function updateUslugs() {
+        var send = {
+            menu: dropdown.menu.val()
+        };
+        dropdown.usluga.attr('disabled', 'disabled');
+        dropdown.usluga.empty();
+        $.getJSON("{{ url_for('foto_manager_bp._get_usl_choice_admin') }}", send, function(data) {
+            data.forEach(function(item) {
+                dropdown.usluga.append(
+                    $('<option>', {
+                        value: item[0],
+                        text: item[1]
+                    })
+                );
+            });
+            dropdown.usluga.removeAttr('disabled');
+        });
+    }
+
+    // event listener to state dropdown change (прослушиватель событий для изменения раскрывающегося списка состояния)
+    dropdown.menu.on('change', function() {
+        updateUslugs();
+    });
+
+});
+
+</script>
+<!--***** Скрипт1 для выбора из меню и услуги для загрузки фото - конец-->
+
+
+<!--***** Скрипт2 для выбора из меню и услуги для удаления фото - начало-->
+<!--<script charset="utf-8" type="text/javascript">-->
+
+<!--$(function() {-->
+
+    <!--// jQuery selection for the 2 select boxes (Выбор jQuery для 2 полей выбора)-->
+    <!--var dropdown = {-->
+        <!--menu: $('#select_menu_for_delete'),-->
+        <!--usluga: $('#select_usluga_for_delete')-->
+    <!--};-->
+
+    <!--// call to update on load (вызов для обновления при загрузке)-->
+    <!--updateUslugs();-->
+
+    <!--// function to call XHR and update usluga dropdown (функция для вызова XHR и обновления раскрывающегося списка услуг)-->
+    <!--function updateUslugs() {-->
+        <!--var send = {-->
+            <!--menu: dropdown.menu.val()-->
+        <!--};-->
+        <!--dropdown.usluga.attr('disabled', 'disabled');-->
+        <!--dropdown.usluga.empty();-->
+        <!--$.getJSON("{{ url_for('foto_manager_bp._get_usl_choice_admin') }}", send, function(data) {-->
+            <!--data.forEach(function(item) {-->
+                <!--dropdown.usluga.append(-->
+                    <!--$('<option>', {-->
+                        <!--value: item[0],-->
+                        <!--text: item[1]-->
+                    <!--})-->
+                <!--);-->
+            <!--});-->
+            <!--dropdown.usluga.removeAttr('disabled');-->
+        <!--});-->
+    <!--}-->
+
+    <!--// event listener to state dropdown change (прослушиватель событий для изменения раскрывающегося списка состояния)-->
+    <!--dropdown.menu.on('change', function() {-->
+        <!--updateUslugs();-->
+    <!--});-->
+
+<!--});-->
+
+<!--</script>-->
+<!--***** Скрипт2 для выбора из меню и услуги для удаления фото - конец-->
+
+
+{% endblock %}
+
+

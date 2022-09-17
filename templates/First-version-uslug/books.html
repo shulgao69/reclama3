@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block container %}
+
+
+<main class="container">
+    <!--Хлебные крошки  (навигационные цепочки)-->
+    <!--<ol class="breadcrumb breadcrumb-new">-->
+    <!--<li class="breadcrumb-item"><a href="/">Главная</a></li>-->
+    <!--<li class="breadcrumb-item"><a href="/poligraf/">Полиграфия</a></li>-->
+    <!--<li class="breadcrumb-item active">Книги</li>-->
+    <!--</ol>-->
+    <!--Хлебные крошки  (навигационные цепочки)-конец-->
+
+    <!--Хлебные крошки  на основе JSON (навигационные цепочки)-->
+    <!--<ol class="breadcrumb breadcrumb-new">-->
+        <!--<li class="breadcrumb-item"><a href="/">Главная</a></li>-->
+        <!--{% for link in links %}-->
+        <!--{% if link.link == punkt_menu %}-->
+        <!--<li class="breadcrumb-item"><a href="/{{ link.link }}/">{{ link.title }}</a></li>-->
+        <!--<li class="breadcrumb-item active">-->
+            <!--{% for uslug in uslugi %}-->
+            <!--{% if uslug.punkt_menu == punkt_menu and uslug.link == category %}-->
+            <!--{{ uslug.title }}-->
+            <!--{% endif %}-->
+            <!--{% endfor %}-->
+        <!--</li>-->
+        <!--{% endif %}-->
+        <!--{% endfor %}-->
+    <!--</ol>-->
+    <!--Хлебные крошки на основе JSON  (навигационные цепочки)-конец-->
+
+
+    <!--Хлебные крошки  на основе базы данных (навигационные цепочки)-->
+    {% include 'breadcrumbs-page.html' %}
+    <!--Хлебные крошки на основе базы данных  (навигационные цепочки)-конец-->
+
+
+
+    <div class="row">
+        <div class="col-3">
+            Стоимость услуг
+        </div>
+        <div class="col-9">
+            <div class="card-deck">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Card title</h4>
+                        <p class="card-text">Это более широкая карта с
+                            поддерживающим текстом ниже в качестве естественного входа к дополнительному контенту.
+                            Этот контент немного длиннее.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Card title</h4>
+                        <p class="card-text">Эта карта имеет вспомогательный текст ниже в качестве естественного
+                            входа к дополнительному контенту.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Card title</h4>
+                        <p class="card-text">Это более широкая карта с поддерживающим текстом ниже в качестве
+                            стественного входа к дополнительному контенту. Эта карта имеет еще более длинное содержание,
+                            чем первая, чтобы показать, что действие равной высоты.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-12">
+                    <div class="card-deck">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Card title</h4>
+                                <p class="card-text">Это более широкая карта с
+                                    поддерживающим текстом ниже в качестве естественного входа к дополнительному
+                                    контенту.
+                                    Этот контент немного длиннее.</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Card title</h4>
+                                <p class="card-text">Эта карта имеет вспомогательный текст ниже в качестве естественного
+                                    входа к дополнительному контенту.</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Card title</h4>
+                                <p class="card-text">Это более широкая карта с поддерживающим текстом ниже в качестве
+                                    стественного входа к дополнительному контенту. Эта карта имеет еще более длинное
+                                    содержание,
+                                    чем первая, чтобы показать, что действие равной высоты.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+</main>
+
+
+{% endblock %}

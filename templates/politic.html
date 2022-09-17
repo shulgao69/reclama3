@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title> Май </title>
+    <meta charset="UTF-8">
+
+    <!--Раньше этот тег был очень важен для поисковиков. Каково положение дел сейчас?
+    https://htmlacademy.ru/courses/299/run/15?skipReg=1
+    Мы бы с удовольствием вам поведали, но это большой секрет Яндекса и Гугла.
+    Ключевые слова (самые важные слова из содержания стр.) перечисляются в атрибуте content через запятую-->
+    <meta name="keywords" content="важные, ключевые, слова">
+
+    <!--   Метатег Description
+    Содержимое метатега Description является одним из источников, на основе которых формируются описания страниц сайта
+    в результатах поиска Яндекса. В сниппет попадает наиболее информативный и релевантный поисковому запросу текст.
+    Если метатега Description нет на страницах, в Яндекс.Вебмастере в разделе Диагностика появится уведомление об этом
+    Метаописание должно:
+    быть уникальным для каждой страницы сайта;
+    быть емким и содержательным, с правильно выстроенными предложениями, без злоупотреблений ключевыми словами,
+    фразами, заглавными буквами, рекламными лозунгами и пр.;
+    отражать текущее состояние страницы;
+    соответствовать языку документа;
+    отличаться от содержимого элемента title.
+    Внимание!!! Доработать этот тег согласно требованиям выше!!!!!-->
+    <!--<meta name="Description" content="..."/>-->
+     <!--https://htmlacademy.ru/courses/299/run/15?skipReg=1
+    Краткое описание стр.задаётся похожим образом, только значение атрибута name меняется на description:
+    Краткое описание (или аннотация) стр. часто используется поисковиками при отображении результатов поиск-->
+    <meta name="description" content="краткое описание">
+
+    <!--Подключаем адаптивную верстку-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Подключаем бутстреп-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">&ndash;&gt;-->
+
+    <!--Подключаем шрифты Roboto и Fira+Sans c сайта https://fonts.googleapis.com
+    Для этого заходим на сайт https://fonts.google.com, выбираем шрифт. нажимаем на + справа появляется код,
+     вставляем в сайт-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap">
+    <!--<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet">-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <!--Подключаем иконки и шрифты-->
+    <!--<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css?ver=5.0.3' type='text/css' media='all' />-->
+    <!--<link rel='stylesheet' id='art_net_theme-material-icons-css' href='https://fonts.googleapis.com/icon?family=Material+Icons&#038;ver=5.0.3' type='text/css' media='all' />-->
+    <!--<link rel="preconnect" href="https://fonts.gstatic.com">-->
+
+    <!--Подключаем файлы собственных стилей my.css, cookie.css для изменения стилей Бутстреп -->
+    <link rel="stylesheet" type="text/css" href="/static/css/my.css" >
+    <link rel="stylesheet" type="text/css" href="/static/css/cookie.css" >
+    <!--<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/my.css') }}">-->
+
+    <!--Подключить для Варианта 1 cookies-->
+    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.css">-->
+    <!---->
+
+    <!--Подключить для Варианта 2 cookies-->
+
+    <!---->
+
+</head>
+<div class="container">
+
+<!--https://www.open.ru/cookie-->
+<h1 class="mt-5">Согласие на обработку персональных данных</h1>
+<p class="mt-4">Настоящим, продолжая работу на сайте, я даю свое согласие ООО "Информ Центр"
+    (адрес: г. Тверь, Вагжановский перю, д.9, офис 509)
+    на автоматизированную обработку моих персональных данных
+    (файлы cookie, сведения о действиях, которые я совершаю на сайте,
+    сведения об используемых для этого устройствах, дата и время сессии),
+    в т.ч. с использованием метрических программ Яндекс.Метрика,
+    Google Analytics, Flocktory, путем совершения следующих действий:
+    сбор, запись, систематизация, накопление, хранение, уточнение (обновление, изменение),
+    извлечение, использование, блокирование, удаление, уничтожение, передача (предоставление, доступ)
+    партнерам ООО "Информ Центр", предоставляющим сервис по метрическим программам.</p>
+<p>Обработка данных осуществляется в целях улучшения работы сайта,
+    совершенствования продуктов и услуг, определения предпочтений пользователя,
+    предоставления целевой информации по продуктам и услугам компании и ее партнеров.
+    Настоящее согласие действует с момента его предоставления и в течение всего периода
+    использования сайта.
+    </p>
+<p>В случае отказа от обработки данных метрическими программами
+    я проинформирован о необходимости прекратить использование сайта или
+    отключить файлы cookie в настройках браузера.
+    </p>
+    <a href="/cookies-success/">
+        <button class="btn btn-success mr-2">Спасибо, понятно</button>
+    </a>
+</div>

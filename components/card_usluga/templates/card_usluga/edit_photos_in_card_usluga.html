@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Перейти к карточкам услуг
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.upload_photos_in_card_usluga',
+                            card_usluga_id=card_usluga.id) }}">
+                Добавить фото
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">
+                Вернуться к карточке услуги
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3 - конец-->
+
+
+        <!--Навигационные ссылки - начало-->
+        <!--<div class="row pt-2 pb-3">-->
+        <!--<div class="col-4">-->
+        <!--<a href="{{ url_for('admin.index') }}">-->
+        <!--Вернуться в панель администратора-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-3">-->
+        <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+        <!--Перейти к карточкам услуг-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-2 text-center">-->
+        <!--<a href="{{ url_for('card_usluga_bp.upload_photos_in_card_usluga', card_usluga_id=card_usluga.id) }}">-->
+        <!--Добавить фото-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--<div class="col-3">-->
+        <!--<a href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">-->
+        <!--Вернуться к карточке услуги-->
+        <!--</a>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки - конец-->
+
+
+        <!--Сведения о карточке услуги - начало-->
+        <div>
+            <h6>Сведения о карточке услуги</h6>
+            <div class="text-success">
+                Раздел:
+                <b class="base_color_1">
+                    {{ card_usluga.usluga.punkt_menu.title }}
+                </b>
+                Услуга:
+                <b class="base_color_1">
+                    {{ card_usluga.usluga }}
+                </b>
+            </div>
+            <div class="text-success">Карточка услуги:
+                {% if card_usluga.name_card_usluga %}
+                <b class="base_color_1">
+                    {{ card_usluga.name_card_usluga }}
+                </b>
+                {% endif %}
+                Id карточки услуг:
+                <b class="base_color_1">
+                    {{ card_usluga.id }}
+                </b>
+            </div>
+            <div class="text-success">
+                    Директория загрузки изображений:
+                    <b class="base_color_1">
+                        /static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}
+                    </b>
+                </div>
+            <div class="text-success">
+                Сопроводительный текст:
+                {% if card_usluga.comments %}
+                <b class="base_color_1">
+                    {{ card_usluga.comments }}
+                </b>
+                {% endif %}
+            </div>
+        </div>
+        <!--Сведения о карточке услуги - конец-->
+
+        <h5 class="pt-3">
+            Изображения, загруженные в карточку
+        </h5>
+
+
+        <div class="row">
+            {% if card_usluga.photos %}
+            {% for photo in card_usluga.photos %}
+
+            <div class="col-4 pt-3">
+
+                <!--карточка с рамкой - начало-->
+                <!--рамка border-success карточки задается в том же div что и card,-->
+                <!--иначе рамка не будет выровнена по низу-->
+                <div class="card border-success m-1 h-100">
+
+                    <div class="card-body">
+
+                        <img class="card-img-top d-none d-md-block w-100"
+                             src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ photo.secure_name_photo }}"
+                             alt="Фото">
+
+                        <!--Сведения о фото - начало-->
+                        <div class="card-text pt-3">
+                            <div><b class="base_color_1">id изображения</b></div>
+                            <div>{{ photo.id }}</div>
+                            <br>
+                            <div><b class="base_color_1">Исходное имя файла:</b></div>
+                            <div>{{ photo.origin_name_photo }}</div>
+                            <br>
+                            <div><b class="base_color_1">Имя файла в базе:</b></div>
+                            <div>{{ photo.secure_name_photo }}</div>
+                            <br>
+                            <div><b class="base_color_1">Заголовок фото:</b></div>
+                            {% if photo.title %}
+                            <div>{{ photo.title }}</div>
+                            {% endif %}
+                            <div class="pt-3"><b class="base_color_1">Сопроводительный текст:</b></div>
+                            {% if photo.comments %}
+                            <div>{{ photo.comments }}</div>
+                            {% endif %}
+                        </div>
+                        <!--Сведения о фото - конец-->
+
+
+                        <!--если кнопка внутри class="card-body" то она не будет выровнена по низу!!-->
+                        <!--<div>-->
+                        <!--<a class="btn btn-success container-fluid"-->
+                        <!--href="">-->
+                        <!--dgsgsg-->
+                        <!--</a>-->
+                        <!--</div>-->
+
+                    </div>
+
+
+                    <!--внутри класса  card-footer кнопки автоматически имеют отступы слева
+                    такие как в тексте card-body, но при этом имеется слабо видимая полоска сверху-->
+                    <div class="card-footer">
+
+                        <!--Ccылка Редактировать информацию к фото - начало-->
+                        <div>
+                            <a class="btn btn-success container-fluid"
+                               href="{{ url_for('card_usluga_bp.edit_photo_info', card_usluga_id=card_usluga.id, photo_id=photo.id) }}">
+                                Редактировать информацию к фото
+                            </a>
+                        </div>
+                        <!-- Ccылка Редактировать информацию к фото - конец-->
+
+                        <!--Кнопка Удалить фото - начало-->
+                        <div class="pt-2">
+
+                            <!--Модальное окно  - начало-->
+                            <!--Его не видно пока не нажать ссылку Удалить2 !!!!!!!-->
+                            <!--активируется после нажатия на триггер(он выше (ссылка - удалить карусель)-->
+                            <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+                            <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+                            <!--ставим модальное окно внутри цикла car in carousel -->
+                            <div class="modal fade" id="deletePhoto{{ photo.id }}"
+                                 tabindex="-1" role="dialog"
+                                 aria-labelledby="deletePhoto{{ photo.id }}Label"
+                                 aria-hidden="true">
+
+                                <div class="modal-dialog" role="document">
+
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title base_color_1" id="deletePhoto{{ photo.id }}Label">
+                                                Вы уверены, что хотите удалить фото?
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <!--&times; - это крестик для закрытия-->
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <h6 class="text-success">
+                                                <b>Внимание!</b><br>
+                                            </h6>
+                                            <div>
+                                                Фото
+                                                <b class="base_color_1">
+                                                    "{{ photo.secure_name_photo }}"
+                                                </b>
+                                                (id фото:
+                                                <b class="base_color_1">
+                                                    {{ photo.id }}
+                                                </b>)
+                                            </div>
+
+                                            <div class="text-danger">
+                                                <b>будет удалено!</b>
+                                            </div>
+                                            <!--<div class="text-danger">-->
+                                            <!--<b>При удалении прайса из карточки услуг сам прайс удален не-->
+                                            <!--будет!</b>-->
+                                            <!--</div>-->
+                                            <br>
+                                            Для редактирования заголовка и сопроводительного текста фото
+                                            выйдите из диалогового окна и нажмите кнопку
+                                            <b class="base_color_1">Редактировать фото</b>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Отменить
+                                            </button>
+
+                                            <a class="btn btn-danger"
+                                               href="{{ url_for('card_usluga_bp.delete_photo_from_card_usluga', card_usluga_id=card_usluga.id, photo_id=photo.id) }}"
+                                               role="button">
+                                                Удалить
+                                            </a>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!--Модальное окно - конец-->
+                            <!--Передача данных в модальное окно Важно!!!  - конец -->
+
+                            <!--Триггер модального окна для удаления фото - начало-->
+                            <div class="pt-2">
+                                <a class="btn btn-danger container-fluid"
+                                   type="button"
+                                   data-toggle="modal"
+                                   data-target="#deletePhoto{{ photo.id }}"
+                                   href="">
+                                    Удалить фото
+                                </a>
+                            </div>
+                            <!--Триггер модального окна для удаления фото - конец-->
+
+                        </div>
+                        <!--Кнопка Удалить фото - конец-->
+
+                    </div>
+                        <!--<button type="button" class="btn btn-success container-fluid" data-toggle="modal"-->
+                        <!--data-target="#deleteFoto"-->
+                        <!--href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">-->
+                        <!--Редактировать карточку услуг-->
+                        <!--</button>-->
+
+                </div>
+                <!--карточка с рамкой - конец-->
+
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>все про cookies</title>
+
+ <!--   Метатег Description
+    Содержимое метатега Description является одним из источников, на основе которых формируются описания страниц сайта
+    в результатах поиска Яндекса. В сниппет попадает наиболее информативный и релевантный поисковому запросу текст.
+    Если метатега Description нет на страницах, в Яндекс.Вебмастере в разделе Диагностика появится уведомление об этом
+    Метаописание должно:
+    быть уникальным для каждой страницы сайта;
+    быть емким и содержательным, с правильно выстроенными предложениями, без злоупотреблений ключевыми словами,
+    фразами, заглавными буквами, рекламными лозунгами и пр.;
+    отражать текущее состояние страницы;
+    соответствовать языку документа;
+    отличаться от содержимого элемента title.
+    Внимание!!! Доработать этот тег согласно требованиям выше!!!!!-->
+    <!--<meta name="Description" content="..."/>-->
+
+    <!--Подключаем адаптивную верстку-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Подключаем бутстреп-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">&ndash;&gt;-->
+
+    <!--Подключаем шрифты Roboto и Fira+Sans c сайта https://fonts.googleapis.com
+    Для этого заходим на сайт https://fonts.google.com, выбираем шрифт. нажимаем на + справа появляется код,
+     вставляем в сайт-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap">
+    <!--<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet">-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!--Подключаем файл style.css для изменения стилей Бутстреп -->
+    <link rel="stylesheet" type="text/css" href="/static/css/my.css" >
+    <!--<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/my.css') }}">-->
+
+    <!--Подключить для Варианта 1 cookies-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.css">
+    <!---->
+
+</head>
+<body>
+
+<!--Вариант 1 cookies сайт https://github.com/Wruczek/Bootstrap-Cookie-Alert-->
+<div class="container" id="variant1">
+    <h3>Вариант 1 cookies сайт https://github.com/Wruczek/Bootstrap-Cookie-Alert</h3>
+    <h2>Работает, проверяла</h2>
+    <div class="alert text-center cookiealert" role="alert">
+        <b>Вариант1 cookies Do you like cookies?</b> &#x1F36A; We use cookies to ensure you get the best experience on our
+        website.
+        <a href="https://cookiesandyou.com/" target="_blank">
+            Learn more
+        </a>
+        <button type="button" class="btn btn-primary btn-sm acceptcookies">
+            I agree
+        </button>
+    </div>
+</div>
+<!---->
+
+
+<div class="container" id="variant2">
+    <h3>Вариант 2  сайт ...</h3>
+    <h2>Работает, проверяла</h2>
+    <div>
+        ...
+    </div>
+</div>
+
+<div class="container" id="variant3">
+    <h3>Вариант 3  сайт ...</h3>
+    <h2>Работает, проверяла</h2>
+    <div>
+        ...
+    </div>
+</div>
+
+
+<!--Подключить для Варианта 1 cookies (1 или 2 скрипта(можно без второго))-->
+<script src="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.js"></script>
+<script>
+window.addEventListener("cookieAlertAccept", function() {
+    alert("cookies приняты")
+})
+</script>
+<!---->
+
+
+
+</body>
+</html>

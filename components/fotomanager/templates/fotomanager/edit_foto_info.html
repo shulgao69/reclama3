@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container">
+
+        <div class="row pb-3 pt-2">
+            <div class="col-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            </div>
+            <a href="{{ url_for('foto_manager_bp.manager_foto') }}">
+            Вернуться к списку изображений
+            </a>
+        </div>
+
+        <!--Модуль редактирования инфо файлов с миниатюрами - начало-->
+        <h4 class="mt-1 bt-2 text-left">Редактируйте заголовок и текст изображения</h4>
+
+        <!--<h5 class="pl-4 text-left bg-success text-white">Раздел меню: {{ razdel }} </h5>-->
+        <!--<div>Перечень фото (в соответствующих видах услуг)(если есть):</div><br>-->
+
+        <div class="row">
+            <div class="col-md-4 p-2">
+                <!--Внимание!!! класс h-100 помог выровнять рамку по высоте!!!-->
+                <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
+                <!--отступов между колонками а при попытке задать margin (m-1 например)-->
+                <!--приводило к тому что отступ появлялся но 4 колонки не помщались на 1 строке(ьтолько 3)-->
+                <div class="border border-success p-2 h-100 ">
+                    <div class="base_color_1"><b>Раздел меню:</b></div>
+                    <div>{{ menu }}</div>
+                    <div class="base_color_1"><b>Услуга:</b></div>
+                    <div>{{ usluga }}</div>
+                    <div class="card ">
+                        <img class="card-img-top" src="/static/images/uploads/{{ dir_uploads }}{{ secure_name_photo }}"
+                             alt="Card image cap">
+                        <div class="card-body">
+                            <!--<div class="card-title">{{ usluga }}</div>-->
+                            <div class="card-text">
+                                <div><b>Исходное имя файла:</b></div>
+                                <div>{{ origin_name_photo }}</div>
+                                <br>
+                                <div><b>Имя файла в базе:</b></div>
+                                <div>{{ secure_name_photo }}</div>
+                                <br>
+                                <div><b>Заголовок фото:</b></div>
+                                {% if title %}
+                                <div>{{ title }}</div>
+                                {% endif %}
+                                <div class="pt-3"><b>Сопроводительный текст:</b></div>
+                                {% if comments %}
+                                <div>{{ comments }}</div>
+
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 p-2">
+                <div class="border border-success p-2 h-100 ">
+
+                    <form method="POST" action="{{ url_for('foto_manager_bp.edit_foto') }}">
+                        {{ form_edit.csrf_token }}
+
+                        {{ form_edit.secure_name_photo(value= secure_name_photo) }}
+                        {{ form_edit.origin_name_photo(value= origin_name_photo) }}
+                        {{ form_edit.dir_uploads(value= dir_uploads) }}
+                        {{ form_edit.dir_usluga(value= dir_usluga) }}
+                        {{ form_edit.dir_menu(value= dir_menu) }}
+                        <div class="pt-2">
+                            <h6>Введите новый заголовок фото</h6>
+                            {{ form_edit.title(class="container-fluid", value=title) }}
+                        </div>
+                        <div class="pt-5">
+                            <h6>Введите новый сопроводительный текст</h6>
+                            {{ form_edit.comments(class="container-fluid py-1 my-1") }}
+                        </div>
+                        <div>
+                            {{ form_edit.submit_save_form_from_mini(class="btn btn-success") }}
+                        </div>
+                    </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

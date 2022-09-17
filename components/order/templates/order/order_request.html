@@ -1,0 +1,370 @@
+<!--страница - заявка на заказ-->
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container">
+
+    <!--возврат к странице выбора услуги - начало-->
+        <a href="{{ url_for('render_uslugi_link', punkt_menu=card_usluga.usluga.punkt_menu.link, category=card_usluga.usluga.link) }}">
+            <div>
+                Вернуться к выбору услуги
+            </div>
+        </a>
+    <!--возврат к странице выбора услуги - конец-->
+
+        <div class="row pt-3">
+
+
+            <div class="col-6">
+                <div>
+                    session.get('sum', 0) {{ session.get('sum', 0) }}
+                </div>
+                <div>
+                    session.get("card_usluga_add_to_cart", False) {{ session.get('card_usluga_add_to_cart', False) }}
+                </div>
+                <div class="px-3 border border-success">
+
+                    {% if current_user.is_authenticated %}
+                    <h5 class="base_color_1 pt-3">
+                        {% if current_user.user_first_name %}
+                            {{ current_user.user_first_name }}!
+                        {% else %}
+                            {{ current_user }}!
+                        {% endif %}
+                    </h5>
+                    {% endif %}
+
+                    <h5 class="pt-3 base_color_1">Вы выбрали для заказа следующую услугу:</h5>
+                    <br>
+                    <div class="row">
+                        <div class="col-5">
+                            <b>Раздел:</b>
+                        </div>
+                        <div class="col-7">
+                            {{ card_usluga.usluga.punkt_menu.title }}
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5">
+                            <b>
+                                Услуга раздела:
+                            </b>
+                        </div>
+                        <div class="col-7">
+                            {{ card_usluga.usluga }}
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5">
+                            <b>Наименование карточки услуги</b>
+                        </div>
+                        <div class="col-7">
+                            {{ card_usluga.name_card_usluga }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5">
+                            <b>Наименование прайса:</b>
+                        </div>
+                        <div class="col-7"> {{ price.name_price_table }}</div>
+                    </div>
+
+                    <br>
+
+                    <div class="row">
+                        <div class="col-5">
+                            <h5 class="base_color_1"> Параметры заказа:</h5>
+                        </div>
+                        <div class="col-7">
+                            <div>
+                                {{ price.value_table[0][0] }} - {{ price.value_table[0][j] }}
+                            </div>
+                            <div>
+                                {{ price.value_table[i][0] }}
+                            </div>
+                            <div>
+                                <b>Цена: {{ price.value_table[i][j] }}</b>
+                            </div>
+
+
+                            {% if order_sum!=-1 %}
+                            <h6 class="pt-4 pb-2">
+                                Изменить количество
+                            </h6>
+                            <div>
+                                <!--Функция  уменьшения количества - начало-->
+                                <!--{#<a href="{{ url_for('order_bp.order_sum_minus',-->
+                                                           <!--foto_id=285,-->
+                                                            <!--name_price=name_price,-->
+                                                            <!--price_0_0=price_0_0,-->
+                                                            <!--price_0_j=price_0_j,-->
+                                                            <!--price_i_0=price_i_0,-->
+                                                            <!--price_i_j=price_i_j) }}">#}-->
+                                    <a href="{{ url_for('order_bp.order_sum_minus',
+                                                card_usluga_id=card_usluga.id,
+                                                price_id=price.id,
+                                                i=i,
+                                                j=j) }}">
+
+                                    <!--Значок - для уменьшения количества - начало-->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="26"
+                                         height="26"
+                                         fill="currentColor"
+                                         class="bi bi-dash-circle"
+                                         viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                                    </svg>
+                                    <!--Значок - для уменьшения количества - конец-->
+                                </a>
+                                <!--Функция  уменьшения количества - конец-->
+
+                                <!--Количество выбранной услуги - начало-->
+                                <b> &nbsp;&nbsp;&nbsp;&nbsp;{{ session.get('sum', 1) }} &nbsp;&nbsp;&nbsp; </b>
+                                <!--Количество выбранной услуги - конец-->
+
+                                <!--Функция  увеличения количества - начало-->
+                                    <a href="{{ url_for('order_bp.order_sum_plus',
+                                                card_usluga_id=card_usluga.id,
+                                                price_id=price.id,
+                                                i=i,
+                                                j=j) }}">
+                                    <!--Значок + для увеличения количества - начало-->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="26"
+                                         height="26"
+                                         fill="currentColor"
+                                         class="bi bi-plus-circle"
+                                         viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                    </svg>
+                                    <!--Значок + для увеличения количества - конец-->
+                                </a>
+                                <!--Функция  увеличения количества - конец-->
+
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+
+                    <div class="row pt-4">
+                        <div class="col-5">
+                            <h5 class="base_color_1">
+                                Итого:
+                            </h5>
+                        </div>
+                        {% if order_sum!=-1 %}
+                        <div class="col-7">
+                            <h5>{{ order_sum }} руб.</h5>
+                        </div>
+
+                        {% else %}
+                        <div class="col-7">
+                            <h5>{{ price.value_table[i][j] }}</h5>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="row pt-3 my-3">
+                        <div class="col-5">
+                            <div>
+                                Добавьте комментарии:
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div>
+                                <input type="text">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row pt-3 my-3">
+                        <div class="col-12">
+                            {% if session.get('card_usluga_add_to_cart') %}
+                            <div>
+                                <a class="btn btn-success container-fluid"
+                                   href="">
+                                    Перейти в корзину
+                                </a>
+                            </div>
+
+                            {% else %}
+                            <div>
+                                <a class="btn btn-success container-fluid"
+                                   href="{{ url_for('order_bp.card_usluga_add_to_cart',
+                                       card_usluga_id=card_usluga.id,
+                                       price_id=price.id,
+                                       i=i,
+                                       j=j) }}">
+                                    Добавить в корзину
+                                </a>
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+                        <!--<div class="col-6">-->
+                <!--<div class="px-3 border border-success">-->
+
+                    <!--{% if current_user.is_authenticated %}-->
+                    <!--<h5 class="base_color_1 pt-3">-->
+                        <!--Здравствуйте {{ current_user }} id: {{ current_user.id }}!-->
+                    <!--</h5>-->
+                    <!--{% endif %}-->
+
+                    <!--&lt;!&ndash;класс бутстреп text-muted делает текст более бледным чем черный (серым)&ndash;&gt;-->
+                    <!--<div class="text-muted pt-3">-->
+                        <!--&lt;!&ndash;<h5 class="h3 mb-3 font-weight-normal">Для уточнения деталей заказа заполните данные</h5>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<h4 class="mb-3 font-weight-light">&ndash;&gt;-->
+                        <!--Для уточнения деталей заказа укажите ваши контактные данные:-->
+                        <!--&lt;!&ndash;</h4>&ndash;&gt;-->
+                    <!--</div>-->
+
+                    <!--&lt;!&ndash;Для чего класс form-signin - не помню!!! поэтому не использую&ndash;&gt;-->
+                    <!--&lt;!&ndash;<form class="form-signin pt-1" action="" method="POST">&ndash;&gt;-->
+                    <!--<form action="" method="POST">-->
+                        <!--{{ form.csrf_token }}-->
+
+                        <!--&lt;!&ndash;Вывод ошибок:&ndash;&gt;-->
+                        <!--&lt;!&ndash;Ошибки можем сформировать разными способами:&ndash;&gt;-->
+                        <!--&lt;!&ndash;1) валидация, кот. делаем внутри формы, с помощью валидаторов формы-->
+                        <!--(встроенных и валидаторов, задаваемых в функции validate_user_phone.-->
+                        <!--Имя такой функции формируется так: validate_имя валидируемого поля-->
+                        <!--В ней можем задать свои сообщения валидатора.)-->
+                        <!--При использовании встроенных валидаторов появляются стандартные сообщения,-->
+                        <!--кот. заданы в браузерах (могут немного отличаться)-->
+                        <!--Если задано в параметрах валидатора собственные message - появятся они!!!&ndash;&gt;-->
+                        <!--&lt;!&ndash;2) условия, кот. накладываем на данные внутри роута и передаем на стр. с помощью переменных            &ndash;&gt;-->
+                        <!--&lt;!&ndash;Затем на стр. выводим ошибки и 1) и 2)-->
+
+
+                        <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало&ndash;&gt;-->
+                        <!--{% if form.user_phone.errors %}-->
+                        <!--{% for err in form.user_phone.errors %}-->
+                        <!--<p class="error alert alert-warning" role="alert">-->
+                            <!--{{ err }}-->
+                        <!--</p>-->
+                        <!--{% endfor %}-->
+                        <!--{% endif %}-->
+                        <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец&ndash;&gt;-->
+
+
+                        <!--&lt;!&ndash;Вывод ошибок, формируемых внутри роута (п.2) (если такие заданы), кот. рендерит эту стр. - начало&ndash;&gt;-->
+                        <!--{% if err %}-->
+                        <!--<div class="alert alert-warning" role="alert">-->
+                            <!--{{ err }}-->
+                        <!--</div>-->
+                        <!--{% endif %}-->
+                        <!--&lt;!&ndash;Вывод ошибок, формируемых внутри роута (п.2), кот. рендерит эту стр. - конец&ndash;&gt;-->
+
+
+                        <!--&lt;!&ndash;класс бутстреп text-muted делает текст более бледным чем черный (серым)&ndash;&gt;-->
+                        <!--{{ form.user_phone.label(class="text-muted control-label") }}-->
+                        <!--{{ form.user_phone(class="form-control") }}-->
+
+                        <!--<div class="pt-3">-->
+                            <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало&ndash;&gt;-->
+                            <!--{% if form.user_first_name.errors %}-->
+                            <!--{% for err in form.user_first_name.errors %}-->
+                            <!--<p class="error alert alert-warning" role="alert">{{ err }}</p>-->
+                            <!--{% endfor %}-->
+                            <!--{% endif %}-->
+                            <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец&ndash;&gt;-->
+                        <!--</div>-->
+
+                        <!--<div class="pt-3">-->
+                            <!--&lt;!&ndash;{{ form.user_first_name.label(class="text-muted control-label") }}&ndash;&gt;-->
+                            <!--{{ form.user_first_name(class="form-control", value=current_user ) }}-->
+                        <!--</div>-->
+
+                        <!--<div class="pt-3">-->
+                            <!--&lt;!&ndash;{{ form.user_surname.label(class="text-muted control-label") }}&ndash;&gt;-->
+                            <!--{{ form.user_surname(class="form-control") }}-->
+                        <!--</div>-->
+
+
+                        <!--&lt;!&ndash;class="list-unstyled" убирает ненужные точки в начале строки в списке&ndash;&gt;-->
+                        <!--&lt;!&ndash;радиокнопок, т.к. в типе RadioField поля form.user_organization используются теги &ndash;&gt;-->
+                        <!--&lt;!&ndash;<ul><li></li></ul> которые задают эти точки по умолчанию&ndash;&gt;-->
+                        <!--<div class="pt-4">-->
+                            <!--{{ form.user_organization.label(class="text-muted control-label") }}-->
+                            <!--{{ form.user_organization(class="list-unstyled") }}-->
+
+                        <!--</div>-->
+
+                        <!--<div class="pt-3">-->
+                            <!--{{ form.user_consent() }}-->
+                            <!--{{ form.user_consent.label(class="text-muted control-label") }}-->
+                            <!--<div>-->
+                                <!--<a href="">Соглашение о персональных данных</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <!--&lt;!&ndash;Кнопка сохранить - с классом form-control&ndash;&gt;-->
+                        <!--<div class="pt-5 pb-3">-->
+                            <!--{{ form.submit(class="form-control btn btn-success") }}-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash;Кнопка сохранить - без класса form-control&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="pt-3">                                &ndash;&gt;-->
+                        <!--&lt;!&ndash;{{ form.submit(class="btn btn-success") }}&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+                    <!--</form>-->
+                <!--</div>-->
+            <!--</div>-->
+
+
+        </div>
+
+    </div>
+</main>
+
+
+{% endblock %}
+
+ <!--Эти вводы управляются плагином jquery.maskedinput, скрипты находятся в base.html - начало-->
+        <!--https://webstool.ru/jquery.maskedinput.html-->
+        <!--https://github.com/digitalBush/jquery.maskedinput-->
+        <!--http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html-->
+        <!--https://snipp.ru/jquery/masked-input-->
+         <!--<input placeholder="Ваш телефон:" id="phone" type="text" />-->
+        <!--<input placeholder="+7(___)___-__-__" id="phone_1" type="text" />-->
+        <!--<input class=form-control placeholder="+7(___)___-__-__" id="phone_2" type="text" />-->
+        <!--<input class=form-control placeholder="+7(___)___-__-__" id="phone_4" type="text" />-->
+        <!--<input placeholder="Ваш телефон:" id="phone_3" type="text" />-->
+        <!--<input placeholder="Дата day/month/year" id="date" type="text" />-->
+        <!--Эти вводы управляются плагином jquery.maskedinput см base.html - конец-->
+
+
+
+<!--иконка кнопки из Бутстрап библиотеки - начало -->
+<!--<a>-->
+<!--<svg xmlns="http://www.w3.org/2000/svg"-->
+<!--width="40" height="40" fill="currentColor"-->
+<!--class="bi bi-toggle-on" viewBox="0 0 16 16">-->
+<!--<path d="M5 3a5 5 0 0 0 0 10h6a5 5 0 0 0 0-10H5zm6 9a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>-->
+<!--</svg>-->
+<!--</a>-->
+<!--иконка кнопки из Бутстрап библиотеки - конец-->
+

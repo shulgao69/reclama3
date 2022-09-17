@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block container %}
+
+
+<main>
+    <div class="container">
+
+
+           <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pl-2 pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+
+            <a class="pl-4" href="{{ url_for('price_bp.priceindex') }}">
+                Создать новый прайс
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Перейти к карточкам услуг
+            </a>
+            {% if session.get('card_usluga_id') %}
+            <a class="pl-4"
+               href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=session.get('card_usluga_id')) }}">
+                Вернуться к карточке услуги {{ session.get('card_usluga_id') }}
+            </a>
+            {% endif %}
+
+
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <!--Навигационные ссылки - начало-->
+        <!--<div class="row py-3 px-2">-->
+            <!--<div class="col-12">-->
+                <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+                    <!--Перейти к карточками услуг-->
+                <!--</a>&nbsp; &nbsp;-->
+                <!--<a href="{{ url_for('admin.index') }}">-->
+                    <!--Вернуться в панель администратора-->
+                <!--</a>&nbsp; &nbsp;-->
+                <!--<a href="{{ url_for('price_bp.priceindex') }}">-->
+                    <!--Создать новый прайс-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки - конец-->
+
+        <!--Хлебные крошки  (навигационные цепочки)-->
+        <!--<ol class="breadcrumb breadcrumb-new">-->
+            <!--<li class="breadcrumb-item"><a href="/">Вернуться на главную</a></li>-->
+            <!--<li class="breadcrumb-item"><a href="/">Вернуться на главную</a></li>-->
+        <!--</ol>-->
+        <!--Хлебные крошки  (навигационные цепочки)-конец-->
+
+        <h4 class="px-2 py-3 base_color_1">Список прайсов</h4>
+
+        {% for price in list_prices %}
+
+        <!--Модальное окно  для удаления прайса по ссылке Удалить прайс- начало-->
+        <!--Его не видно пока не нажать ссылку Удалить прайс!!!!!!!-->
+        <!--активируется после нажатия на триггер(ссылка - удалить прайс)-->
+        <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+        <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+        <!--ставим модальное окно внутри цикла -->
+
+        <!--Передача данных в модальное окно Важно!!!  - начало -->
+        <!--Для передачи данных в модальное окно нужно -->
+        <!-- обязательно указать идентификатор удаляемого объекта!!-->
+        <!--и в тригере модального окна (data-target="#deletePrice{{ price.id }}")-->
+        <!--и в самом модальном окне id="deletePrice{{ price.id }}"-->
+        <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
+        <div class="modal fade" id="deletePrice{{ price.id }}" tabindex="-1" role="dialog"
+             aria-labelledby="deletePriceLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title base_color_1" id="deletePriceLabel">Вы уверены, что хотите удалить
+                            прайс?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <!--&times; - это крестик для закрытия-->
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5 class="text-danger">
+                            <b>Внимание!</b><br>
+                        </h5>
+                        <b class="base_color_1">
+                            Прайс будет удален
+                            из всех мест размещения <br>
+                            на сайте (в том числе из карточек услуг)!
+                        </b>
+                        <br>
+                        <div class="pt-3">
+                            Если вы хотите изменить данные прайса,
+                            <br>
+                            выйдите из диалогового окна и перейдите по ссылке
+                            <a href=""> Редактировать прайс</a>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                        </button>
+                        <a class="btn btn-danger"
+                           href="{{ url_for('price_bp.delete_price', id=price['id']) }}"
+                           role="button">
+                            Удалить {{ price.id }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--Передача данных в модальное окно Важно!!!  - конец -->
+        <!--Модальное окно - конец-->
+
+        <!--Имя, id прайса и ссылки для редактирования - начало-->
+        <h5 class="px-3 base_color_1">
+                    {{ price['name_price_table'] }}
+                </h5>
+        <div class="row p-3">
+
+
+            <!--Имя и id прайса - начало-->
+            <div class="col-3">
+                <!--<div class="h5 base_color_1">-->
+                    <!--{{ price['name_price_table'] }}-->
+                <!--</div>-->
+                <div>
+                    id прайса: {{ price['id'] }}
+                </div>
+            </div>
+            <!--Имя и id прайса - конец-->
+            <div class="col-3">
+
+            </div>
+
+            <!--Ссылки для редактирования прайса - начало-->
+            <div class="col-6 text-right">
+                <a href="{{ url_for('price_bp.edit_price', id=price['id']) }}">
+                    Редактировать прайс &nbsp; &nbsp;
+                </a>
+
+                <a href="{{ url_for('price_bp.copy_price', id=price['id']) }}">
+                    Скопировать прайс
+                </a>
+
+                <!--&nbsp; Это пробел-->
+                &nbsp;
+
+                <!-- Триггер модального окна (Варианты: ссылка или кнопка) - начало -->
+                <!--вариант - ссылка-->
+                <a href="" data-toggle="modal" data-target="#deletePrice{{ price.id }}">
+                    Удалить прайс
+                </a>
+                <!--вариант - кнопка-->
+                <!--<button type="button" class="btn btn-success" data-toggle="modal" data-target="#deleteCarousel">-->
+                <!--Удалить карусель-->
+                <!--</button>-->
+                <!-- Триггер модального окна (Варианты ссылка или кнопка) - конец -->
+
+            </div>
+            <!--Ссылки для редактирования прайса - начало-->
+
+        </div>
+        <!--Имя, id прайса и ссылки для редактирования - конец-->
+
+
+        <!--Сам прайс - начало-->
+        <div class="row">
+
+            <!--Таблица прайса -  начало-->
+            <div class="col-12">
+                <!--class="table-responsive" в отдельном div позволяет сделать прокрутку таблицы -->
+                <!--см. https://bootstrap-4.ru/docs/4.0/content/tables/-->
+                <div class="table-responsive">
+                    <table class="table table-reflow mb-5">
+                        {% for i in range(price['value_table']|length) %}
+                        {% if i == 0 %}
+                        <thead>
+                        <tr>
+                            {% for val in price['value_table'][i] %}
+                            <th>{{ val }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        {% else %}
+                        <tbody>
+                        <tr>
+                            {% for val in price['value_table'][i] %}
+                            <td>{{ val }}</td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                        {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            <!--Таблица прайса -  конец-->
+
+            <!--<div class="col-4">-->
+                <!--&lt;!&ndash;<div class="mt-2">&ndash;&gt;-->
+                <!--&lt;!&ndash;<a href="{{ url_for('price_bp.edit_price', id=price['id']) }}">Перейти к редактированию</a>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="mt-2">&ndash;&gt;-->
+                <!--&lt;!&ndash;<a href="{{ url_for('price_bp.delete_price', id=price['id']) }}">Удалить прайс</a>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="mt-2">&ndash;&gt;-->
+                <!--&lt;!&ndash;<a href="{{ url_for('price_bp.copy_price', id=price['id']) }}">Создать копию прайса</a>&ndash;&gt;-->
+                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--</div>-->
+        </div>
+        <!--Сам прайс - конец-->
+
+        <br>
+        <!--HTML тег <hr> (horizontal rule) определяет горизонтальную линию, -->
+        <!--которая вставляет разрыв строки до и после себя и занимает всю доступную ширину.-->
+        <!--<hr>-->
+
+
+        {% endfor %}
+
+        <!--Вернуться на главную-->
+        <ol class="breadcrumb breadcrumb-new">
+            <li class="breadcrumb-item "><a href="/">Вернуться на главную</a></li>
+        </ol>
+        <!--Вернуться на главную-->
+
+    </div>
+</main>
+
+
+{% endblock %}

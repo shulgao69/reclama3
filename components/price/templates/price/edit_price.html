@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container-fluid">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row mx-5 pl-3 pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4" href="{{ url_for('price_bp.priceindex') }}">
+                Создать новый прайс
+            </a>
+            <a class="pl-4" href="{{ url_for('price_bp.choose_price') }}">
+                Перейти к списку прайсов
+            </a>
+            {% if session.get('card_usluga_id') %}
+            <a class="pl-4"
+               href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=session.get('card_usluga_id')) }}">
+                Вернуться к карточке услуги
+            </a>
+            {% else %}
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Перейти к карточкам услуг
+            </a>
+            {% endif %}
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <!--Навигационные ссылки - начало-->
+        <!--<div class="row pb-3 pt-2 mx-5">-->
+            <!--<div class="col-3">-->
+                <!--<a href="{{ url_for('admin.index') }}">-->
+                    <!--Вернуться в панель администратора-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-2 text-left">-->
+                <!--<a href="{{ url_for('price_bp.priceindex') }}">-->
+                    <!--Создать новый прайс-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-2 text-left">-->
+                <!--<a href="{{ url_for('price_bp.choose_price') }}">-->
+                    <!--Перейти к списку прайсов-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-2 text-left">-->
+                <!--{% if session.get('card_usluga_id') %}-->
+                <!--<a href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=session.get('card_usluga_id')) }}">-->
+                    <!--Вернуться к карточке услуги-->
+                <!--</a>-->
+                <!--{% else %}-->
+                <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+                    <!--Перейти к карточкам услуг-->
+                <!--</a>-->
+                <!--{% endif %}-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки - конец-->
+
+        <!--На данной странице представлена форма, которая формируется динамически!!!
+        в price.py блюпринта price
+        в @price_blueprint.route('/pricestr/<int:row_table>/<int:col_table>/', methods=['GET', 'POST'])
+        def createprice(row_table, col_table)-->
+        <!--на основании данных о количестве строк и столбцов,
+        полученных на странице price.html в функции priceindex() @price_blueprint.route('/priceroute/'-->
+        <div class="container-fluid mx-5">
+            <!--https://bootstrap-4.ru/docs/4.6/components/forms/-->
+            <form method="POST" action="{{ url_for('price_bp.edit_price', id=id) }}">
+                <!--<form method="POST" action="">-->
+                {{ form.csrf_token }}
+                <h5 class="pt-2">
+                    Прайс:
+                    <b class="base_color_1">
+                        {{ price }}
+                    </b>
+                    , id:
+                    <b class="base_color_1">
+                        {{ id }}
+                    </b>
+                </h5>
+                {% if message_edit_price %}
+                <div class="text-success">
+                    <b>{{ message_edit_price }}</b>
+                </div>
+                {% else %}
+                <div>
+                    Отредактируйте данные
+                </div>
+                {% endif %}
+                {{ err }}
+                {% if form.errors %}
+                <ul class="errors">
+                    {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                    {% for error in field_errors %}
+                    <li>{{ form[field_name].label }}: {{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {{ err }}
+                {{ message }}
+                <table class="table-responsive">
+                    <!--<thead class="mb-5">-->
+                    <th class="pb-3">
+                        {{ form.name_price_table.label(class='text-success') }}<br>
+                        <!--{{ form.name_price_table(value="Наименование прайса") }}-->
+                        {{ form.name_price_table(class='form-control') }}
+
+                    </th>
+                    <!--</thead>-->
+                    <br>
+                    <br>
+                    <tbody class="mt-5">
+                    <tr>
+                        {% for cols in form.mycol %}
+                        <td class="text-success pt-3">
+                            <!--{{ cols.row.label }}-->
+                            {{ cols.row }}
+                            <!--{{ cols }}-->
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="row pt-5">
+                    <div class="col-2">
+                        {{ form.submit(class='btn btn-success form-control') }}
+                    </div>
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</main>
+
+
+{% endblock %}

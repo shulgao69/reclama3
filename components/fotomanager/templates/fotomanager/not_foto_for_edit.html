@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block container %}
+<main class="container my-5 py-5">
+  <div class="text-center my-5">
+
+      {% if err %}
+      <div class="alert alert-warning" role="alert">{{ err }}</div>
+      {% endif %}
+      Из фотоманагер
+        <p class="h5 font-weight-light mb-5">Не выбрано фото для редактирования</p>
+        <div class="my-5">
+      <p class="h5 font-weight-light mb-5">или выбрано фото с некорректными данными</p>
+        <div class="my-5">
+      <a href="/admin/deletefoto/">Вернуться </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

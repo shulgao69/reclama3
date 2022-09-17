@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4"
+               href="{{ url_for('card_usluga_bp.edit_photos_in_card_usluga', card_usluga_id=card_usluga.id) }}">
+                Вернуться к изображениям карточки услуг
+            </a>
+            <a class="pl-4"
+               href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">
+                Вернуться к карточке услуги
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <!--Навигационные ссылки вар 1 - начало-->
+        <!--<div class="row pb-3 pt-2">-->
+        <!--<div class="col-4">-->
+        <!--<a href="{{ url_for('admin.index') }}">Вернуться в панель администратор</a>-->
+        <!--</div>-->
+        <!--<a href="">Вернуться к списку изображений-</a>-->
+        <!--</div>-->
+        <!--Навигационные ссылки вар 1 - конец-->
+
+        <!--Сведения о карточке услуги - начало-->
+        <div>
+            <h6>Сведения о карточке услуги</h6>
+            <div class="text-success">
+                Раздел:
+                <b class="base_color_1">
+                    {{ card_usluga.usluga.punkt_menu.title }}
+                </b>
+                Услуга:
+                <b class="base_color_1">
+                    {{ card_usluga.usluga }}
+                </b>
+            </div>
+            <div class="text-success">Карточка услуги:
+                {% if card_usluga.name_card_usluga %}
+                <b class="base_color_1">
+                    {{ card_usluga.name_card_usluga }}
+                </b>
+                {% endif %}
+                Id карточки услуг:
+                <b class="base_color_1">
+                    {{ card_usluga.id }}
+                </b>
+            </div>
+            <div class="text-success">
+                Сопроводительный текст:
+                {% if card_usluga.comments %}
+                <b class="base_color_1">
+                    {{ card_usluga.comments }}
+                </b>
+                {% endif %}
+            </div>
+        </div>
+        <!--Сведения о карточке услуги - конец-->
+
+        <!--Редактируйте заголовок и текст изображения - начало-->
+        <h5 class="mt-1 pt-2 text-left">
+            Редактируйте заголовок и текст изображения
+        </h5>
+        <!--Редактируйте заголовок и текст изображения - конец-->
+
+
+        <div class="row">
+
+            <!--Исходные данные фото - начало-->
+            <div class="col-md-4 p-2">
+                <!--Внимание!!! класс h-100 помог выровнять рамку по высоте!!!-->
+                <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
+                <!--отступов между колонками а при попытке задать margin (m-1 например)-->
+                <!--приводило к тому что отступ появлялся но 4 колонки не помщались на 1 строке(ьтолько 3)-->
+                <div class="border border-success h-100 ">
+
+                    <div class="card">
+
+                        <div class="card-body">
+                            <!--<div class="card-title">{{ usluga }}</div>-->
+                            <img class="card-img-top d-none d-md-block w-100"
+                                 src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ photo.secure_name_photo }}"
+                                 alt="Фото">
+                            <div class="card-text pt-3">
+                                <div><b class="base_color_1">id изображения</b></div>
+                                <div>{{ photo.id }}</div>
+                                <br>
+                                <div><b class="base_color_1">Исходное имя файла:</b></div>
+                                <div>{{ photo.origin_name_photo }}</div>
+                                <br>
+                                <div><b class="base_color_1">Имя файла в базе:</b></div>
+                                <div>{{ photo.secure_name_photo }}</div>
+                                <br>
+                                <div><b class="base_color_1">Заголовок фото:</b></div>
+                                {% if photo.title %}
+                                <div>{{ photo.title }}</div>
+                                {% endif %}
+                                <div class="pt-3"><b class="base_color_1">Сопроводительный текст:</b></div>
+                                {% if photo.comments %}
+                                <div>{{ photo.comments }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Исходные данные фото - конец-->
+
+            <!--Форма редактирования  заголовка и текста  фото - начало-->
+            <div class="col-md-4 p-2">
+                <div class="border border-success p-2 h-100 ">
+
+                    <form method="POST"
+                          action="{{ url_for('card_usluga_bp.edit_photo_info', card_usluga_id=card_usluga.id, photo_id=photo.id) }}">
+                        {{ form.csrf_token }}
+
+                        <div class="pt-2">
+                            <h6>Введите новый заголовок фото</h6>
+                            {{ form.title(class="container-fluid", value=photo.title) }}
+                        </div>
+                        <div class="pt-5">
+                            <h6>Введите новый сопроводительный текст</h6>
+                            {{ form.comments(class="container-fluid py-1 my-1", value=photo.comments) }}
+                        </div>
+                        <div>
+                            {{ form.submit(class="btn btn-success") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--Форма редактирования  заголовка и текста  фото - конец-->
+
+        </div>
+
+
+    </div>
+</main>
+
+{% endblock %}

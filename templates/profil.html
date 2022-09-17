@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block container %}
+
+
+<main class="container">
+    <div class="row mt-4">
+        <div class="col-3">
+            <h4>{{ current_user.email }}</h4>
+            <div>{{ current_user.password|truncate(5) }}</div>
+
+            {% if current_user.has_role('admin') %}
+            <div>Вы администратор(admin) - {{ current_user.has_role('admin') }}</div>
+            <div>Ваши полномочия:....</div>
+            {% elif current_user.has_role('editor') %}
+            <div>Вы редактор (editor) - {{ current_user.has_role('editor') }}</div>
+            <div>Ваши полномочия:....</div>
+            {% elif current_user.has_role('manager') %}
+            <div>Вы менеджер (manager) - {{ current_user.has_role('manager') }}</div>
+            <div>Ваши полномочия:....</div>
+            {% else %}
+            <div>Вы - пользователь</div>
+            <div>Ваши полномочия:....</div>
+            {% endif %}
+        </div>
+        <div class="col-4">
+            <h4>Ваша роль:.....</h4>
+        </div>
+        <div class="col-5 text-right">
+            <div>Ваши заказы</div>
+        </div>
+    </div>
+
+    <div class="container-fluid plashka-grey mt-2">
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-3">
+            <ul class="list-unstyled">
+                <li class="mb-3"><a href="#">Настройки профиля</a></li>
+                <li class="mb-3"><a href="#">Смена пароля</a></li>
+                <li class="mb-3"><a href="#">Заказы в работе</a></li>
+                <li class="mb-3"><a href="#">Выполненные заказы</a></li>
+            </ul>
+        </div>
+        <div class="col-9">
+            <div class="card-deck">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Card title</h4>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
+                            additional content. This content is a little bit longer. <br>Это более широкая карта с
+                            поддерживающим текстом ниже в качестве естественного входа к дополнительному контенту.
+                            Этот контент немного длиннее.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Card title</h4>
+                        <p class="card-text">This card has supporting text below as a natural lead-in to additional
+                            content. <br>Эта карта имеет вспомогательный текст ниже в качестве естественного
+                            входа к дополнительному контенту.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Card title</h4>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
+                            additional content. This card has even longer content than the first to show that equal
+                            height action. <br>Это более широкая карта с поддерживающим текстом ниже в качестве
+                            стественного входа к дополнительному контенту. Эта карта имеет еще более длинное содержание,
+                            чем первая, чтобы показать, что действие равной высоты.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}

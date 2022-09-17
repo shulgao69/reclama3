@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container">
+
+        <!--Навигационные ссылки вар 3 - начало-->
+        <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
+        <!--Далее наверное нужно использовать его!-->
+        <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Перейти к списку карточек услуг
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">
+                Продолжить редактирование карточки услуг
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+        <!--Навигационные ссылки - начало-->
+        <!--<div class="row pt-2 pb-3">-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('admin.index') }}">-->
+                    <!--Вернуться в панель администратора-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
+                    <!--Перейти к списку карточек услуг-->
+                <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-4">-->
+                <!--<a href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">-->
+                    <!--Продолжить редактирование карточки услуг-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--Навигационные ссылки - конец-->
+
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-success pt-2">
+                    <b> Шаг 3 </b>
+                </h3>
+            </div>
+        </div>
+
+        <div class="card border-success ">
+            <div class="m-3">
+
+                <div class="row">
+
+
+                    <div class="col-6 col-lg-6 col-sm-12">
+
+                        <h5 class="pt-3">Выбор прайса</h5>
+                        <div class="pt-2 pb-3">
+                            <b>
+                            <h6 class="text-danger">Внимание!</h6>
+                                <div>
+                                    1. К карточке услуги вы можете прикрепить несколько прайсов!
+                                </div>
+                                <div class="text-danger">
+                                    2. Прайс может быть прикреплен только к одной карточке услуги.
+                                </div>
+                            </b>
+                            <div class="pl-3 font-italic">
+                                Если вы добавляете прайс к данной карточке услуги,
+                                то этот прайс будет перемещен в эту карточку, а из другой удален <br>
+                                (если ранее он был прикреплен к другой карточке)!!!
+                            </div>
+                            <div><b>
+                                3. Если вам нужно создать новый прайс</b> - перейдите по ссылке
+
+                                <a href="{{ url_for('price_bp.priceindex') }}">Создать новый прайс</a>.
+                            </div>
+
+                            <div><b>
+                                4. Вы можете создать копию прайса и внести при копировании изменения</b> - для этого перейдите по ссылке
+
+                                <a href="">Скопировать прайс</a> нужного вам прайса.
+                            </div>
+
+
+                            <div class="pt-2"><b>
+                                После создания нового прайса вернитесь к редактированию карточки и
+                                добавьте в нее прайс.
+                            </b></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6 col-lg-6 col-sm-12">
+
+
+                        <div class="row">
+                            <div class="col-12">
+
+                                <div class="pt-3">
+                                    <b class="base_color_1">Раздел:</b> {{ menu }}.<br>
+                                    <b class="base_color_1">Услуга раздела:</b> {{ usluga }}
+                                </div>
+                                <div>
+                                    <b class="base_color_1">Карточка услуги:</b>
+                                    {{ card_usluga.name_card_usluga }} (
+                                    <b class="base_color_1">Id </b> {{ card_usluga.id }}).
+                                </div>
+                                <div>
+                                    <b class="base_color_1">Прикрепленные прайсы:</b>
+                                    {% if card_usluga.prices %}
+                                    {% for price in card_usluga.prices %}
+                                    {{ price }},
+                                    {% endfor %}
+                                    {% else %}
+                                    в карточке пока нет прайсов
+
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            {% if card_usluga.photos %}
+                            <div class="col-12">
+                                <h6 class="pt-4 base_color_1">Загруженные изображения</h6>
+                            </div>
+                            {% for photo in card_usluga.photos %}
+                            <div class="col-3 pt-2">
+                                <img class="card-img-top"
+                                     width="25"
+                                     src="/static/images/cards_uslugs/{{ photo.dir_uploads }}{{ photo.secure_name_photo }}"
+                                     alt="фото услуги">
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <!--<div class="row pt-4">-->
+                            <!--{% if card_usluga.prices %}-->
+                            <!--<div class="col-12">-->
+                                <!--<div>-->
+                                    <!--<b class="base_color_1">-->
+                                        <!--Прикрепленные прайсы:-->
+                                    <!--</b>-->
+                                    <!--{% for price in card_usluga.prices %}-->
+                                    <!--{{ price }},-->
+                                    <!--{% endfor %}-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+
+                            <!--{% else %}-->
+                            <!--<div class="col-6"><b class="base_color_1">-->
+                                <!--В карточке услуг пока нет прайсов.-->
+                            <!--</b></div>-->
+                            <!--{% endif %}-->
+
+                        <!--</div>-->
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+                {% if card_usluga.prices|length < prices|length %}
+                <h5 class="py-4 base_color_1 text-center">
+                    Список прайсов, доступных к добавлению в карточку услуг {{ card_usluga.name_card_usluga }}
+                </h5>
+                {% else %}
+                <h5 class="pb-4 text-danger">Нет прайсов, доступных к добавлению в карточку услуг</h5>
+                {% endif %}
+
+                {% set ns = namespace(counter=1) %}
+                {% for price in prices %}
+                {% if price not in card_usluga.prices %}
+
+                <!--Модальное окно  - начало-->
+                <!--Его не видно пока не нажать ссылку Добавить прайс... !!!!!!!-->
+                <!--активируется после нажатия на триггер(ссылка )-->
+                <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+                <!--Т.к. у нас внутри мод. окна ссылка, зависящая от переменных переданных в шаблон -->
+                <!--ставим модальное окно внутри цикла car in carousel -->
+                <div class="modal fade" id="addPrice{{ price['id'] }}" tabindex="-1" role="dialog"
+                     aria-labelledby="addPrice{{ price['id'] }}Label" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h6 class="modal-title base_color_1" id="addPrice{{ price['id'] }}Label">
+                                    Подтвердите добавление прайса "{{ price }}" (id: {{ price.id }}) <br>
+                                    в карточку услуги
+                                    <b class="base_color_1">
+                                        "{{ card_usluga.name_card_usluga }}" (id: {{ card_usluga.id }}).
+                                    </b>
+                                </h6>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                    <!--&times; - это крестик для закрытия-->
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h6 class="text-success">
+                                    <b>Внимание!</b><br>
+                                </h6>
+
+                                {% if price['card_usluga'] %}
+                                <div>
+                                    Этот прайс сейчас прикреплен к карточке услуг
+                                </div>
+                                <h5 class="base_color_1">
+                                    "{{ price['card_usluga']['name_card_usluga'] }}"
+                                </h5>
+
+
+                                {% else %}
+                                <div>
+                                    Этот прайс сейчас не прикреплен ни к одной карточке услуг!
+                                </div>
+                                {% endif %}
+                                <div>
+                                    После подтверждения прайс <b class="base_color_1">"{{ price }}"</b> <br>
+                                    будет прикреплен к карточке услуг
+                                    <b class="base_color_1">
+                                        "{{ card_usluga.name_card_usluga }}"!
+                                    </b>
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Закрыть
+                                </button>
+
+                                <a class="btn btn-danger"
+                                   href="{{ url_for('card_usluga_bp.attach_price_in_card_usluga',
+                           card_usluga_id=card_usluga.id, price_id=price.id) }}"
+                                   role="button">
+                                    Добавить прайс
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Модальное окно - конец-->
+
+
+                <!--***** Список прайсов - начало-->
+                <div>
+                    <div class="row">
+                        <div class="col-6">
+                            <!--Заголовок прайса - начало-->
+                            <h5>
+                                {{ ns.counter }}) {{ price['name_price_table'] }}
+                            </h5>
+                            <!--Заголовок прайса - конец-->
+
+                            {% set ns.counter = ns.counter+1 %}
+
+                            {% if price['card_usluga'] %}
+                            <div class="font-italic text-danger">
+                                Внимание! Этот прайс уже прикреплен к карточке услуги
+                                <b class="base_color_1">
+                                    {{ price['card_usluga']['name_card_usluga'] }}.</b>
+                            </div>
+                            {% else %}
+                            <div class="font-italic base_color_1">
+                                Этот прайс не прикреплен ни к одной карточке услуг.
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-6 text-right">
+                            <a href="{{ url_for('price_bp.copy_price',
+                           id=price.id) }}">
+                                Скопировать прайс
+                            </a>&nbsp;&nbsp;&nbsp;
+                            <!-- Триггер модального окна  - начало -->
+                            <a href=""
+                               data-toggle="modal"
+                               data-target="#addPrice{{ price['id'] }}">
+                                Добавить прайс <b>"{{ price }}"</b> <br>в карточку услуг <b>"{{
+                                card_usluga.name_card_usluga }}"</b>
+                            </a>
+                            <!-- Триггер модального окна  - конец-->
+                        </div>
+
+                    </div>
+
+                    <div class="row pt-2">
+                        <div class="col-12 container-fluid">
+                            <table class="table table-reflow pb-3">
+                                {% for i in range(price['value_table']|length) %}
+                                {% if i == 0 %}
+                                <thead>
+                                <tr>
+                                    {% for val in price['value_table'][i] %}
+                                    <th>{{ val }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                {% else %}
+                                <tbody>
+                                <tr>
+                                    {% for val in price['value_table'][i] %}
+                                    <td>{{ val }}</td>
+                                    {% endfor %}
+                                </tr>
+                                </tbody>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <br><br>
+                </div>
+                <!--***** Список прайсов - конец-->
+
+                {% endif %}
+
+
+                {% endfor %}
+
+
+            </div>
+        </div>
+        </div>
+</main>
+
+{% endblock %}

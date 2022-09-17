@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container-fluid">
+
+
+        <div class="row mt-3">
+            <div class="col-4">
+                <img class="container-fluid" src="/static/images/place4.jpg" weight="1500">
+            </div>
+            <div class="col-7">
+                <h5 class="pt-2 mb-2 base_color_1 text-center">
+                    <b> Выберите новое местоположение карусели {{ carousel.name_carousel }} из разрешенных вариантов</b>
+                </h5>
+                <div class="pt-2 mb-2 text-center">Вы можете разместить карусель только на те позиции и с теми размерами, которые указаны ниже.</div>
+
+                {% for base_position in base_positions %}
+                <div class="row">
+                    <div class="container-fluid plashka-grey mt-2 mb-3"></div>
+                    <div class="col-2">
+                        <div class="base_color_1"><b>
+                            Базовая позиция: </b></div>
+                        <h5 class="text-success mb-3">
+                            <b>{{ base_position }} ({{ base_position.comment_base_position }})</b>
+                        </h5>
+                        {% if base_position.name_base_position=='header' %}
+                        <h5>Mеста 1/</h5>
+                        <div class="plashka_grey">
+                        </div>
+                        {% endif %}
+                        {% if base_position.name_base_position=='body' %}
+                        <h5>Mеста 2/</h5>
+                        <div class="plashka_green">
+                        </div>
+                        {% endif %}
+                        {% if base_position.name_base_position=='footer' %}
+                        <h5>Mеста 3/</h5>
+                        <div class="plashka_red">
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-10">
+                        <div class="row">
+
+                            {% for place_model_size in places_model_size %}
+                            {% if place_model_size.place_element.base_position == base_position %}
+                            <div class="col-4">
+                                <h5 class="mb-2 mt-1 text-success"><b>
+                                    {{ place_model_size.place_element }}
+                                </b></h5>
+                                {{ place_model_size.id }}
+                                <div class="base_color_1"><b>
+                                    Базовая локация:
+                                </b></div>
+                                <div class="mb-1"><b>
+                                    {{ place_model_size.place_element.base_location.comment_base_location }}
+                                    ({{ place_model_size.place_element.base_location.name_base_location }})
+                                </b></div>
+                                <div class="base_color_1"><b>
+                                    Позиция:
+                                </b></div>
+                                <div class="mb-1">
+                                    {{ place_model_size.place_element.position.comment_position }}
+                                </div>
+
+                                <div class="base_color_1"><b>
+                                    Контейнер:
+                                </b></div>
+                                <div class="mb-1">
+                                    {{ place_model_size.place_element.container_element.comment_container_element }}
+                                </div>
+                                <div class="base_color_1"><b>
+                                    Колонки:
+                                </b></div>
+                                <div class="mb-1">
+                                    {{ place_model_size.place_element.column_element.comment_column_element }} ({{
+                                    place_model_size.place_element.column_element.column_element }})
+                                </div>
+                                <div class="base_color_1"><b>
+                                    Размер:
+                                </b></div>
+                                <div class="mb-1">
+                                    Ширина: {{ place_model_size.width_element }}
+                                    Высота: {{ place_model_size.height_element }}
+
+                                </div>
+                                <div class="mt-1 mb-2">
+                                    <a href="{{ url_for('carousel_manager_bp.save_place_carousel', place_model_size_id=place_model_size['id'] , carousel_id=carousel['id']) }}">
+                                        Сохранить местоположение
+                                    </a>
+                                </div>
+                                <br>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </div>
+            <div class="col-1"></div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+
+<!--<h5 class="mt-4 base_color_1">-->
+            <!--Сведения о карусели-->
+        <!--</h5>-->
+        <!--<div class="container-fluid plashka-grey mt-2"></div>-->
+
+        <!--&lt;!&ndash;Данные из карусели car из списка каруселей - начало&ndash;&gt;-->
+        <!--<div class="row">-->
+            <!--<div class="col-3 col-lg-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Наименование карусели:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel.name_carousel }}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-3 col-lg-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Директория загрузки карусели:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel.dir_carousel }}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-3 col-lg-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Кол-во изображений в карусели:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel.number_foto }}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-3 col-lg-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Дата создания карусели:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel.date_create }}-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--{% if carousel.locations %}-->
+        <!--<h5 class="mt-4 base_color_1">-->
+            <!--Локации выбранной карусели-->
+        <!--</h5>-->
+
+        <!--{% else %}-->
+        <!--<h5 class="mt-4 text-danger">-->
+            <!--Локации карусели пока не заданы-->
+        <!--</h5>-->
+        <!--{% endif %}-->
+
+        <!--&lt;!&ndash;Счетчик в jinja - https://ru.stackoverflow.com/questions/889339/Счетчик-в-jinjja2&ndash;&gt;-->
+        <!--&lt;!&ndash;set ns = namespace(counter=1) - это установила счетчик&ndash;&gt;-->
+        <!--{% set ns = namespace(counter=1) %}-->
+        <!--{% for carousel_location in carousel.locations %}-->
+        <!--<div class="container-fluid plashka-grey mt-2"></div>-->
+
+        <!--<div class="row mt-2">-->
+            <!--&lt;!&ndash;<div class="col-3">&ndash;&gt;-->
+                <!--<div class="text-left pl-3 text-danger"><b>-->
+                    <!--{{ ns.counter }}. Имя локации-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--:  {{ carousel_location.name_location }}-->
+                <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row mb-4">-->
+            <!--<div class="col-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Базовая локация:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel_location.base_location }}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Позиция локации:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel_location.position }}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Ширина карусели:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel_location.width }}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-3">-->
+                <!--<div class="text-left mt-2 text-success"><b>-->
+                    <!--Высота карусели:-->
+                <!--</b></div>-->
+                <!--<div>-->
+                    <!--{{ carousel_location.width }}-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--{% set ns.counter = ns.counter+1 %}-->
+        <!--{% endfor %}-->
+    <!--&lt;!&ndash;Данные из карусели car из списка каруселей - конец&ndash;&gt;-->
+
+
+    <!--&lt;!&ndash;Карусель car - начало&ndash;&gt;-->
+    <!--<div id="demo" class="carousel slide container mt-2 mb-4" data-ride="carousel">-->
+        <!--&lt;!&ndash;class="carousel-indicators" создает внизу слайда индикаторы, &ndash;&gt;-->
+        <!--&lt;!&ndash;показывающие количество слайдов&ndash;&gt;-->
+        <!--&lt;!&ndash;и на каком мы находимся&ndash;&gt;-->
+        <!--<ul class="carousel-indicators">-->
+            <!--<li data-target="#demo" data-slide-to=0 class="active"></li>-->
+            <!--{% for i in range(1, carousel.dict_all_foto_carousel_name|length) %}-->
+            <!--<li data-target="#demo" data-slide-to=i></li>-->
+            <!--{% endfor %}-->
+        <!--</ul>-->
+        <!--<div class="carousel-inner" role="listbox">-->
+            <!--&lt;!&ndash;Класс active указывать обязательно иначе не будет видно-->
+            <!--он указывает с какого слайда начинается слайд-шоу&ndash;&gt;-->
+            <!--<div class="carousel-item active">-->
+                <!--&lt;!&ndash;Классы d-none - скрыто на всех размерах экрана-->
+                <!--d-block - показывать на всех размерах экрана-->
+                <!--d-md-block - показывать на размере md-->
+                <!--d-lg-none -  скрыто на размере экрана lg  и тд и тп&ndash;&gt;-->
+
+                <!--<img class="img d-none d-md-block w-100"-->
+                     <!--src="/static/images/carousel/{{ carousel.dir_carousel }}/{{ carousel.dict_all_foto_carousel_name[0]['photo'] }}"-->
+                     <!--data-src="holder.js/900x400?theme=social" alt="Придумать название изображения" width="1500"-->
+                     <!--height="300">-->
+                <!--<div class="carousel-caption">-->
+                    <!--<h1 class="text-center text-success">-->
+                        <!--{{ carousel.dict_all_foto_carousel_name[0]['title_foto_carousel'] }}-->
+                    <!--</h1>-->
+                    <!--<h5 class="text-center text-success">-->
+                        <!--{{ carousel.dict_all_foto_carousel_name[0]['text_foto_carousel'] }}-->
+                    <!--</h5>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            {#{% for i in range(1, carousel.dict_all_foto_carousel_name|length) %}#}
+            <!--<div class="carousel-item">-->
+                <!--<img class="img d-none d-md-block w-100"-->
+                     <!--src="/static/images/carousel/{{ carousel.dir_carousel }}/{{ carousel.dict_all_foto_carousel_name[i]['photo'] }}"-->
+                     <!--alt="слайд {{ i }}" width="1500" height="300">-->
+                <!--<div class="carousel-caption">-->
+                    <!--<h1 class="text-center text-success">-->
+                        <!--{{ carousel.dict_all_foto_carousel_name[i]['title_foto_carousel'] }}-->
+                    <!--</h1>-->
+                    <!--<h5 class="text-center text-success">-->
+                        <!--{{ carousel.dict_all_foto_carousel_name[i]['text_foto_carousel'] }}-->
+                    <!--</h5>-->
+                <!--</div>-->
+            <!--</div>-->
+            {#{% endfor %}#}
+
+        <!--</div>-->
+        <!--&lt;!&ndash;Элементы управления - начало &ndash;&gt;-->
+        <!--<a class="carousel-control-prev" href="#demo" role="button" data-slide="prev">-->
+            <!--<span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+            <!--<span class="sr-only text-success">Предыдущий</span>-->
+        <!--</a>-->
+        <!--<a class="carousel-control-next" href="#demo" role="button" data-slide="next">-->
+            <!--<span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+            <!--<span class="sr-only text-success">Следующий</span>-->
+        <!--</a>-->
+        <!--&lt;!&ndash;Элементы управления - конец &ndash;&gt;-->
+    <!--</div>-->
+    <!--&lt;!&ndash;Карусель car  - конец&ndash;&gt;-->
+

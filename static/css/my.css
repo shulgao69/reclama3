@@ -1,0 +1,288 @@
+/* Общие свойства*/
+body {
+    font-family: 'Roboto', sans-serif;
+    /*font-family: 'Roboto Condensed', sans-serif;*/
+}
+
+/* главное меню сайта (из базы данных)*/
+/* Чтобы dropdown меню раскрывалось и скрывалось при наведении (событие hover) а не на клике(click)*/
+/* https://alexfine.ru/rubriki/web-stati/bootstrap/193-vypadayushchee-menyu-na-bootstrap-4-pri-navedenii-sobytie-hover*/
+nav.navbar .dropdown:hover > .dropdown-menu {
+ display: block;
+}
+
+/*Чтобы dropdown меню (см выше) работало только на ПК версиях экранов, и не работало на мобильных устройствах,*/
+/*т.к.там просто отсутствует нормальная работа события hover. */
+/*Автор рекомендует прописать ниже еще вот такой код:*/
+/* см.https://alexfine.ru/rubriki/web-stati/bootstrap/193-vypadayushchee-menyu-na-bootstrap-4-pri-navedenii-sobytie-hover*/
+
+@media only screen and (max-device-width: 992px){
+    nav.navbar .dropdown:hover .dropdown-menu{
+        display: none;
+    }
+}
+
+
+
+/* элемент  белый */
+.base_color_white {
+    color: #ffffff;
+}
+
+/* фон  белый */
+.background_base_color_white {
+    background-color: #ffffff;
+}
+
+
+/* телефон в шапке сайта*/
+#phone {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 26px;
+    color: #0796a6;
+}
+
+.base_color_1 {
+color: #0796a6; /* телефон, footer и т.п*/
+}
+
+.background_base_color_1 {
+background-color: #0796a6; /* телефон, footer и т.п*/
+}
+
+.border_base_color_1 {
+border: 3px solid #0796a6;
+}
+
+.plashka_grey {
+        background-color: #9d9fa1;
+        height: 50px;
+        width: 100%;
+      }
+
+
+.plashka_green {
+        background-color: #26b809;
+        height: 50px;
+        width: 100%;
+      }
+
+.plashka_red {
+        background-color: #e60d09;
+        height: 50px;
+        width: 100%;
+      }
+
+.plashka-base_color_1 {
+height: 3px; /*ширина плашки*/
+background-color: #0796a6; /* цвет плашки*/
+}
+
+.plashka-grey {
+height: 2px; /*ширина плашки*/
+background-color: #0796a6; /* цвет плашки*/
+}
+
+
+ /* Тонкая полоса в шапке сайта между логотипом, адресом, телефоном и меню*/
+.plashka-f {
+height: 6px; /*ширина плашки*/
+background-color: #0796a6; /* начальный цвет плашки*/
+
+/* Задание свойств анимации (в нашем случае просто переход из одного цвета в другой):
+Standard syntax:
+https://html5css.ru/cssref/css3_pr_animation.php
+https://html5css.ru/css/css3_animations.php
+animation-name	            Задает имя ключевого кадра, который требуется привязать к селектору
+animation-duration	        Указывает, сколько секунд или миллисекунд требуется анимации для завершения
+animation-timing-function	Задает кривую скорости анимации
+animation-delay	            Указывает задержку перед запуском анимации
+animation-iteration-count	Указывает, сколько раз должна воспроизводиться анимация
+animation-direction	        Указывает, должна ли анимация воспроизводиться в обратном порядке на альтернативных циклах
+animation-fill-mode	        Указывает, какие значения применяются анимацией вне времени ее выполнения
+animation-play-state	    Указывает, запущена ли анимация или приостановлена
+initial		                Присваивает этому свойству значение по умолчанию. (Читайте о initial)
+inherit		                Наследует это свойство из родительского элемента. (Читайте о inherit)*/
+
+animation-name: anime; /* Имя анимации*/
+animation-duration: 4s; /*Свойство animation-duration определяет, сколько времени должна занять анимация для завершения*/
+animation-timing-function: linear; /*Воспроизведение анимации с одинаковой скоростью от начала до конца
+animation-timing-function задает кривую скорости анимации.
+linear	                Анимация имеет одинаковую скорость от начала до конца
+ease	                Значение по умолчанию. Анимация имеет медленный запуск, а затем быстро, прежде чем она заканчивается медленно
+ease-in	                Анимация имеет медленный запуск
+ease-out	            Анимация имеет медленный конец
+ease-in-out	            Анимация имеет медленный запуск и медленный конец
+step-start	            Эквивалентно шагам (1, запуск)
+step-end	            Эквивалентно шагам (1, конец)
+steps(int,start|end)	Задает функцию степпинга с двумя параметрами. Первый параметр указывает количество интервалов в функции. Оно должно быть положительным целым числом (больше 0). Второй параметр, который является необязательным, является либо значением "Start", либо "End", и указывает точку, в которой изменение значений происходит в интервале. Если второй параметр опущен, ему дается значение "End"
+cubic-bezier(n,n,n,n)	Определите собственные значения в функции кубической Безье
+Возможные значения — это числовые значения от 0 до 1
+initial	                Присваивает этому свойству значение по умолчанию. (Читайте о initial)
+inherit	                Наследует это свойство из родительского элемента. (Читайте о inherit)*/
+animation-delay: 2s; /* Свойство определяет время задержки начала анимации*/
+animation-iteration-count: infinite; /*Воспроизвести анимацию бесконечное количество раз либо указать цифрой количество*/
+animation-direction: alternate; /*Сначала воспроизвести анимацию вперед, а затем назад:
+normal	        Значение по умолчанию. Анимация воспроизводится как обычная (вперед)
+reverse	        Анимация воспроизводится в обратном направлении (назад)
+alternate	    Анимация сначала разыгрывается вперед, затем назад
+alternate-reverse	Анимация сначала воспроизводится назад, а затем пересылается
+initial		    Присваивает этому свойству значение по умолчанию. (Читайте о initial)
+inherit		    Наследует это свойство из родительского элемента. (Читайте о inherit)*/
+/*animation-fill-mode: none; /*
+none	        Значение по умолчанию. Анимация не будет применять стили к элементу до или после выполнения
+forwards	    Элемент сохранит значения стиля, заданные последним ключевым кадром (в зависимости от направления анимации и анимации-количество итераций)
+backwards	    Элемент получит значения стиля, заданные первым ключевым кадром (в зависимости от направления анимации), и сохранит его во время периода задержки анимации
+both	        Анимация будет следовать правилам как вперед, так и назад, расширяя свойства анимации в обоих направлениях
+initial	        Присваивает этому свойству значение по умолчанию. (Читайте о initial)
+inherit	        Наследует это свойство из родительского элемента. (Читайте о inherit)*/
+animation-play-state: running; /*
+running	    Значение по умолчанию. Указывает, что анимация запущена
+paused	    Указывает, что анимация приостановлена
+initial	    Присваивает этому свойству значение по умолчанию. (Читайте о initial)
+inherit	    Наследует это свойство из родительского элемента. (Читайте о inherit)*/
+
+/* Те же свойства в    Safari 4.0 - 8.0 */
+-webkit-animation-name: anime;
+-webkit-animation-duration: 4s;
+-webkit-animation-timing-function: linear;
+-webkit-animation-delay: 2s;
+-webkit-animation-iteration-count: infinite;
+-webkit-animation-direction: alternate;
+-webkit-animation-play-state: running;
+}
+
+/*Анимация цвета плашки id=plashka-f:*/
+/* Standard syntax */
+@keyframes anime {
+    from {background-color: #0796a6;}
+    to {background-color: #08c915;}
+}
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes anime {
+    from {background-color: #0796a6;}
+    to {background-color: #08c915;}
+}
+
+
+/* Задание свойств плашки с меню в шапке сайта (в нашем случае зеленая плашка с меню)*/
+#nav-plashka1 {
+    line-height: 1; /*изменяю расстояние в navbar (по умолчанию 1.5) между строками, кот. образуются при сворачивании в 2 строки на маленьких экранах*/
+    height: 50px;
+    background-color: #ace807; /*устанавливаю цвет плашки navbar (по умолчанию navbar-light белый? фон синие буквы)*/
+}
+
+
+#fon {
+background-color: #08415a;
+}
+
+/*Хлебные крошки  (навигационные цепочки)*/
+/* Bootstrap 4 */
+.breadcrumb-item + .breadcrumb-item::before {
+  display: inline-block;
+  padding-right: 0.5rem;
+  color: #6c757d;
+  content: ">"; /* это разделитель между хлебными крошками. По умолчанию слеш "/" */
+}
+
+/*Изменяем цвет фона навигационного меню хлебные крошки на белый, размер шрифта,
+высоту элемента breadcrumb делаем уже и выравниваем текст по высоте (чуть поднимаем)
+Если цвет фона белый убрать, то по умолчанию вылезает тень сверху этого элемента (почему не знаю)*/
+.breadcrumb-new {
+    background-color: white;
+    font-size: 14px;
+    height: 30px;
+    padding-top: 3px;
+    padding-bottom: 1px;
+}
+/*Хлебные крошки (навигационные цепочки) - конец */
+
+/*Меню слева*/
+.menu-katalog {
+
+}
+/*Меню слева - конец*/
+
+
+footer {
+        background-color: #08415a;
+        height: 1200px;
+        width: 100%;
+      }
+
+/* Задаем свойства класса nav-first в SHPORA-base.html*/
+.nav-first {
+        background-color: white;
+}
+
+.nav-col-text {
+        color: #08415a;
+}
+
+
+/*Переопределяем свойства индикаторов карусели index.html
+По умолчанию они в виде полосочек, а теперь в виде маленьких кружочков*/
+.carousel-indicators li {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+}
+
+
+/* всплывающие подсказки */
+/* Пример 1 (работает) https://question-it.com/questions/1810513/perekrasit-vsplyvajuschuju-podskazku-v-bootstrap-4
+/*Tooltip*/
+/*
+.tooltip-inner{ color:white; font-weight:400;  background-color:red;}
+.tooltip.bs-tooltip-auto[x-placement^=right] .arrow::before, .tooltip.bs-tooltip-right .arrow::before { border-right-color: red;}
+*/
+
+  /*Пример 2  (работает) https://html5css.ru/edithtm/index.php*/
+  /* Tooltip */
+  .tooltip > .tooltip-inner {
+      background-color: #08c915;
+      color: white;
+      border: 3px solid success;
+      padding: 5px;
+      font-size: 15px;
+  }
+  /* Tooltip on top */
+  .tooltip.top > .tooltip-arrow {
+      border-top: 5px solid green;
+  }
+  /* Tooltip on bottom */
+  .tooltip.bottom > .tooltip-arrow {
+      border-bottom: 5px solid blue;
+  }
+  /* Tooltip on left */
+  .tooltip.left > .tooltip-arrow {
+      border-left: 5px solid red;
+  }
+  /* Tooltip on right */
+  .tooltip.right > .tooltip-arrow {
+      border-right: 5px solid black;
+  }
+
+
+  /*страница Полиграфия*/
+  .punkt_menu {
+    font-size: 16px;
+    line-height: 32px;
+    color: grey;
+  }
+
+  .zag-katalog {
+        background-color: #0796a6;
+        color: white;
+        width: 100%;
+        font-size: 20px;
+        line-height: 80%;
+  }
+
+#menu {
+        font-size: 40px;
+        color: white;
+        background-color: #0796a6;
+}
+

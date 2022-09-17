@@ -1,0 +1,60 @@
+<!--страница - заявка на заказ-->
+{% extends 'base.html' %}
+{% block container %}
+
+<main>
+    <div class="container">
+
+    <!--возврат к странице выбора услуги - начало-->
+        {# <a href="{{ url_for('render_uslugi_link', punkt_menu=card_usluga.usluga.punkt_menu.link, category=card_usluga.usluga.link) }}">-->
+            <div>
+                Вернуться к выбору услуги
+            </div>
+        </a> #}
+    <!--возврат к странице выбора услуги - конец-->
+
+        <div class="row pt-3">
+
+            <div class="col-6">
+
+                    <h5 class="base_color_1">
+                        {% if current_user.is_authenticated %}
+                        {% if current_user.user_first_name %}
+                            {{ current_user.user_first_name }}!
+                        {% else %}
+                            {{ current_user }}!
+                        {% endif %}
+                        {% endif %}
+
+                    </h5>
+                <div>
+                     Ваша корзина:
+                </div>
+
+
+                <div class="px-3 border border-success">
+
+                    <div class="row pt-3 my-3">
+                        <div class="col-12">
+
+                            <div>
+                                <a class="btn btn-success container-fluid"
+                                   href="">
+                                    Оформить заказ
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+
+{% endblock %}
+
