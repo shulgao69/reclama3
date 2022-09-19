@@ -15,7 +15,6 @@
 
         <div class="row pt-3">
 
-
             <div class="col-6">
                 <div>
                     session.get('sum', 0) {{ session.get('sum', 0) }}
@@ -101,13 +100,6 @@
                             </h6>
                             <div>
                                 <!--Функция  уменьшения количества - начало-->
-                                <!--{#<a href="{{ url_for('order_bp.order_sum_minus',-->
-                                                           <!--foto_id=285,-->
-                                                            <!--name_price=name_price,-->
-                                                            <!--price_0_0=price_0_0,-->
-                                                            <!--price_0_j=price_0_j,-->
-                                                            <!--price_i_0=price_i_0,-->
-                                                            <!--price_i_j=price_i_j) }}">#}-->
                                     <a href="{{ url_for('order_bp.order_sum_minus',
                                                 card_usluga_id=card_usluga.id,
                                                 price_id=price.id,
@@ -198,7 +190,11 @@
                             {% if session.get('card_usluga_add_to_cart') %}
                             <div>
                                 <a class="btn btn-success container-fluid"
-                                   href="">
+                                   href="{{ url_for('order_bp.order_cart',
+                                       card_usluga_id=card_usluga.id,
+                                       price_id=price.id,
+                                       i=i,
+                                       j=j) }}">
                                     Перейти в корзину
                                 </a>
                             </div>
@@ -219,7 +215,6 @@
 
                         </div>
                     </div>
-
 
                 </div>
             </div>

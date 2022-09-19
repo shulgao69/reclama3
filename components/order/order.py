@@ -13,7 +13,7 @@ from RECL.models import db
 from RECL.forms import LoginForm
 import json
 
-#  импортируем модуль используем для перевода сроки в десятичное число
+#  модуль используем для перевода строки в десятичное число
 from decimal import Decimal
 
 # getcontext().prec = 2    #  устанавливаем точность
@@ -22,6 +22,23 @@ from decimal import Decimal
 # Создаем блюпринт управления прайсами- создание, редактирование, копирование, удаление таблиц прайсов
 
 order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/order/', static_folder='static')
+
+
+# заявка на заказ по ссылке из прайса на странице услуги
+@order_blueprint.route('/order_cart/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+# @login_required
+def order_cart(card_usluga_id, price_id, i, j):
+    card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
+    price = PriceTable.query.filter(PriceTable.id == price_id).first()
+
+    return render_template('order_cart.html',
+                           card_usluga=card_usluga,
+                           price=price,
+                           i=i,
+                           j=j
+                           )
+
 
 
 # заявка на заказ по ссылке из прайса на странице услуги
@@ -90,18 +107,6 @@ def order_confirm(user_id):
     form = ApplicationForm()
     return render_template('order_confirm.html',
                            form=form
-                           # punkt_menu=punkt_menu,
-                           # category=category,
-                           # name_price=name_price,
-                           # name_foto=name_foto,
-                           # price_0_0=price_0_0,
-                           # price_0_j=price_0_j,
-                           # price_i_0=price_i_0,
-                           # price_i_j=price_i_j,
-                           # price_i=price_i,
-                           # price_0=price_0,
-                           # foto_title=foto_title,
-                           # form=form
                            )
 
 
