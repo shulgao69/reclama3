@@ -25,20 +25,16 @@ order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/ord
 
 
 # корзина
-@order_blueprint.route('/order_cart/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
+@order_blueprint.route('/cart/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
 # @login_required
-def order_cart(card_usluga_id, price_id, i, j):
-    card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
-    price = PriceTable.query.filter(PriceTable.id == price_id).first()
+def cart():
+    cart=session.get('cart', [])
+    print('cart=', cart)
     session['card_usluga_add_to_cart'] = False
+    print("len(session.get('cart', []))=", len(session.get('cart', [])))
 
-    return render_template('order_cart.html',
-                           card_usluga=card_usluga,
-                           price=price,
-                           i=i,
-                           j=j
-                           )
+    return render_template('cart.html')
 
 
 
@@ -72,8 +68,9 @@ def order_request(card_usluga_id, price_id, i, j):
     except:
         order_sum=-1
 
-    if form.validate_on_submit():
-        user_phone = form.user_phone.data
+    # if form.validate_on_submit():
+    #     user_phone = form.user_phone.data
+
 
     return render_template('order_request.html',
                            card_usluga=card_usluga,
@@ -91,6 +88,21 @@ def order_request(card_usluga_id, price_id, i, j):
 # @login_required
 def card_usluga_add_to_cart(card_usluga_id, price_id, i, j):
     session['card_usluga_add_to_cart']=True
+    order = {}
+    order['sum'] = session.get('sum', 1)
+    order['card_usluga_id'] = card_usluga_id
+    order['price_id'] = price_id
+    order['i'] = i
+    order['j'] = j
+    print('order=', order)
+    session['order'] = order
+    print("session.get('order', [])=", session.get('order', []))
+    cart=session.get('cart', [])
+    cart.append(order)
+    print("cart=", cart)
+    session['cart']=cart
+    print("session.get('cart', [])=", session.get('cart', []))
+    print("len(session.get('cart', []))=", len(session.get('cart', [])))
     return redirect(url_for('order_bp.order_request',
                             card_usluga_id=card_usluga_id,
                             price_id=price_id,

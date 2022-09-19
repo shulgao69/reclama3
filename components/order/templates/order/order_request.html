@@ -188,13 +188,12 @@
                     <div class="row pt-3 my-3">
                         <div class="col-12">
                             {% if session.get('card_usluga_add_to_cart') %}
+                            <h6 class="text-center base_color_1">
+                                Услуга добавлена в корзину.
+                            </h6>
                             <div>
                                 <a class="btn btn-success container-fluid"
-                                   href="{{ url_for('order_bp.order_cart',
-                                       card_usluga_id=card_usluga.id,
-                                       price_id=price.id,
-                                       i=i,
-                                       j=j) }}">
+                                   href="{{ url_for('order_bp.cart')}}">
                                     Перейти в корзину
                                 </a>
                             </div>
