@@ -24,13 +24,14 @@ from decimal import Decimal
 order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/order/', static_folder='static')
 
 
-# заявка на заказ по ссылке из прайса на странице услуги
+# корзина
 @order_blueprint.route('/order_cart/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
 # @login_required
 def order_cart(card_usluga_id, price_id, i, j):
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
+    session['card_usluga_add_to_cart'] = False
 
     return render_template('order_cart.html',
                            card_usluga=card_usluga,
@@ -98,19 +99,6 @@ def card_usluga_add_to_cart(card_usluga_id, price_id, i, j):
                     )
 
 
-# страница с подтвержденной заявкой для авторизованного пользователя
-@order_blueprint.route('/order_confirm/<int:user_id>/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
-def order_confirm(user_id):
-    session['sum']=1
-    form = ApplicationForm()
-    return render_template('order_confirm.html',
-                           form=form
-                           )
-
-
-
 # роут добавления количества в заказе
 @order_blueprint.route('/order_sum_plus/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
@@ -154,7 +142,16 @@ def order_sum_minus(card_usluga_id, price_id, i, j):
                     )
 
 
-
+# страница с подтвержденной заявкой для авторизованного пользователя
+@order_blueprint.route('/order_confirm/<int:user_id>/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+# @login_required
+def order_confirm(user_id):
+    session['sum']=1
+    form = ApplicationForm()
+    return render_template('order_confirm.html',
+                           form=form
+                           )
 
 # class Status:
 #     def __init__(self, name_status, status_weight, norma):
