@@ -19,9 +19,22 @@ from decimal import Decimal
 # getcontext().prec = 2    #  устанавливаем точность
 
 
+
 # Создаем блюпринт управления прайсами- создание, редактирование, копирование, удаление таблиц прайсов
 
 order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/order/', static_folder='static')
+
+# удалить из корзины
+@order_blueprint.route('/cart/<int:i>', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+# @login_required
+def delete_from_cart(i):
+    print('i=', i)
+    cart=session.get('cart', [])
+    cart.pop(i)
+    session['cart']=cart
+    return redirect(url_for('order_bp.cart')
+                    )
 
 
 # корзина
@@ -29,22 +42,59 @@ order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/ord
 # @roles_accepted('superadmin')
 # @login_required
 def cart():
-    cart=session.get('cart', [])
-    print('cart=', cart)
     session['card_usluga_add_to_cart'] = False
-    print("len(session.get('cart', []))=", len(session.get('cart', [])))
+    cart = session.get('cart', [])
+    orders=[]
+    for order in cart:
+        dict={}
+        card_usluga = CardUsluga.query.filter(CardUsluga.id == order['card_usluga_id']).first()
+        price = PriceTable.query.filter(PriceTable.id == order['price_id']).first()
+        dict['card_usluga']=card_usluga
+        dict['price'] = price
+        dict['i'] = order['i']
+        dict['j'] = order['j']
+        dict['sum'] = order['sum']
+        dict['order_sum'] = order['order_sum']
+        orders.append(dict)
+    print('orders=', orders)
 
-    return render_template('cart.html')
+
+    return render_template('cart.html',
+                           orders=orders
+                           )
 
 
+
+# добавить в корзину
+@order_blueprint.route('/card_usluga_add_to_cart/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+# @login_required
+def card_usluga_add_to_cart():
+    session['card_usluga_add_to_cart']=True
+    order=session.get('order', [])
+    cart=session.get('cart', [])
+    cart.append(order)
+    session['cart']=cart
+
+    return redirect(url_for('order_bp.order_request',
+                            card_usluga_id=order['card_usluga_id'],
+                            price_id=order['price_id'],
+                            i=order['i'],
+                            j=order['j']
+                           )
+                    )
 
 # заявка на заказ по ссылке из прайса на странице услуги
 @order_blueprint.route('/order_request/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
 # @login_required
 def order_request(card_usluga_id, price_id, i, j):
+    session['order']=[]
     # print("session.get('sum', 0)=", session.get('sum'))
     # print('session.get("card_usluga_add_to_cart", False)=', session.get('card_usluga_add_to_cart'))
+
+    # Пока оставить для обнуления корзины(пока не напишу всю)
+    # session['cart'] = []
 
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
@@ -68,9 +118,18 @@ def order_request(card_usluga_id, price_id, i, j):
     except:
         order_sum=-1
 
+    session['order_sum']=order_sum
     # if form.validate_on_submit():
     #     user_phone = form.user_phone.data
+    order = {}
+    order['card_usluga_id'] = card_usluga_id
+    order['price_id'] = price_id
+    order['i'] = i
+    order['j'] = j
+    order['sum'] = session.get('sum', 1)
+    order['order_sum'] = order_sum
 
+    session['order']=order
 
     return render_template('order_request.html',
                            card_usluga=card_usluga,
@@ -80,35 +139,6 @@ def order_request(card_usluga_id, price_id, i, j):
                            order_sum=order_sum,
                            form=form
                            )
-
-
-# добавить в корзину
-@order_blueprint.route('/card_usluga_add_to_cart/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
-def card_usluga_add_to_cart(card_usluga_id, price_id, i, j):
-    session['card_usluga_add_to_cart']=True
-    order = {}
-    order['sum'] = session.get('sum', 1)
-    order['card_usluga_id'] = card_usluga_id
-    order['price_id'] = price_id
-    order['i'] = i
-    order['j'] = j
-    print('order=', order)
-    session['order'] = order
-    print("session.get('order', [])=", session.get('order', []))
-    cart=session.get('cart', [])
-    cart.append(order)
-    print("cart=", cart)
-    session['cart']=cart
-    print("session.get('cart', [])=", session.get('cart', []))
-    print("len(session.get('cart', []))=", len(session.get('cart', [])))
-    return redirect(url_for('order_bp.order_request',
-                            card_usluga_id=card_usluga_id,
-                            price_id=price_id,
-                            i=i, j=j
-                           )
-                    )
 
 
 # роут добавления количества в заказе

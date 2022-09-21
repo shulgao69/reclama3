@@ -436,6 +436,7 @@ def render_menu(punkt_menu):
 # (показываются только карточки, имеющие прайсы)
 @app.route('/раздел-<punkt_menu>/услуга-<category>/')
 def render_uslugi_link(punkt_menu, category):
+    session['card_usluga_add_to_cart'] = False
     # print('punkt_menu=', punkt_menu, 'category=', category)
 
     # session['sum']=1 кол-во услуги при заказе, нужна при переходе по ссылке

@@ -5,52 +5,239 @@
 <main>
     <div class="container">
 
-    <!--возврат к странице выбора услуги - начало-->
-         {#<a href="{{ url_for('render_uslugi_link', punkt_menu=card_usluga.usluga.punkt_menu.link, category=card_usluga.usluga.link) }}">
-            <div>
-                Вернуться к выбору услуги
-            </div>
-        </a>#}
-    <!--возврат к странице выбора услуги - конец-->
+        <!--возврат к странице выбора услуги - начало-->
+        {#<a
+            href="{{ url_for('render_uslugi_link', punkt_menu=card_usluga.usluga.punkt_menu.link, category=card_usluga.usluga.link) }}">
+        <div>
+            Вернуться к выбору услуги
+        </div>
+    </a>#}
+        <!--возврат к странице выбора услуги - конец-->
 
-        <div class="row pt-3">
-
-            <div class="col-6">
-
-                    <h5 class="base_color_1">
-                        {% if current_user.is_authenticated %}
-                        {% if current_user.user_first_name %}
-                            {{ current_user.user_first_name }}!
-                        {% else %}
-                            {{ current_user }}!
-                        {% endif %}
-                        {% endif %}
-
-                    </h5>
-                <div>
-                     Ваша корзина:
-                </div>
+        <h5 class="base_color_1">
+            {% if current_user.is_authenticated %}
+            {% if current_user.user_first_name %}
+            {{ current_user.user_first_name }}!
+            {% else %}
+            {{ current_user }}!
+            {% endif %}
+            {% endif %}
+        </h5>
+        <div>
+            Ваша корзина:
+        </div>
 
 
-                <div class="px-3 border border-success">
+        <div class="row">
 
-                    <div class="row pt-3 my-3">
-                        <div class="col-12">
+<!--            Все заказы в корзине-начало-->
+            <div class="col-10">
+
+                {% for i in range(orders|length) %}
+                <div class="px-3 my-3 border border-success">
+<!--                    <h6 class="pt-1">Параметры заказа</h6>-->
+                    <div class="row m-1">
+                        <div class="col-3">
+                            gg
+                        </div>
+
+                        <!--Параметры заказа-начало-->
+                        <div class="col-3">
+<!--                            Использую тег small для уменьшения шрифта-->
+<!--                            https://getbootstrap.ru/docs/v4-alpha/content/typography/-->
+                            <small>
+
+                            <!-- Раздел-начало-->
+                            <div class="row">
+                                <div class="col-6 base_color_1">
+                                    <b>Раздел:</b>
+                                </div>
+                                <div class="col-6">
+                                    {{ orders[i]['card_usluga'].usluga.punkt_menu.title }}
+                                </div>
+                            </div>
+                            <!-- Раздел-конец-->
+
+                            <!-- Услуга раздела-начало-->
+                            <div class="row">
+                                <div class="col-6 base_color_1">
+                                    <b>Услуга:</b>
+                                </div>
+                                <div class="col-6">
+                                    {{ orders[i]['card_usluga'].usluga.title }}
+                                </div>
+                            </div>
+                            <!--Услуга раздела-конец-->
+
+                            <!-- Наименование карточки услуги-начало-->
+                            <div class="row">
+                                <div class="col-6 base_color_1">
+                                    <b>Карточка:</b>
+                                </div>
+                                <div class="col-6">
+                                    {{ orders[i]['card_usluga'].name_card_usluga }}
+                                </div>
+                            </div>
+                            <!--Наименование карточки услуги-конец-->
+
+                            <!--Наименование прайса-начало-->
+                            <div class="row">
+                                <div class="col-6 base_color_1">
+                                    <b>Прайс:</b>
+                                </div>
+                                <div class="col-6">
+                                    {{ orders[i]['price'].name_price_table }}
+                                </div>
+                            </div>
+                            <!--Наименование прайса-конец-->
+
+                            <!--Размерность по горизонтали - начало-->
+                            <div class="row">
+                                <div class="col-6 base_color_1">
+                                    <b>{{ orders[i]['price'].value_table[0][0] }}</b>
+                                </div>
+                                <div class="col-6">
+                                    {{ orders[i]['price'].value_table[0][orders[i][3]] }}
+                                </div>
+                            </div>
+                            <!--Размерность по горизонтали - конец-->
+                       </small>
+                        </div>
+                        <!--Параметры заказа-конец-->
+
+                        <!--Значение ячейки прайса-начало-->
+                        <div class="col-2">
+                            <div class="base_color_1">
+                                <b>{{ orders[i]['price'].value_table[orders[i]['i']][0] }}</b>
+                                <b>{#{{ orders[i]['price'].value_table[orders[i]['i']][0] }}#}</b>
+                            </div>
+                            <div>
+                                {{ orders[i]['price'].value_table[orders[i]['i']][orders[i]['j']] }}
+                            </div>
+                        </div>
+                        <!--Значение ячейки прайса-конец-->
+
+<!--                    Количество-начало-->
+                        <div class="col-2">
+                            <div class="base_color_1">
+                                <b>Кол-во</b>
+                            </div>
 
                             <div>
-                                <a class="btn btn-success container-fluid"
-                                   href="">
-                                    Оформить заказ
+                                <!--Функция  уменьшения количества - начало-->
+                                {% if orders[i]['order_sum']!=-1 %}
+                                <a href="">
+                                    <!--Значок - для уменьшения количества - начало-->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         fill="currentColor"
+                                         class="bi bi-dash-circle"
+                                         viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                                    </svg>
+                                    <!--Значок - для уменьшения количества - конец-->
                                 </a>
+                                {% endif %}
+                                <!--Функция  уменьшения количества - конец-->
+
+                                &nbsp
+                                {{ orders[i]['sum'] }}
+                                &nbsp
+
+                                <!--Функция  увеличения количества - начало-->
+                                {% if orders[i]['order_sum']!=-1 %}
+                                <a href="">
+                                    <!--Значок + для увеличения количества - начало-->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         fill="currentColor"
+                                         class="bi bi-plus-circle"
+                                         viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                    </svg>
+                                    <!--Значок + для увеличения количества - конец-->
+                                </a>
+                                {% endif %}
+                                <!--Функция  увеличения количества - конец-->
+
                             </div>
 
                         </div>
+<!--                    Количество-конец-->
+
+<!--                    Итого-начало-->
+                        <div class="col-1">
+                            <div class="base_color_1">
+                                <b>Итого</b>
+                            </div>
+                            {% if orders[i]['order_sum']==-1 %}
+                            <div>
+                                {{ orders[i]['price'].value_table[orders[i]['i']][orders[i]['j']] }}
+                            </div>
+                            {% else %}
+                            <div>{{ orders[i]['order_sum'] }}
+                            </div>
+                            {% endif %}
+                        </div>
+<!--                    Итого-конец-->
+
+<!--                        Удалить из корзины-начало-->
+                        <div class="col-1">
+                            <div class="base_color_1 text-center">
+                                <b>Удалить</b>
+                            </div>
+                            <div class="base_color_1 text-center">
+                                <a href="{{ url_for('order_bp.delete_from_cart',
+                                                i=i) }}">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="16"
+                                     height="16"
+                                     fill="currentColor"
+                                     class="bi bi-trash3-fill"
+                                     viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                                </svg>
+                                </a>
+                            </div>
+                        </div>
+<!--                        Удалить из корзины-конец-->
+
                     </div>
 
                 </div>
+
+                {% endfor %}
+
+                </div>
+<!--            Все заказы в корзине-конец-->
+
+<!--Оформление заказа-начало-->
+            <div class="col-2">
+<!--            Сделала правую клдлеку липкой (работает в пределах родительского элмента)-->
+<!--            У нас-<div class="row">-->
+<!--            https://bootstrap-4.ru/docs/5.2/helpers/position/-->
+            <div class="sticky-top pt-5">
+<!--                <div class="fixed-bottom">-->
+            <div>
+                Итого
             </div>
+            <div>
+                <a class="btn btn-success container-fluid"
+                   href="">
+                    Оформить заказ
+                </a>
+            </div>
+        </div>
+                </div>
+<!--Оформление заказа-конец-->
 
         </div>
+
+    </div>
 
     </div>
 </main>
