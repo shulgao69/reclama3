@@ -103,28 +103,43 @@ def edit_name_and_text_card(card_usluga_id ):
 @card_usluga_blueprint.route('/delete_card_usluga/<int:card_usluga_id>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
 def delete_card_usluga(card_usluga_id):
+    cart = session.get('cart', [])
+
     card_usluga=CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
 
-    # print('card_usluga.usluga.punkt_menu.link=', card_usluga.usluga.punkt_menu.link)
-    # print('card_usluga.usluga.link=', card_usluga.usluga.link)
-    # print('card_usluga.dir_photos=', card_usluga.dir_photos)
+    # проверяем есть ли в корзине заказы с этой карточкой услуги
+    # Если есть - отправляем карточку в архив (не удаляем).
+    # Если у карточки услуги есть фото и прайсы - их тоже отправляем в архив!
+    # Если нет - удаляем
+    card_usluga_in_cart = False
+    for element in cart:
+        if element['card_usluga_id']==card_usluga_id:
+            card_usluga_in_cart = True
+    if card_usluga_in_cart == True:
+        card_usluga.arhive=True
+        for price in card_usluga.prices:
+            price.arhive=True
+        for photo in card_usluga.photos:
+            photo.arhive=True
 
-    if card_usluga.photos:
-        # Формируем путь для удаления файла
-        path_delete = current_app.config['CARDS_USLUGS_UPLOAD_PATH'] + str(card_usluga.usluga.punkt_menu.link)+'/' + str(card_usluga.usluga.link) + '/' +str(card_usluga.dir_photos)
+    else:
+        if card_usluga.photos:
+            # Формируем путь для удаления файла
+            path_delete = current_app.config['CARDS_USLUGS_UPLOAD_PATH'] + str(card_usluga.usluga.punkt_menu.link)+'/' + str(card_usluga.usluga.link) + '/' +str(card_usluga.dir_photos)
 
-        # print('path_delete=', path_delete)
-        # print('os.listdir(path_delete)=', os.listdir(path_delete))
+            # print('path_delete=', path_delete)
+            # print('os.listdir(path_delete)=', os.listdir(path_delete))
 
-        # Удаляем папку со всем содержимым
-        # см https://pythonist.ru/udalenie-fajla-poshagovoe-rukovodstvo/
-        shutil.rmtree(path_delete)
+            # Удаляем папку со всем содержимым
+            # см https://pythonist.ru/udalenie-fajla-poshagovoe-rukovodstvo/
+            shutil.rmtree(path_delete)
 
-    # Удаляем запись, соответствующую карточке услуги, из базы
-    db.session.delete(card_usluga)
+        # Удаляем запись, соответствующую карточке услуги, из базы
+        db.session.delete(card_usluga)
 
-    # Вносим изменение в базу
+        # Вносим изменение в базу
     db.session.commit()
+
     return redirect(url_for('card_usluga_bp.show_cards_uslugs'))
 # *** Удалить карточку услуг - конец
 
@@ -598,6 +613,7 @@ def upload_prices_in_card_usluga(card_usluga_id):
     card_usluga=CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
     usluga=card_usluga.usluga
     menu=card_usluga.usluga.punkt_menu
+    # desc() - сортировка по убыванию
     prices=PriceTable.query.order_by(PriceTable.card_usluga_id.desc()).order_by('name_price_table').all()
 
     return render_template('upload_prices_in_card_usluga.html',

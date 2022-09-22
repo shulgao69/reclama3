@@ -135,12 +135,20 @@
                 </div>
             </div>
             <!--Имя и id прайса - конец-->
-            <div class="col-3">
+            <div class="col-2">
 
             </div>
 
             <!--Ссылки для редактирования прайса - начало-->
-            <div class="col-6 text-right">
+            <div class="col-7 text-right">
+                {% if price['arhive']==True %}
+                 <b class="text-danger"> Прайс в архиве &nbsp &nbsp</b>
+                <a href="{{ url_for('price_bp.copy_price', id=price['id']) }}">
+                    Скопировать прайс
+                </a>
+                {% else %}
+                <b class="text-success">Прайс не в архиве &nbsp &nbsp</b>
+
                 <a href="{{ url_for('price_bp.edit_price', id=price['id']) }}">
                     Редактировать прайс &nbsp; &nbsp;
                 </a>
@@ -162,7 +170,7 @@
                 <!--Удалить карусель-->
                 <!--</button>-->
                 <!-- Триггер модального окна (Варианты ссылка или кнопка) - конец -->
-
+                {% endif %}&nbsp &nbsp
             </div>
             <!--Ссылки для редактирования прайса - начало-->
 

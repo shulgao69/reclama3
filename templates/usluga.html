@@ -48,6 +48,7 @@
 
 
             {% for card_usluga in cards_uslugs %}
+            {% if card_usluga.arhive == False %}
             <!--Тонкая полоска - начало-->
             <div class="plashka-grey mt-2"></div>
             <!--Тонкая полоска - конец-->
@@ -191,6 +192,7 @@
 
                     {% if card_usluga.prices %}
                     {% for price in card_usluga.prices %}
+                    {% if price.arhive == False %}
                     <h5 class="base_color_1">
                         {{ price.name_price_table }}
                     </h5>
@@ -251,6 +253,7 @@
                     </div>
 
                     <br>
+                    {% endif %}
                     {% endfor %}
                     {% endif %}
 
@@ -259,6 +262,7 @@
 
             </div>
             <!--Изображения и прайсы карточки услуги - конец-->
+            {% endif %}
 
             {% endfor %}
 

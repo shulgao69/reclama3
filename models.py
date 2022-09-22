@@ -482,6 +482,7 @@ class PriceTable(db.Model):
 
     card_usluga_id = db.Column(db.Integer, db.ForeignKey("cards_uslugs.id"))
     card_usluga = db.relationship('CardUsluga', back_populates="prices")
+    arhive = db.Column(db.Boolean, default=False)
 
 
     def __repr__(self):
@@ -806,6 +807,7 @@ class CardUsluga(db.Model):
     prices = db.relationship('PriceTable', back_populates="card_usluga")
     statuses_card_usluga = db.relationship("StatusCardUsluga", back_populates='card_usluga', cascade="all,delete")
     orders = db.relationship("Order", back_populates='card_usluga')
+    arhive = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return self.name_card_usluga + ' (id '+str(self.id)+')'
@@ -881,6 +883,8 @@ class Photo(db.Model):
 
     # Сопроводительный текст к фото
     comments = db.Column(db.Text)
+
+    arhive = db.Column(db.Boolean, default=False)
 
     @hybrid_property
     def photo_card_usluga_usluga(self):

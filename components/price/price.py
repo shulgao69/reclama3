@@ -172,8 +172,21 @@ def copy_price(id):
 # @roles_accepted('superadmin')
 def delete_price(id):
     price = PriceTable.query.filter_by(id=id).first()
-    db.session.delete(price)
+    # print('price.card_usluga=', price.card_usluga)
+
+    # проверяем есть ли в корзине заказы с этим прайсом
+    # Если есть - отправляем прайс в архив (не удаляем). Если нет - удаляем
+    cart=session.get('cart', [])
+    price_in_cart = False
+    for element in cart:
+        if element['price_id']==id:
+            price_in_cart = True
+    if price_in_cart == True:
+        price.arhive=True
+    else:
+        db.session.delete(price)
     db.session.commit()
+
     return redirect(url_for('price_bp.choose_price'))
 
 
@@ -249,6 +262,7 @@ def choose_price():
         # dict_price['value_table']=json.loads(price.value_table)
         dict_price['value_table']=price.value_table
         dict_price['card_uslugi_id']=price.card_uslugi_id
+        dict_price['arhive'] = price.arhive
         list_prices.append(dict_price)
 
     return render_template('choose_price.html',

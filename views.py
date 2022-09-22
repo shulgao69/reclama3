@@ -358,11 +358,12 @@ def render_menu(punkt_menu):
             # Если услуга имеет карточки
             if usluga.cards_usluga:
                 for card in usluga.cards_usluga:
+                    if card.arhive==False:
 
-                    # Если карточки имеют фото
-                    if card.photos and i<1:
-                        i=i+1
-                        list_cards_with_photo.append(card)
+                        # Если карточки имеют фото
+                        if card.photos and i<1:
+                            i=i+1
+                            list_cards_with_photo.append(card)
 
                 if len(list_cards_with_photo)>0:
                     dict_card['usluga']=usluga
@@ -436,10 +437,11 @@ def render_menu(punkt_menu):
 # (показываются только карточки, имеющие прайсы)
 @app.route('/раздел-<punkt_menu>/услуга-<category>/')
 def render_uslugi_link(punkt_menu, category):
-    session['card_usluga_add_to_cart'] = False
+    session['order_add_to_cart'] = False
     # print('punkt_menu=', punkt_menu, 'category=', category)
 
-    # session['sum']=1 кол-во услуги при заказе, нужна при переходе по ссылке
+    # кол-во в заказе
+    session['sum']=1
     # на заказ услуги в def order_request в блюпринте @order_blueprint.route
     # иначе сохранится то кол-во которое было указано в def order_request ранее
     # Делаем это на этой стр и потом на стр где все карточки услуг (с нее тоже можно будет заказать)
@@ -455,7 +457,7 @@ def render_uslugi_link(punkt_menu, category):
 
     # Запрос фильтрует те карточки которые принадлежат данной услуге и имеют прайсы
     cards_uslugs = CardUsluga.query.filter(db.and_(CardUsluga.usluga.has(CardUsluga.usluga_id== usluga.id),
-                                         CardUsluga.prices.any()
+                                         CardUsluga.prices.any(), CardUsluga.usluga.has(CardUsluga.arhive==False)
                                          )
                                   ).all()
     # print('cards_uslugs=', cards_uslugs)

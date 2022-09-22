@@ -178,7 +178,7 @@
 
                 {% set ns = namespace(counter=1) %}
                 {% for price in prices %}
-                {% if price not in card_usluga.prices %}
+                {% if price not in card_usluga.prices and price.arhive != True %}
 
                 <!--Модальное окно  - начало-->
                 <!--Его не видно пока не нажать ссылку Добавить прайс... !!!!!!!-->
