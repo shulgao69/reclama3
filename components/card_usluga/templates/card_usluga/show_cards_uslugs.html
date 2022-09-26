@@ -55,7 +55,26 @@
                 <!--<div class="border border-success p-2 h-100">-->
 
 
-                <div class="card border-success m-2 p-3 h-100">
+                <div class="card border-success m-2 px-3 pt-2 pb-3 h-100">
+
+                    <div class="row pb-2">
+                        <div class="col-6"></div>
+                        <div class="col-6">
+                            {% if card_usluga.active == False %}
+                            <span class="badge badge-pill badge-danger">
+                                Ожидает активации
+                            </span>
+
+
+                            {% else %}
+                            <span class="badge badge-pill badge-info">
+                                Карточка активна
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
                     <div class="text-success">Услуга раздела: <b>{{ usluga }}</b></div>
 
                     <div class="card-body pt-2 pl-2">

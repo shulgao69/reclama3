@@ -808,6 +808,7 @@ class CardUsluga(db.Model):
     statuses_card_usluga = db.relationship("StatusCardUsluga", back_populates='card_usluga', cascade="all,delete")
     orders = db.relationship("Order", back_populates='card_usluga')
     arhive = db.Column(db.Boolean, default=False)
+    active = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return self.name_card_usluga + ' (id '+str(self.id)+')'

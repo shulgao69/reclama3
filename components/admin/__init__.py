@@ -1998,7 +1998,7 @@ class MyUsluga(SpecificView):
     # def is_accessible(self):
     #     return (current_user.has_role('manager'))
 
-class MyCardUsluga(SpecificView):
+class CardUslugaView(SpecificView):
     # Пыталась сделать выбор меню, потом из выбранных услуг по услуге - не получилось пока на 16.07.22 - начало
     # тк сейчас для определения места карточки есть выбор услуги только из списка услуг,
     # а он большой и не понятно к какому пункту меню относится.
@@ -2042,17 +2042,25 @@ class MyCardUsluga(SpecificView):
     # Как ее решить не знаю поэтому использовала гибридное св-во в модели def punkt_menu_card_usluga
     # которое позволяет в данном случае задать и псевдоним  column_labels и сортировку column_sortable_list
     # column_list = ['id', 'name_card_usluga', 'punkt_menu_card_usluga', 'usluga.punkt_menu', 'usluga', 'dir_photos', 'comments', 'count_photos_in_card_usluga', 'photos', 'count_prices_in_card_usluga', 'prices']
-    column_list = ['id', 'name_card_usluga', 'punkt_menu_card_usluga', 'usluga', 'dir_photos', 'comments', 'count_photos_in_card_usluga', 'photos', 'count_prices_in_card_usluga', 'prices', 'statuses_card_usluga']
+    column_list = ['id', 'name_card_usluga', 'punkt_menu_card_usluga', 'usluga',
+                   'dir_photos', 'comments', 'count_photos_in_card_usluga',
+                   'photos', 'count_prices_in_card_usluga', 'prices',
+                   'statuses_card_usluga', 'arhive', 'active']
 
     # Если включаю 'count_photos_in_card_usluga' для возможности сортировки - выдает ошибку поэтому исключила
     # Нужно разбираться с гибридными св-вами модели ('count_photos_in_card_usluga' оттуда)
     # column_sortable_list =['id', ('punkt_menu_card_usluga', 'usluga.punkt_menu.title'), ('usluga.punkt_menu', 'usluga.punkt_menu.title'), ('usluga', 'usluga.title'), 'name_card_usluga', 'dir_photos', 'comments']
-    column_sortable_list =['id', 'name_card_usluga', ('punkt_menu_card_usluga', 'usluga.punkt_menu.title'), ('usluga', 'usluga.title'), 'dir_photos', 'comments', ('statuses_card_usluga', 'statuses_card_usluga.status.number')]
+    column_sortable_list =['id', 'arhive', 'active', 'name_card_usluga', ('punkt_menu_card_usluga',
+                                                                         'usluga.punkt_menu.title'),
+                           ('usluga', 'usluga.title'), 'dir_photos', 'comments', ('statuses_card_usluga', 'statuses_card_usluga.status.number')]
 
-    column_searchable_list = ['id', 'name_card_usluga', 'usluga.punkt_menu.title', 'usluga.title', 'dir_photos', 'comments', 'statuses_card_usluga.status.status']
+    column_searchable_list = ['id', 'arhive', 'active', 'name_card_usluga', 'usluga.punkt_menu.title', 'usluga.title',
+                              'dir_photos', 'comments', 'statuses_card_usluga.status.status']
     # Присвоить столбцам из модели заголовки
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
     column_labels = dict (usluga='Относится к услуге (usluga)',
+                          arhive='Архив',
+                          active='Активна',
                           punkt_menu_card_usluga='Относится к разделу',
                           dir_photos='Директория загрузки фото (dir_photos)',
                           name_card_usluga='Имя карточки (name_card_usluga)',
@@ -2062,8 +2070,8 @@ class MyCardUsluga(SpecificView):
 
     form_create_rules = ['usluga', 'name_card_usluga', 'comments']
 
-    column_editable_list = ['name_card_usluga', 'comments']
-    form_edit_rules = ['name_card_usluga', 'comments']
+    column_editable_list = ['name_card_usluga', 'arhive', 'active', 'comments']
+    form_edit_rules = ['name_card_usluga', 'arhive', 'active', 'comments']
     edit_modal = True
     # can_view_details = True
 
@@ -3000,7 +3008,7 @@ with warnings.catch_warnings():
     admin.add_view(MyUploadFileMy(UploadFileMy, db.session, name='Фото услуг(UploadFileMy)', category="Фото услуг и прайсы"))
     admin.add_view(MyPriceTable(PriceTable, db.session, name='Прайсы(PriceTable)', category="Фото услуг и прайсы"))
     # Заказы и статусы - начало
-    admin.add_view(MyCardUsluga(CardUsluga, db.session, name=' Карточка услуги(CardUsluga)'))
+    admin.add_view(CardUslugaView(CardUsluga, db.session, name=' Карточка услуги(CardUsluga)'))
     admin.add_view(MyStatus(Status, db.session, name='Возможные статусы'))
     admin.add_view(MyStatusCardUsluga(StatusCardUsluga, db.session, name='Статусы карточек'))
     # admin.add_view(MyOrderStatus(OrderStatus, db.session, name='Статусы заказов'))

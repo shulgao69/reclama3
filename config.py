@@ -20,7 +20,7 @@ class Config:
 
 class DevelopConfig:
     DEBUG = True
-
+    FLASK_APP = flaskapp
     SQLALCHEMY_DATABASE_URI = "postgresql://postgres:postgres@127.0.0.1:5432/datarecl3"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PASSWORD_MIN_LENGTH = 2

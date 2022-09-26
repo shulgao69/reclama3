@@ -358,7 +358,7 @@ def render_menu(punkt_menu):
             # Если услуга имеет карточки
             if usluga.cards_usluga:
                 for card in usluga.cards_usluga:
-                    if card.arhive==False:
+                    if card.arhive==False and card.active==True:
 
                         # Если карточки имеют фото
                         if card.photos and i<1:
@@ -455,11 +455,17 @@ def render_uslugi_link(punkt_menu, category):
     # cards_uslugs=usluga_page.cards_usluga
     # print('cards_uslugs=', cards_uslugs)
 
-    # Запрос фильтрует те карточки которые принадлежат данной услуге и имеют прайсы
-    cards_uslugs = CardUsluga.query.filter(db.and_(CardUsluga.usluga.has(CardUsluga.usluga_id== usluga.id),
-                                         CardUsluga.prices.any(), CardUsluga.usluga.has(CardUsluga.arhive==False)
-                                         )
-                                  ).all()
+    # Запрос фильтрует те карточки которые принадлежат данной услуге, имеют прайсы и не в архиве
+    # cards_uslugs = CardUsluga.query.filter(db.and_(CardUsluga.usluga.has(CardUsluga.usluga_id== usluga.id),
+    #                                      CardUsluga.prices.any(), CardUsluga.usluga.has(CardUsluga.arhive==False)
+    #                                      )
+    #                               ).all()
+    # Запрос фильтрует те карточки которые принадлежат данной услуге и не в архиве
+    cards_uslugs = CardUsluga.query.filter(db.and_(CardUsluga.usluga.has(CardUsluga.usluga_id == usluga.id),
+                                                   CardUsluga.usluga.has(CardUsluga.arhive == False),
+                                                   CardUsluga.usluga.has(CardUsluga.active == True)
+                                                   )
+                                           ).all()
     # print('cards_uslugs=', cards_uslugs)
 
 

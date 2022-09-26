@@ -53,7 +53,26 @@
             <!--Сведения о карточке услуги - начало-->
             <div>
                 <!--<h5 class="base_color_1">Сведения о карточке услуги</h5>-->
-                <h5>Сведения о карточке услуги</h5>
+                <h5>Сведения о карточке</h5>
+
+                <div class="row">
+                    <div class="col-10">
+                    </div>
+                    <div class="col-2">
+                        {% if card_usluga.active == False %}
+                        <span class="badge badge-pill badge-danger">
+                                Ожидает активации
+                            </span>
+
+                        {% else %}
+                        <span class="badge badge-pill badge-info">
+                                Карточка активна
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+
                 <div class="text-success">
                     Раздел:
                     <b class="base_color_1">
