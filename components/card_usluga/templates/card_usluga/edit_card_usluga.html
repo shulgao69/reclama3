@@ -279,11 +279,7 @@
                     <div class="base_color_1">
                         {{ card_usluga.name_card_usluga }}
                     </div>
-                    {% if card_usluga.comments %}
-                    <div>
-                        {{ card_usluga.comments }}
-                    </div>
-                    {% endif %}
+
                 </div>
 
 
@@ -393,15 +389,20 @@
 
                     <!--Прайсы карточки услуг (с ссылками редактирования прайсов) - начало-->
                     <div class="col-8 container-fluid">
-                        {% if card_usluga.prices %}
+                        {% if card_usluga.comments %}
+                        <div>
+                        {{ card_usluga.comments }}
+                        </div>
+                        {% endif %}
 
+                        {% if card_usluga.prices %}
 
                         <!--класс class="d-inline" см https://bootstrap-4.ru/docs/5.0/utilities/display/-->
                         <!--https://bootstrap-4.ru/articles/cheatsheet/#d-inline-->
                         {% for price in card_usluga.prices %}
 
                         <!--Имя прайса и id - начало-->
-                        <div class="row">
+                        <div class="row pt-2">
                             <div class="col-8">
                                 <h5 class="d-inline">Имя прайса:
                                     <b class="base_color_1">

@@ -7,6 +7,8 @@ from flask_wtf import FlaskForm
 
 from flask_security import login_required, roles_required, roles_accepted
 
+from sqlalchemy import and_, or_
+
 from wtforms import SubmitField, HiddenField, SelectField, BooleanField, StringField, IntegerField
 from wtforms import validators, PasswordField, FieldList, FormField, TextAreaField
 from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo
@@ -250,7 +252,10 @@ def edit_price(id):
 @price_blueprint.route('/chooseprice/')
 # @roles_accepted('superadmin')
 def choose_price():
-    prices = PriceTable.query.order_by('name_price_table').all()
+    # prices = PriceTable.query.order_by('name_price_table').all()
+    # prices = PriceTable.query.order_by(and_(PriceTable.name_price_table(), PriceTable.arhive())).all()
+    # prices = PriceTable.query.order_by(and_(text('name_price_table', 'arhive'))).all()
+    prices = PriceTable.query.order_by('arhive').all()
     list_prices = []
 
     for price in prices:

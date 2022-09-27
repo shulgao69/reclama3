@@ -19,35 +19,16 @@ from decimal import Decimal
 # getcontext().prec = 2    #  устанавливаем точность
 
 
-# Создаем блюпринт управления прайсами- создание, редактирование, копирование, удаление таблиц прайсов
-
+# Создаем блюпринт управления заказами и корзиной
 order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/order/', static_folder='static')
 
 
-# удалить из корзины
-@order_blueprint.route('/cart/<int:number>', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
-def delete_from_cart(number):
-    print('number=', number)
-    cart = session.get('cart', [])
-    print('cart before delete=', cart)
-    cart.pop(number)
-    session['cart'] = cart
-    cart = session.get('cart', [])
-    print('cart after delete=', cart)
-    return redirect(url_for('order_bp.cart')
-                    )
-
-
-# корзина
+# показать содержимое корзины
 @order_blueprint.route('/cart/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
 def cart():
     session['order_add_to_cart'] = False
     cart = session.get('cart', [])
-    print('cart from cart=', cart)
+    # print('cart from cart=', cart)
     orders = []
     for order in cart:
         dict = {}
@@ -62,17 +43,15 @@ def cart():
         dict['sum'] = order['sum']
         dict['order_sum'] = order['order_sum']
         orders.append(dict)
-    print('orders from cart=', orders)
+    # print('orders from cart=', orders)
 
     return render_template('cart.html',
                            orders=orders
                            )
 
 
-# добавить в корзину
+# добавить заявку на заказ в корзину
 @order_blueprint.route('/order_add_to_cart/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
 def order_add_to_cart():
     session['order_add_to_cart'] = True
     order = session.get('order', [])
@@ -132,10 +111,22 @@ def order_add_to_cart():
                     )
 
 
+# удалить из корзины
+@order_blueprint.route('/cart/<int:number>', methods=['GET', 'POST'])
+def delete_from_cart(number):
+    print('number=', number)
+    cart = session.get('cart', [])
+    print('cart before delete=', cart)
+    cart.pop(number)
+    session['cart'] = cart
+    cart = session.get('cart', [])
+    print('cart after delete=', cart)
+    return redirect(url_for('order_bp.cart')
+                    )
+
+
 # заявка на заказ по ссылке из прайса на странице услуги
 @order_blueprint.route('/order_request/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
 def order_request(card_usluga_id, price_id, i, j):
     session['order'] = {}
     print('session.get("sum") from order_request=', session.get('sum'))
@@ -188,10 +179,8 @@ def order_request(card_usluga_id, price_id, i, j):
                            )
 
 
-# роут добавления количества в заказе
+# роут добавления кол-ва в заявке на заказ перед добавлением в корзину
 @order_blueprint.route('/order_sum_plus/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
 def order_sum_plus(card_usluga_id, price_id, i, j):
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
@@ -207,10 +196,8 @@ def order_sum_plus(card_usluga_id, price_id, i, j):
                             ))
 
 
-# роут уменьшения количества в заказе
+# роут уменьшения кол-ва в заявке на заказ перед добавлением в корзину
 @order_blueprint.route('/order_sum_minus/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-# @login_required
 def order_sum_minus(card_usluga_id, price_id, i, j):
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
@@ -231,7 +218,7 @@ def order_sum_minus(card_usluga_id, price_id, i, j):
                     )
 
 
-# страница с подтвержденной заявкой для авторизованного пользователя
+# стр. с подтвержденной заявкой для авторизованного пользователя
 @order_blueprint.route('/order_confirm/<int:user_id>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
 # @login_required
