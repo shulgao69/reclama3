@@ -1,17 +1,19 @@
 from flask import Blueprint, redirect, url_for
-from flask import request, render_template, session
-from flask_wtf import FlaskForm
-from wtforms import SubmitField, HiddenField, SelectField, BooleanField, StringField, IntegerField
-from wtforms import PasswordField, IntegerField, validators, FieldList, FormField, TextAreaField
-from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo
-from RECL.components.price.forms import PriceForm
+# from flask import request
+from flask import render_template, session
+# from flask_wtf import FlaskForm
+# from wtforms import SubmitField, HiddenField, SelectField, BooleanField, StringField, IntegerField
+# from wtforms import PasswordField, IntegerField, validators, FieldList, FormField, TextAreaField
+# from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo
+# from RECL.components.price.forms import PriceForm
 from RECL.components.order.forms import ApplicationForm
-from RECL.models import Usluga, Link, Order, User, Role, CardUsluga, roles_users, UploadFileMy, PriceTable
+from RECL.models import CardUsluga, PriceTable
+# from RECL.models import Usluga, Link, Order, User, Role, roles_users, UploadFileMy
 # from RECL.models import OrderStatus
-from flask_security import login_required, roles_required, roles_accepted
-from RECL.models import db
-from RECL.forms import LoginForm
-import json
+# from flask_security import login_required, roles_required, roles_accepted
+# from RECL.models import db
+# from RECL.forms import LoginForm
+# import json
 
 #  модуль используем для перевода строки в десятичное число
 from decimal import Decimal
@@ -35,6 +37,7 @@ def cart():
         card_usluga = CardUsluga.query.filter(CardUsluga.id == order['card_usluga_id']).first()
         price = PriceTable.query.filter(PriceTable.id == order['price_id']).first()
         dict['card_usluga_arhive'] = card_usluga.arhive
+        dict['card_usluga_active'] = card_usluga.active
         dict['price_arhive']=price.arhive
         dict['card_usluga'] = card_usluga
         dict['price'] = price
@@ -54,7 +57,9 @@ def cart():
 @order_blueprint.route('/order_add_to_cart/', methods=['GET', 'POST'])
 def order_add_to_cart():
     session['order_add_to_cart'] = True
-    order = session.get('order', [])
+    order = session.get('order', {})
+    print("order, type(order)=", order, type(order))
+    print("order['order_sum']=", order['order_sum'])
     cart = session.get('cart', [])
     print('session.get("sum", 1) order_add_to_cart=', session.get('sum', 1))
     print('order from add_to_cart=', order)

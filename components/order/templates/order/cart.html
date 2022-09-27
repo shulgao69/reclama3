@@ -39,6 +39,24 @@
 
 
                     <div class="row p-2">
+                        <div class="col-12 pb-3">
+                        {% if orders[number]['card_usluga'].arhive==True or orders[number]['card_usluga'].active ==
+                            False %}
+                            <small>
+                            <div class="alert alert-success" role="alert">
+                                <strong class="alert-heading">Поздравляем!</strong>
+                                <br>
+                                Вы успели сделать заказ услуги и можете
+                            продолжить оформление заказа по данной цене и параметрам.
+                                <br>
+                            Далее данная услуга не будет предоставляться или
+                            условия ее предоставления изменятся.
+                                <br>Если вы удалите заказ из корзины то данное предложение
+                            услуги и цены будут не актуальны.
+                            </div>
+                        </small>
+                        {% endif %}
+                            </div>
 
                         <!-- Ссылка на стр. карточки услуги по клику на фото- начало-->
                         <a href="{{ url_for('render_uslugi_link',
@@ -257,7 +275,10 @@
 
                             <div>
                                 <!--Функция  уменьшения количества - начало-->
-                                {% if orders[number]['order_sum']!=-1 %}
+                                {% if orders[number]['order_sum']!=-1  %}
+                                {%  if orders[number]['card_usluga'].arhive == False and orders[number]['card_usluga'].active == True %}
+
+
                                 <a href="">
                                     <!--Значок - для уменьшения количества - начало-->
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -271,6 +292,8 @@
                                     </svg>
                                     <!--Значок - для уменьшения количества - конец-->
                                 </a>
+
+                                {% endif %}
                                 {% endif %}
                                 <!--Функция  уменьшения количества - конец-->
 
@@ -279,7 +302,11 @@
                                 &nbsp
 
                                 <!--Функция  увеличения количества - начало-->
-                                {% if orders[number]['order_sum']!=-1 %}
+                                 {% if orders[number]['order_sum']!=-1  %}
+                                {%  if orders[number]['card_usluga'].arhive == False and orders[number]['card_usluga'].active == True %}
+
+
+
                                 <a href="">
                                     <!--Значок + для увеличения количества - начало-->
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -293,6 +320,7 @@
                                     </svg>
                                     <!--Значок + для увеличения количества - конец-->
                                 </a>
+                                {% endif %}
                                 {% endif %}
                                 <!--Функция  увеличения количества - конец-->
 
