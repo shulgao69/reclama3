@@ -117,7 +117,7 @@ def order_add_to_cart():
 
 
 # удалить из корзины
-@order_blueprint.route('/cart/<int:number>', methods=['GET', 'POST'])
+@order_blueprint.route('/cart/delete/<int:number>', methods=['GET', 'POST'])
 def delete_from_cart(number):
     print('number=', number)
     cart = session.get('cart', [])
@@ -233,6 +233,7 @@ def order_confirm(user_id):
     return render_template('order_confirm.html',
                            form=form
                            )
+
 
 # class Status:
 #     def __init__(self, name_status, status_weight, norma):

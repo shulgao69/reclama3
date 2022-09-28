@@ -975,7 +975,7 @@ class MyUser(SpecificView):
     # *** column_searchable_list- Задает поля, в которых возможен поиск по словам - конец
 
     # *** column_filters - Задает поля, в которых возможна булева фильтрация - начало
-    column_filters = (BooleanEqualFilter(column=User.active, name='active'),)
+    # column_filters = (BooleanEqualFilter(column=User.active, name='active'),)
     # *** column_filters - Задает поля, в которых возможна булева фильтрация - конец
 
     # *** column_filters - Задает поля, в которых возможна фильтрация - начало
@@ -985,7 +985,11 @@ class MyUser(SpecificView):
     # то в выпадающем списке AddFilter кроме имени, роли, описания, id
     # увидим и все поля модели Role(например name, description и тп)
     # и следовательно можно искать те роли в которых например name содержит сочетание ad и тп)
-    column_filters = ['id', 'user_first_name', 'email', 'active', 'password', 'confirmed_at', 'created_on', 'updated_on', 'roles', 'orders', 'phones']
+    # column_filters = ['id', 'user_first_name', 'email', 'active', 'password', 'confirmed_at', 'created_on', 'updated_on', 'roles', 'orders', 'phones']
+    column_filters = ['id', 'user_first_name', 'email',
+                      BooleanEqualFilter(column=User.active, name='active'),
+                      'password', 'confirmed_at', 'created_on',
+                      'updated_on', 'roles', 'orders', 'phones']
     # *** column_filters - Задает поля, в которых возможна фильтрация - конец
 
     # *** column_sortable_list- Задает поля, в которых возможна сортировка - начало
@@ -996,7 +1000,8 @@ class MyUser(SpecificView):
     # не понятно как сортировать???
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
-    column_sortable_list = ['id', 'user_first_name', ('roles', 'roles.name'), ('orders', 'orders.order'), ('phones', 'phones.phone'), 'email', 'active', 'confirmed_at', 'created_on', 'updated_on' ]
+    column_sortable_list = ['id', 'user_first_name', ('roles', 'roles.name'), ('orders', 'orders.order'),
+                            ('phones', 'phones.phone'), 'email', 'active', 'confirmed_at', 'created_on', 'updated_on' ]
     # *** column_sortable_list- Задает поля, в которых возможна сортировка - конец
 
 
@@ -2644,7 +2649,6 @@ class MyStatusCardUsluga(SpecificView):
             return True
 
 
-
 # class MyOrderStatus(SpecificView):
 #
 #     def on_model_change(self, form, model, is_created):
@@ -2726,7 +2730,21 @@ class MyStatusCardUsluga(SpecificView):
 
 
 
-class MyPriceTable(SpecificView):
+class PriceTableView(SpecificView):
+    # Задает поля из базы, отображаемые в админ панели
+    # Столбцы будут расположены в порядке, указанном в списке!!!
+    column_list = ['id', 'name_price_table', 'arhive', 'card_usluga', 'row_table', 'col_table', 'value_table']
+
+    column_sortable_list = ['id', 'arhive', 'name_price_table', ('card_usluga', 'card_usluga.name_card_usluga')]
+
+    # Быстрое редактирование
+    column_editable_list = ['arhive', 'name_price_table']
+
+    # Задает поля, в которых возможна фильтрация (в том числе булева )
+    column_filters = ('id', 'name_price_table', 'row_table',
+                      BooleanEqualFilter(column=PriceTable.arhive, name='arhive'),
+                      'col_table',
+                      'card_usluga.name_card_usluga')
 
     # *** def is_visible(self): -Делаем модель видимой только для определенных ролей - начало
     def is_visible(self):
@@ -3006,7 +3024,7 @@ with warnings.catch_warnings():
     admin.add_view(MyListModel(ListModel, db.session, name='Модели(ListModel)', category="Модели и настройки"))
     admin.add_view(MySettingAdmin(SettingAdmin, db.session, name='Настройки(SettingAdmin)', category="Модели и настройки"))
     admin.add_view(MyUploadFileMy(UploadFileMy, db.session, name='Фото услуг(UploadFileMy)', category="Фото услуг и прайсы"))
-    admin.add_view(MyPriceTable(PriceTable, db.session, name='Прайсы(PriceTable)', category="Фото услуг и прайсы"))
+    admin.add_view(PriceTableView(PriceTable, db.session, name='Прайсы(PriceTable)', category="Фото услуг и прайсы"))
     # Заказы и статусы - начало
     admin.add_view(CardUslugaView(CardUsluga, db.session, name=' Карточка услуги(CardUsluga)'))
     admin.add_view(MyStatus(Status, db.session, name='Возможные статусы'))
