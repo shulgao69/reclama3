@@ -28,58 +28,58 @@ order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/ord
 # показать содержимое корзины
 @order_blueprint.route('/cart/', methods=['GET', 'POST'])
 def cart():
-    session['order_add_to_cart'] = False
+    session['order_request_add_to_cart'] = False
     cart = session.get('cart', [])
     # print('cart from cart=', cart)
-    orders = []
-    for order in cart:
+    orders_requests = []
+    for order_request in cart:
         dict = {}
-        card_usluga = CardUsluga.query.filter(CardUsluga.id == order['card_usluga_id']).first()
-        price = PriceTable.query.filter(PriceTable.id == order['price_id']).first()
+        card_usluga = CardUsluga.query.filter(CardUsluga.id == order_request['card_usluga_id']).first()
+        price = PriceTable.query.filter(PriceTable.id == order_request['price_id']).first()
         dict['card_usluga_arhive'] = card_usluga.arhive
         dict['card_usluga_active'] = card_usluga.active
         dict['price_arhive']=price.arhive
         dict['card_usluga'] = card_usluga
         dict['price'] = price
-        dict['i'] = order['i']
-        dict['j'] = order['j']
-        dict['sum'] = order['sum']
-        dict['order_sum'] = order['order_sum']
-        orders.append(dict)
-    # print('orders from cart=', orders)
+        dict['i'] = order_request['i']
+        dict['j'] = order_request['j']
+        dict['count'] = order_request['count']
+        dict['order_request_sum'] = order_request['order_request_sum']
+        orders_requests.append(dict)
+    # print('orders_requests from cart=', orders_requests)
 
     return render_template('cart.html',
-                           orders=orders
+                           orders_requests=orders_requests
                            )
 
 
 # добавить заявку на заказ в корзину
-@order_blueprint.route('/order_add_to_cart/', methods=['GET', 'POST'])
-def order_add_to_cart():
-    session['order_add_to_cart'] = True
-    order = session.get('order', {})
-    print("order, type(order)=", order, type(order))
-    print("order['order_sum']=", order['order_sum'])
+@order_blueprint.route('/order_request_add_to_cart/', methods=['GET', 'POST'])
+def order_request_add_to_cart():
+    session['order_request_add_to_cart'] = True
+    order_request = session.get('order_request', {})
+    print("order_request, type(order_request)=", order_request, type(order_request))
+    print("order_request['order_request_sum']=", order_request['order_request_sum'])
     cart = session.get('cart', [])
-    print('session.get("sum", 1) order_add_to_cart=', session.get('sum', 1))
-    print('order from add_to_cart=', order)
+    print('session.get("count", 1) order_request_add_to_cart=', session.get('count', 1))
+    print('order_request from add_to_cart=', order_request)
     print('cart from add_to_cart=', cart)
 
     if cart == []:
-        cart.append(order)
+        cart.append(order_request)
         print('элемент добавлен в пустую корзину')
 
     else:
-        session['order_in_cart'] = False
-        if order['order_sum'] == -1:
-            cart.append(order)
+        session['order_request_in_cart'] = False
+        if order_request['order_request_sum'] == -1:
+            cart.append(order_request)
         else:
             for element in cart:
-                if element['card_usluga_id'] == order['card_usluga_id'] and element['price_id'] == order['price_id'] and \
-                        element['i'] == order['i'] and element['j'] == order['j']:
+                if element['card_usluga_id'] == order_request['card_usluga_id'] and element['price_id'] == order_request['price_id'] and \
+                        element['i'] == order_request['i'] and element['j'] == order_request['j']:
                     print('element["card_usluga_id"]=', element['card_usluga_id'])
-                    print('order["card_usluga_id"]=', order['card_usluga_id'])
-                    print('element["i"]=', element['i'], 'order["i"]=', order['i'])
+                    print('order["card_usluga_id"]=', order_request['card_usluga_id'])
+                    print('element["i"]=', element['i'], 'order["i"]=', order_request['i'])
                     # print('element=', element)
                     print('такой заказ есть в корзине. изменим кол-во и сумму заказа')
 
@@ -92,26 +92,26 @@ def order_add_to_cart():
                     price = PriceTable.query.filter(PriceTable.id == element['price_id']).first()
                     y = Decimal(price.value_table[element['i']][element['j']])
                     print('y=', y)
-                    print('order["sum"]=', order['sum'])
-                    print('element["sum"]=', element['sum'])
-                    x = order['sum'] + element['sum']
+                    print('order_request["count"]=', order_request['count'])
+                    print('element["count"]=', element['count'])
+                    x = order_request['count'] + element['count']
                     print('x=', x)
 
                     # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
-                    element['order_sum'] = round(x * y, 2)
-                    element['sum'] = x
+                    element['order_request_sum'] = round(x * y, 2)
+                    element['count'] = x
 
-                    session['order_in_cart']=True
-            if session.get('order_in_cart')==False:
-                cart.append(order)
+                    session['order_request_in_cart']=True
+            if session.get('order_request_in_cart')==False:
+                cart.append(order_request)
 
     session['cart'] = cart
 
     return redirect(url_for('order_bp.order_request',
-                            card_usluga_id=order['card_usluga_id'],
-                            price_id=order['price_id'],
-                            i=order['i'],
-                            j=order['j']
+                            card_usluga_id=order_request['card_usluga_id'],
+                            price_id=order_request['price_id'],
+                            i=order_request['i'],
+                            j=order_request['j']
                             )
                     )
 
@@ -133,8 +133,8 @@ def delete_from_cart(number):
 # заявка на заказ по ссылке из прайса на странице услуги
 @order_blueprint.route('/order_request/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
 def order_request(card_usluga_id, price_id, i, j):
-    session['order'] = {}
-    # print('session.get("sum") from order_request=', session.get('sum'))
+    session['order_request'] = {}
+    # print('session.get("count") from order_request=', session.get('count'))
     # Пока оставить для обнуления корзины(пока не напишу всю)
     # session['cart'] = []
 
@@ -155,21 +155,21 @@ def order_request(card_usluga_id, price_id, i, j):
         value = Decimal(price.value_table[i][j])
 
         # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
-        order_sum = round(session.get('sum', 1) * value, 2)
+        order_request_sum = round(session.get('count', 1) * value, 2)
 
     except:
-        order_sum = -1
+        order_request_sum = -1
 
-    # session['order_sum'] = order_sum
-    order = {}
-    order['card_usluga_id'] = card_usluga_id
-    order['price_id'] = price_id
-    order['i'] = i
-    order['j'] = j
-    order['sum'] = session.get('sum', 1)
-    order['order_sum'] = order_sum
-    session['order'] = order
-    # print('session.get("order")=', session.get('order'), type(session.get('order')))
+    # session['order_request_sum'] = order_request_sum
+    order_request = {}
+    order_request['card_usluga_id'] = card_usluga_id
+    order_request['price_id'] = price_id
+    order_request['i'] = i
+    order_request['j'] = j
+    order_request['count'] = session.get('count', 1)
+    order_request['order_request_sum'] = order_request_sum
+    session['order_request'] = order_request
+    # print('session.get("order_request")=', session.get('order_request'), type(session.get('order_request')))
 
     # if form.validate_on_submit():
     #     user_phone = form.user_phone.data
@@ -179,18 +179,18 @@ def order_request(card_usluga_id, price_id, i, j):
                            price=price,
                            i=i,
                            j=j,
-                           order_sum=order_sum,
+                           order_request_sum=order_request_sum,
                            form=form
                            )
 
 
 # роут добавления кол-ва в заявке на заказ перед добавлением в корзину
-@order_blueprint.route('/order_sum_plus/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
-def order_sum_plus(card_usluga_id, price_id, i, j):
+@order_blueprint.route('/order_request_sum_plus/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
+def order_request_sum_plus(card_usluga_id, price_id, i, j):
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
     form = ApplicationForm()
-    session['sum'] = session.get('sum', 1) + 1
+    session['count'] = session.get('count', 1) + 1
 
     return redirect(url_for('order_bp.order_request',
                             card_usluga_id=card_usluga.id,
@@ -202,16 +202,16 @@ def order_sum_plus(card_usluga_id, price_id, i, j):
 
 
 # роут уменьшения кол-ва в заявке на заказ перед добавлением в корзину
-@order_blueprint.route('/order_sum_minus/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
-def order_sum_minus(card_usluga_id, price_id, i, j):
+@order_blueprint.route('/order_request_sum_minus/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
+def order_request_sum_minus(card_usluga_id, price_id, i, j):
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
     form = ApplicationForm()
 
-    if session.get('sum') > 0:
-        session['sum'] = session.get('sum', 1) - 1
+    if session.get('count') > 0:
+        session['count'] = session.get('count', 1) - 1
     else:
-        session['sum'] = 0
+        session['count'] = 0
 
     return redirect(url_for('order_bp.order_request',
                             card_usluga_id=card_usluga.id,

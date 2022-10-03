@@ -437,15 +437,13 @@ def render_menu(punkt_menu):
 # (показываются только карточки, имеющие прайсы)
 @app.route('/раздел-<punkt_menu>/услуга-<category>/')
 def render_uslugi_link(punkt_menu, category):
-    session['order_add_to_cart'] = False
+    session['order_request_add_to_cart'] = False
     # print('punkt_menu=', punkt_menu, 'category=', category)
 
-    # кол-во в заказе
-    session['sum']=1
-    # на заказ услуги в def order_request в блюпринте @order_blueprint.route
+    # кол-во в заказе на заказ услуги в def order_request в блюпринте @order_blueprint.route
     # иначе сохранится то кол-во которое было указано в def order_request ранее
     # Делаем это на этой стр и потом на стр где все карточки услуг (с нее тоже можно будет заказать)
-    session['sum']=1
+    session['count']=1
     links_menu = Link.query.order_by('title').all()
 
     link = Link.query.filter(Link.link == punkt_menu).first()

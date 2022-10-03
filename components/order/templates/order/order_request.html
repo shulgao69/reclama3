@@ -17,7 +17,7 @@
 
             <div class="col-6">
 <!--                <div>-->
-<!--                    session.get('sum', 0) {{ session.get('sum', 0) }}-->
+<!--                    session.get('count', 0) {{ session.get('count', 0) }}-->
 <!--                </div>-->
 <!--                <div>-->
 <!--                    session.get("card_usluga_add_to_cart", False) {{ session.get('card_usluga_add_to_cart', False) }}-->
@@ -94,13 +94,13 @@
                             </div>
 
 
-                            {% if order_sum!=-1 %}
+                            {% if order_request_sum!=-1 %}
                             <h6 class="pt-4 pb-2">
                                 Изменить количество
                             </h6>
                             <div>
                                 <!--Функция  уменьшения количества - начало-->
-                                    <a href="{{ url_for('order_bp.order_sum_minus',
+                                    <a href="{{ url_for('order_bp.order_request_sum_minus',
                                                 card_usluga_id=card_usluga.id,
                                                 price_id=price.id,
                                                 i=i,
@@ -121,11 +121,11 @@
                                 <!--Функция  уменьшения количества - конец-->
 
                                 <!--Количество выбранной услуги - начало-->
-                                <b> &nbsp;&nbsp;&nbsp;&nbsp;{{ session.get('sum', 1) }} &nbsp;&nbsp;&nbsp; </b>
+                                <b> &nbsp;&nbsp;&nbsp;&nbsp;{{ session.get('count', 1) }} &nbsp;&nbsp;&nbsp; </b>
                                 <!--Количество выбранной услуги - конец-->
 
                                 <!--Функция  увеличения количества - начало-->
-                                    <a href="{{ url_for('order_bp.order_sum_plus',
+                                    <a href="{{ url_for('order_bp.order_request_sum_plus',
                                                 card_usluga_id=card_usluga.id,
                                                 price_id=price.id,
                                                 i=i,
@@ -158,9 +158,9 @@
                                 Итого:
                             </h5>
                         </div>
-                        {% if order_sum !=-1 %}
+                        {% if order_request_sum !=-1 %}
                         <div class="col-7">
-                            <h5>{{ order_sum }} руб.</h5>
+                            <h5>{{ order_request_sum }} руб.</h5>
                         </div>
 
                         {% else %}
@@ -187,7 +187,7 @@
 
                     <div class="row pt-3 my-3">
                         <div class="col-12">
-                            {% if session.get('order_add_to_cart') %}
+                            {% if session.get('order_request_add_to_cart') %}
                             <h6 class="text-center base_color_1">
                                 Услуга добавлена в корзину.
                             </h6>
@@ -201,7 +201,7 @@
                             {% else %}
                             <div>
                                 <a class="btn btn-success container-fluid"
-                                   href="{{ url_for('order_bp.order_add_to_cart',
+                                   href="{{ url_for('order_bp.order_request_add_to_cart',
                                        card_usluga_id=card_usluga.id,
                                        price_id=price.id,
                                        i=i,

@@ -24,7 +24,7 @@
             {% endif %}
         </h5>
         <!-- если корзина пуста - начало-->
-        {% if orders|length == 0 %}
+        {% if orders_requests|length == 0 %}
         <div>
             Ваша корзина пока пуста!
         </div>
@@ -41,15 +41,15 @@
             <!--Все заказы в корзине - начало-->
             <div class="col-10">
 
-                {% for number in range(orders|length) %}
+                {% for number in range(orders_requests|length) %}
                 <div class="border border-success my-2">
                     <!--<h6 class="pt-1">Параметры заказа</h6>-->
 
 
                     <div class="row p-2">
                         <div class="col-12 pb-3">
-                            {% if orders[number]['card_usluga'].arhive==True or orders[number]['card_usluga'].active ==
-                            False or orders[number]['price_arhive'] %}
+                            {% if orders_requests[number]['card_usluga'].arhive==True or orders_requests[number]['card_usluga'].active ==
+                            False or orders_requests[number]['price_arhive'] %}
                             <small>
                                 <div class="alert alert-success" role="alert">
                                     <strong class="alert-heading">Поздравляем!</strong>
@@ -68,11 +68,11 @@
 
                         <!-- Ссылка на стр. карточки услуги по клику на фото- начало-->
                         <a href="{{ url_for('render_uslugi_link',
-                        punkt_menu=orders[number]['card_usluga'].usluga.punkt_menu.link,
-                        category=orders[number]['card_usluga'].usluga.link) }}">
+                        punkt_menu=orders_requests[number]['card_usluga'].usluga.punkt_menu.link,
+                        category=orders_requests[number]['card_usluga'].usluga.link) }}">
                             <!--Изображения карточки услуг - начало-->
                             <div class="col-3">
-                                {% if orders[number]['card_usluga'].photos %}
+                                {% if orders_requests[number]['card_usluga'].photos %}
 
                                 <!--Карусель car - начало-->
                                 <!--https://bootsnipp.com/snippets/NjR9z-->
@@ -84,7 +84,7 @@
                                 <!--сделать ее без отступов с права и слева ПОЧЕМУ ТО этот метод НЕ РАБОТАЕТ ТЕПЕРЬ ИСКАТЬ ПРИЧИНУ!!!-->
                                 <!--В противном случае есть небольшие отступы справа и слева-->
 
-                                <div id="{{ orders[number]['card_usluga'].id }}"
+                                <div id="{{ orders_requests[number]['card_usluga'].id }}"
                                      data-interval="2400"
                                      class="carousel slide container-fluid mb-2 p-0 w-100"
                                      data-ride="carousel"
@@ -94,10 +94,10 @@
                                     <!--и на каком мы находимся-->
                                     <!--Индикаторы по умолчанию прямоугольныею Сделали их круглыми переопределив их в my.css-->
                                     <ul class="carousel-indicators">
-                                        <li data-target="#{{ orders[number]['card_usluga'].id  }}" data-slide-to=0
+                                        <li data-target="#{{ orders_requests[number]['card_usluga'].id  }}" data-slide-to=0
                                             class="active"></li>
-                                        {% for j in range(1, orders[number]['card_usluga'].photos|length) %}
-                                        <li data-target="#{{ orders[number]['card_usluga'].id }}" data-slide-to=j></li>
+                                        {% for j in range(1, orders_requests[number]['card_usluga'].photos|length) %}
+                                        <li data-target="#{{ orders_requests[number]['card_usluga'].id }}" data-slide-to=j></li>
                                         {% endfor %}
                                     </ul>
                                     <div class="carousel-inner w-100" role="listbox">
@@ -110,49 +110,49 @@
                                             d-lg-none -  скрыто на размере экрана lg  и тд и тп-->
 
                                             <img class="img d-none d-md-block w-100"
-                                                 src="/static/images/cards_uslugs/{{ orders[number]['card_usluga'].usluga.punkt_menu.link }}/{{ orders[number]['card_usluga'].usluga.link }}/{{ orders[number]['card_usluga'].dir_photos }}/{{ orders[number]['card_usluga'].photos[0].secure_name_photo }}"
+                                                 src="/static/images/cards_uslugs/{{ orders_requests[number]['card_usluga'].usluga.punkt_menu.link }}/{{ orders_requests[number]['card_usluga'].usluga.link }}/{{ orders_requests[number]['card_usluga'].dir_photos }}/{{ orders_requests[number]['card_usluga'].photos[0].secure_name_photo }}"
                                                  alt="Название изображения"
                                                  width=""
                                                  height="">
                                             <!--<div class="carousel-caption">-->
                                             <!--<h1 class="text-center text-success">-->
-                                            <!--{{ orders[number]['card_usluga'].photos[0].title }}-->
+                                            <!--{{ orders_requests[number]['card_usluga'].photos[0].title }}-->
                                             <!--</h1>-->
                                             <!--<h5 class="text-center text-success">-->
-                                            <!--{{ orders[number]['card_usluga'].photos[0].comments }}-->
+                                            <!--{{ orders_requests[number]['card_usluga'].photos[0].comments }}-->
                                             <!--</h5>-->
                                             <!--</div>-->
                                             <div class="pt-2">
                                                 <h5 class="text-center base_color_1">
-                                                    {{ orders[number]['card_usluga'].photos[0].title }}
+                                                    {{ orders_requests[number]['card_usluga'].photos[0].title }}
                                                 </h5>
                                                 <div class="px-0 text-center">
-                                                    {{ orders[number]['card_usluga'].photos[0].comments }}
+                                                    {{ orders_requests[number]['card_usluga'].photos[0].comments }}
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {% for j in range(1, orders[number]['card_usluga'].photos|length) %}
+                                        {% for j in range(1, orders_requests[number]['card_usluga'].photos|length) %}
                                         <div class="carousel-item">
                                             <img class="img d-none d-md-block w-100"
-                                                 src="/static/images/cards_uslugs/{{ orders[number]['card_usluga'].usluga.punkt_menu.link }}/{{ orders[number]['card_usluga'].usluga.link }}/{{ orders[number]['card_usluga'].dir_photos }}/{{ orders[number]['card_usluga'].photos[j].secure_name_photo }}"
+                                                 src="/static/images/cards_uslugs/{{ orders_requests[number]['card_usluga'].usluga.punkt_menu.link }}/{{ orders_requests[number]['card_usluga'].usluga.link }}/{{ orders_requests[number]['card_usluga'].dir_photos }}/{{ orders_requests[number]['card_usluga'].photos[j].secure_name_photo }}"
                                                  alt="слайд {{ j }}"
                                                  width=""
                                                  height="">
                                             <!--<div class="carousel-caption">-->
                                             <!--<h1 class="text-center text-success">-->
-                                            <!--{{ orders[number]['card_usluga'].photos[j].title }}-->
+                                            <!--{{ orders_requests[number]['card_usluga'].photos[j].title }}-->
                                             <!--</h1>-->
                                             <!--<h5 class="text-center text-success">-->
-                                            <!--{{ orders[number]['card_usluga'].photos[j].comments }}-->
+                                            <!--{{ orders_requests[number]['card_usluga'].photos[j].comments }}-->
                                             <!--</h5>-->
                                             <!--</div>-->
                                             <div class="pt-2">
                                                 <h5 class="text-center base_color_1">
-                                                    {{ orders[number]['card_usluga'].photos[j].title }}
+                                                    {{ orders_requests[number]['card_usluga'].photos[j].title }}
                                                 </h5>
                                                 <div class="text-center">
-                                                    {{ orders[number]['card_usluga'].photos[j].comments }}
+                                                    {{ orders_requests[number]['card_usluga'].photos[j].comments }}
                                                 </div>
                                             </div>
                                         </div>
@@ -160,23 +160,23 @@
 
                                     </div>
                                     <!--Элементы управления - начало -->
-                                    <!--<a class="carousel-control-prev" href="#{{ orders[number]['card_usluga'].id }}" role="button" data-slide="prev">-->
+                                    <!--<a class="carousel-control-prev" href="#{{ orders_requests[number]['card_usluga'].id }}" role="button" data-slide="prev">-->
                                     <!--<span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
                                     <!--<span class="sr-only text-success">Предыдущий</span>-->
                                     <!--</a>-->
-                                    <!--<a class="carousel-control-next" href="#{{ orders[number]['card_usluga'].id }}" role="button" data-slide="next">-->
+                                    <!--<a class="carousel-control-next" href="#{{ orders_requests[number]['card_usluga'].id }}" role="button" data-slide="next">-->
                                     <!--<span class="carousel-control-next-icon" aria-hidden="true"></span>-->
                                     <!--<span class="sr-only text-success">Следующий</span>-->
                                     <!--</a>-->
                                     <!--Элементы управления - конец -->
 
                                     <!--Элементы управления - начало -->
-                                    <a class="left carousel-control" href="#{{ orders[number]['card_usluga'].id }}"
+                                    <a class="left carousel-control" href="#{{ orders_requests[number]['card_usluga'].id }}"
                                        role="button" data-slide="prev">
                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                         <span class="sr-only text-success">Предыдущий</span>
                                     </a>
-                                    <a class="right carousel-control" href="#{{ orders[number]['card_usluga'].id }}"
+                                    <a class="right carousel-control" href="#{{ orders_requests[number]['card_usluga'].id }}"
                                        role="button" data-slide="next">
                                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                         <span class="sr-only text-success">Следующий</span>
@@ -205,7 +205,7 @@
                                         <b>Раздел:</b>
                                     </div>
                                     <div class="col-7">
-                                        {{ orders[number]['card_usluga'].usluga.punkt_menu.title }}
+                                        {{ orders_requests[number]['card_usluga'].usluga.punkt_menu.title }}
                                     </div>
                                 </div>
                                 <!-- Раздел-конец-->
@@ -216,7 +216,7 @@
                                         <b>Услуга:</b>
                                     </div>
                                     <div class="col-7">
-                                        {{ orders[number]['card_usluga'].usluga.title }}
+                                        {{ orders_requests[number]['card_usluga'].usluga.title }}
                                     </div>
                                 </div>
                                 <!--Услуга раздела-конец-->
@@ -225,12 +225,12 @@
                                 <div class="row pb-1">
                                     <div class="col-5 base_color_1">
                                         <b>Карточка:</b>
-                                        {% if orders[number]['card_usluga_arhive']==True %}
+                                        {% if orders_requests[number]['card_usluga_arhive']==True %}
                                         <div class="inline text-danger"> (карточка в архиве)</div>
                                         {% endif %}
                                     </div>
                                     <div class="col-7">
-                                        {{ orders[number]['card_usluga'].name_card_usluga }}
+                                        {{ orders_requests[number]['card_usluga'].name_card_usluga }}
                                     </div>
                                 </div>
                                 <!--Наименование карточки услуги-конец-->
@@ -239,12 +239,12 @@
                                 <div class="row pb-1">
                                     <div class="col-5 base_color_1">
                                         <b>Прайс:</b>
-                                        {% if orders[number]['price_arhive']==True %}
+                                        {% if orders_requests[number]['price_arhive']==True %}
                                         <div class="inline text-danger"> (прайс в архиве)</div>
                                         {% endif %}
                                     </div>
                                     <div class="col-7">
-                                        {{ orders[number]['price'].name_price_table }}
+                                        {{ orders_requests[number]['price'].name_price_table }}
                                     </div>
                                 </div>
                                 <!--Наименование прайса-конец-->
@@ -252,10 +252,10 @@
                                 <!--Размерность по горизонтали - начало-->
                                 <div class="row pb-1">
                                     <div class="col-5 base_color_1">
-                                        <b>{{ orders[number]['price'].value_table[0][0] }}</b>
+                                        <b>{{ orders_requests[number]['price'].value_table[0][0] }}</b>
                                     </div>
                                     <div class="col-7">
-                                        {{ orders[number]['price'].value_table[0][orders[number]['j']] }}
+                                        {{ orders_requests[number]['price'].value_table[0][orders_requests[number]['j']] }}
                                     </div>
                                 </div>
                                 <!--Размерность по горизонтали - конец-->
@@ -266,11 +266,11 @@
                         <!--Значение ячейки прайса-начало-->
                         <div class="col-1">
                             <div class="base_color_1">
-                                <b>{{ orders[number]['price'].value_table[orders[number]['i']][0] }}</b>
-                                <b>{#{{ orders[number]['price'].value_table[orders[number]['i']][0] }}#}</b>
+                                <b>{{ orders_requests[number]['price'].value_table[orders_requests[number]['i']][0] }}</b>
+                                <b>{#{{ orders_requests[number]['price'].value_table[orders_requests[number]['i']][0] }}#}</b>
                             </div>
                             <div>
-                                {{ orders[number]['price'].value_table[orders[number]['i']][orders[number]['j']] }}
+                                {{ orders_requests[number]['price'].value_table[orders_requests[number]['i']][orders_requests[number]['j']] }}
                             </div>
                         </div>
                         <!--Значение ячейки прайса-конец-->
@@ -283,9 +283,9 @@
 
                             <div>
                                 <!--Функция  уменьшения количества - начало-->
-                                {% if orders[number]['order_sum']!=-1 %}
-                                {% if orders[number]['card_usluga'].arhive == False and
-                                orders[number]['card_usluga'].active == True %}
+                                {% if orders_requests[number]['order_request_sum']!=-1 %}
+                                {% if orders_requests[number]['card_usluga'].arhive == False and
+                                orders_requests[number]['card_usluga'].active == True %}
 
 
                                 <a href="">
@@ -307,13 +307,13 @@
                                 <!--Функция  уменьшения количества - конец-->
 
                                 &nbsp
-                                {{ orders[number]['sum'] }}
+                                {{ orders_requests[number]['count'] }}
                                 &nbsp
 
                                 <!--Функция  увеличения количества - начало-->
-                                {% if orders[number]['order_sum']!=-1 %}
-                                {% if orders[number]['card_usluga'].arhive == False and
-                                orders[number]['card_usluga'].active == True %}
+                                {% if orders_requests[number]['order_request_sum']!=-1 %}
+                                {% if orders_requests[number]['card_usluga'].arhive == False and
+                                orders_requests[number]['card_usluga'].active == True %}
 
 
                                 <a href="">
@@ -343,12 +343,12 @@
                             <div class="base_color_1">
                                 <b>Итого</b>
                             </div>
-                            {% if orders[number]['order_sum']==-1 %}
+                            {% if orders_requests[number]['order_request_sum']==-1 %}
                             <div>
-                                {{ orders[number]['price'].value_table[orders[number]['i']][orders[number]['j']] }}
+                                {{ orders_requests[number]['price'].value_table[orders_requests[number]['i']][orders_requests[number]['j']] }}
                             </div>
                             {% else %}
-                            <div>{{ orders[number]['order_sum'] }}
+                            <div>{{ orders_requests[number]['order_request_sum'] }}
                             </div>
                             {% endif %}
                         </div>
