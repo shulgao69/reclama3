@@ -37,23 +37,28 @@
 
         {% for menu in menus %}
         {% if menu.uslugs %}
-        <div class="pl-4 text-left bg-info text-white">
+        <div class="pl-4 mt-4 text-left bg-info text-white">
             Раздел: <b>{{ menu }}</b>
         </div>
 
 
         <div class="row pt-2">
             {% for usluga in menu.uslugs %}
-                {% if usluga.cards_usluga %}
-                    {% for card_usluga in (usluga.cards_usluga|sort(attribute="name_card_usluga")) %}
-                    {% if card_usluga.arhive == False %}
-                <div class="col-md-4 p-2 pb-4">
+            {% if usluga.cards_usluga %}
+            <div class="col-12 mt-2 ml-3">
+                <div class="text-success">
+                    Услуга раздела: <b>{{ usluga }}</b>
+                </div>
+            </div>
+
+            {% for card_usluga in (usluga.cards_usluga|sort(attribute="name_card_usluga")) %}
+            {% if card_usluga.arhive == False %}
+            <div class="col-md-4 p-2 pb-4">
                 <!--Внимание!!! класс h-100 помог выровнять по высоте!!!-->
                 <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
                 <!--отступов между колонками а при попытке задать margin (m-1 например)-->
                 <!--приводило к тому что отступ появлялся но 4 колонки не помещались на 1 строке(ьтолько 3)-->
                 <!--<div class="border border-success p-2 h-100">-->
-
 
                 <div class="card border-success m-2 px-3 pt-2 pb-3 h-100">
 
@@ -64,8 +69,6 @@
                             <span class="badge badge-pill badge-danger">
                                 Ожидает активации
                             </span>
-
-
                             {% else %}
                             <span class="badge badge-pill badge-info">
                                 Карточка активна
@@ -74,8 +77,6 @@
                         </div>
                     </div>
 
-
-                    <div class="text-success">Услуга раздела: <b>{{ usluga }}</b></div>
 
                     <div class="card-body pt-2 pl-2">
                         <div class="card-text">
@@ -224,7 +225,6 @@
                                                 услуги.</b>
                                         </div>
 
-
                                     </div>
 
                                     <br>
@@ -257,20 +257,15 @@
                         <!--</button>-->
                     </div>
 
-
                 </div>
 
-
             </div>
+            {% endif %}
+            {% endfor %}
 
-                       {% endif %}
-
-                     {% endfor %}
-                 {% endif %}
+            {% endif %}
             {% endfor %}
         </div>
-
-
 
         {% endif %}
         {% endfor %}
@@ -282,17 +277,25 @@
 
         {% for menu in menus %}
         {% if menu.uslugs %}
-        <div class="pl-4 text-left bg-success text-white">
+
+
+
+        <div class="pl-4 mt-4 text-left bg-info text-white">
             Раздел: <b>{{ menu }}</b>
         </div>
 
 
         <div class="row">
             {% for usluga in menu.uslugs %}
-                {% if usluga.cards_usluga %}
-                    {% for card_usluga in (usluga.cards_usluga|sort(attribute="name_card_usluga")) %}
-                    {% if card_usluga.arhive == True %}
-                <div class="col-md-4 p-2 pb-4">
+            {% if usluga.cards_usluga %}
+            <div class="col-12 mt-2 ml-3">
+                <div class="text-success">
+                    Услуга раздела: <b>{{ usluga }}</b>
+                </div>
+            </div>
+            {% for card_usluga in (usluga.cards_usluga|sort(attribute="name_card_usluga")) %}
+            {% if card_usluga.arhive == True %}
+            <div class="col-md-4 p-2 pb-4">
                 <!--Внимание!!! класс h-100 помог выровнять по высоте!!!-->
                 <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
                 <!--отступов между колонками а при попытке задать margin (m-1 например)-->
@@ -301,7 +304,7 @@
 
 
                 <div class="card border-success m-2 p-3 h-100">
-                    <div class="text-success">Услуга раздела: <b>{{ usluga }}</b></div>
+
 
                     <div class="card-body pt-2 pl-2">
                         <div class="card-text">
@@ -473,10 +476,10 @@
 
             </div>
 
-                       {% endif %}
+            {% endif %}
+            {% endfor %}
 
-                     {% endfor %}
-                 {% endif %}
+            {% endif %}
             {% endfor %}
         </div>
 

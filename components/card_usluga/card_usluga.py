@@ -314,7 +314,13 @@ def edit_card_usluga(card_usluga_id):
 @card_usluga_blueprint.route('/show_cards_uslugs/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
 def show_cards_uslugs():
-    session['card_usluga_id']=''
+
+    mm=Link.query.filter(Link.uslugs).order_by('title').all()
+    print('mm=', mm)
+    usl=Usluga.query.filter(Usluga.cards_usluga).all()
+    print('usl=', usl)
+
+    session['card_usluga_id'] = ''
     menus=Link.query.order_by('title').all()
     cards_uslugs=CardUsluga.query.all()
     uslugs=Usluga.query.all()
