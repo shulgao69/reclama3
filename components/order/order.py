@@ -134,7 +134,7 @@ def delete_from_cart(number):
 @order_blueprint.route('/order_request/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
 def order_request(card_usluga_id, price_id, i, j):
     session['order'] = {}
-    print('session.get("sum") from order_request=', session.get('sum'))
+    # print('session.get("sum") from order_request=', session.get('sum'))
     # Пока оставить для обнуления корзины(пока не напишу всю)
     # session['cart'] = []
 
@@ -152,10 +152,10 @@ def order_request(card_usluga_id, price_id, i, j):
         # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
         # type(y)= <class 'decimal.Decimal'>
         # https://www.delftstack.com/howto/python/string-to-decimal-python/
-        y = Decimal(price.value_table[i][j])
+        value = Decimal(price.value_table[i][j])
 
         # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
-        order_sum = round(session.get('sum', 1) * y, 2)
+        order_sum = round(session.get('sum', 1) * value, 2)
 
     except:
         order_sum = -1
