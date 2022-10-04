@@ -32,19 +32,22 @@
         <!--Навигационные ссылки - конец-->
 
         <!--Модуль Карточки услуг не в архиве - начало-->
+        {% if menus_not_arhive|length==0 %}
+        <h5 class="text-left base_color_1">Карточек нет</h5>
+        {% else %}
         <h5 class="text-left base_color_1">Карточки услуг</h5>
+        {% endif %}
 
 
-        {% for menu in menus %}
-        {% if menu.uslugs %}
+        {% for menu in (menus_not_arhive|sort(attribute="title")) %}
+
         <div class="pl-4 mt-4 text-left bg-info text-white">
             Раздел: <b>{{ menu }}</b>
         </div>
 
-
         <div class="row pt-2">
-            {% for usluga in menu.uslugs %}
-            {% if usluga.cards_usluga %}
+            {% for usluga in menu.uslugs|sort(attribute="title") %}
+            {% if usluga in uslugs_not_arhive %}
             <div class="col-12 mt-2 ml-3">
                 <div class="text-success">
                     Услуга раздела: <b>{{ usluga }}</b>
@@ -52,7 +55,7 @@
             </div>
 
             {% for card_usluga in (usluga.cards_usluga|sort(attribute="name_card_usluga")) %}
-            {% if card_usluga.arhive == False %}
+            {% if card_usluga in cards_uslugs_not_arhive %}
             <div class="col-md-4 p-2 pb-4">
                 <!--Внимание!!! класс h-100 помог выровнять по высоте!!!-->
                 <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
@@ -267,34 +270,35 @@
             {% endfor %}
         </div>
 
-        {% endif %}
+
         {% endfor %}
         <!--Модуль Карточки услуг не в архиве- конец-->
 
         <!--Модуль Карточки услуг в архиве - начало-->
+        {% if menus_arhive|length==0 %}
+        <h5 class="text-left base_color_1 pt-4">Архив карточек пуст</h5>
+        {% else %}
         <h5 class="text-left base_color_1 pt-4">Карточки услуг в архиве</h5>
+        {% endif %}
 
-
-        {% for menu in menus %}
-        {% if menu.uslugs %}
-
-
+        {% for menu in menus_arhive|sort(attribute="title") %}
 
         <div class="pl-4 mt-4 text-left bg-info text-white">
             Раздел: <b>{{ menu }}</b>
         </div>
 
-
         <div class="row">
             {% for usluga in menu.uslugs %}
-            {% if usluga.cards_usluga %}
+
+            {% if usluga in uslugs_arhive|sort(attribute="title") %}
             <div class="col-12 mt-2 ml-3">
                 <div class="text-success">
                     Услуга раздела: <b>{{ usluga }}</b>
                 </div>
             </div>
             {% for card_usluga in (usluga.cards_usluga|sort(attribute="name_card_usluga")) %}
-            {% if card_usluga.arhive == True %}
+
+            {% if card_usluga in cards_uslugs_arhive %}
             <div class="col-md-4 p-2 pb-4">
                 <!--Внимание!!! класс h-100 помог выровнять по высоте!!!-->
                 <!--попытка задать рамку в class="col" (выше) не получилась так как не было -->
@@ -475,17 +479,14 @@
 
 
             </div>
-
             {% endif %}
+
             {% endfor %}
 
             {% endif %}
             {% endfor %}
         </div>
 
-
-
-        {% endif %}
         {% endfor %}
         <!--Модуль Карточки услуг в архиве- конец-->
 

@@ -315,20 +315,51 @@ def edit_card_usluga(card_usluga_id):
 # @roles_accepted('superadmin')
 def show_cards_uslugs():
 
-    mm=Link.query.filter(Link.uslugs).order_by('title').all()
-    print('mm=', mm)
-    usl=Usluga.query.filter(Usluga.cards_usluga).all()
-    print('usl=', usl)
+    # услуги, имеющие карточки услуг
+    # usl=Usluga.query.filter(Usluga.cards_usluga.any()).all()
+    # print('usl=', usl)
+
+    cards_uslugs = CardUsluga.query.order_by('name_card_usluga').all()
+
+    # Множество услуг для карточек в архиве
+    uslugs_list_for_cards_in_arhive= set()
+    # Множество разделов меню для карточек в архиве
+    menus_list_for_cards_in_arhive = set()
+    # Список карточек услуг в архиве
+    cards_uslugs_in_arhive = []
+
+    # Множество услуг для карточек НЕ в архиве
+    uslugs_list_for_cards_not_in_arhive = set()
+    # Множество разделов меню  для карточек НЕ в архиве
+    menus_list_for_cards_not_in_arhive = set()
+    # Список карточек услуг НЕ в архиве
+    cards_uslugs_not_in_arhive = []
+
+    for card in cards_uslugs:
+        if card.arhive==True:
+            uslugs_list_for_cards_in_arhive.add(card.usluga)
+            menus_list_for_cards_in_arhive.add(card.usluga.punkt_menu)
+            cards_uslugs_in_arhive.append(card)
+        else:
+            uslugs_list_for_cards_not_in_arhive.add(card.usluga)
+            menus_list_for_cards_not_in_arhive.add(card.usluga.punkt_menu)
+            cards_uslugs_not_in_arhive.append(card)
+
+    uslugs_list_for_cards_in_arhive=list(uslugs_list_for_cards_in_arhive)
+    menus_list_for_cards_in_arhive = list(menus_list_for_cards_in_arhive)
+    uslugs_list_for_cards_not_in_arhive = list(uslugs_list_for_cards_not_in_arhive)
+    menus_list_for_cards_not_in_arhive = list(menus_list_for_cards_not_in_arhive)
+
 
     session['card_usluga_id'] = ''
-    menus=Link.query.order_by('title').all()
-    cards_uslugs=CardUsluga.query.all()
-    uslugs=Usluga.query.all()
-    # form_edit = EditFormPhotoCards()
     return render_template('show_cards_uslugs.html',
-                           cards_uslugs=cards_uslugs,
-                           uslugs=uslugs,
-                           menus=menus,
+                           menus_not_arhive=menus_list_for_cards_not_in_arhive,
+                           uslugs_not_arhive=uslugs_list_for_cards_not_in_arhive,
+                           cards_uslugs_not_arhive=cards_uslugs_not_in_arhive,
+                           menus_arhive=menus_list_for_cards_in_arhive,
+                           uslugs_arhive=uslugs_list_for_cards_in_arhive,
+                           cards_uslugs_arhive=cards_uslugs_in_arhive
+
                            # form_edit=form_edit
                            )
 # Показать карточки услуг - конец

@@ -176,12 +176,12 @@ def delete_price(id):
     price = PriceTable.query.filter_by(id=id).first()
     # print('price.card_usluga=', price.card_usluga)
 
-    # проверяем есть ли в корзине заказы с этим прайсом
+    # проверяем есть ли в корзине заявки на заказы с этим прайсом
     # Если есть - отправляем прайс в архив (не удаляем). Если нет - удаляем
     cart=session.get('cart', [])
     price_in_cart = False
-    for element in cart:
-        if element['price_id']==id:
+    for order_reuest in cart:
+        if order_reuest['price_id']==id:
             price_in_cart = True
     if price_in_cart == True:
         price.arhive=True

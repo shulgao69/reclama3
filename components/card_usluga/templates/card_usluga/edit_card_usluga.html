@@ -125,7 +125,6 @@
 
                                     "{{ status_card_usluga }}" -
 
-
                                 {% endfor %}
                                 </div>
 
@@ -134,7 +133,6 @@
                             </div>
                             <!--Информация о статусах - конец-->
                 </div>
-
 
             </div>
             <!--Сведения о карточке услуги - конец-->
@@ -201,8 +199,6 @@
                                             "{{ card_usluga.name_card_usluga }}"
                                         </b>
                                         (ссылка <b class="base_color_1">Добавить прайс</b>).
-
-
                                     </div>
 
                                 </div>
@@ -399,26 +395,47 @@
 
                         <!--класс class="d-inline" см https://bootstrap-4.ru/docs/5.0/utilities/display/-->
                         <!--https://bootstrap-4.ru/articles/cheatsheet/#d-inline-->
-                        {% for price in card_usluga.prices %}
 
-                        <!--Имя прайса и id - начало-->
+                        <!--Сортировка по двум атрибутам-->
+                        <!-- https://docs-python.ru/packages/modul-jinja2-python/vstroennye-filtry-modulja-jinja2/-->
+                        {% for price in card_usluga.prices|sort(attribute="arhive,name_price_table") %}
+
+                        <!--Имя прайса, id, архив - начало-->
                         <div class="row pt-2">
-                            <div class="col-8">
-                                <h5 class="d-inline">Имя прайса:
-                                    <b class="base_color_1">
-                                        {{ price.name_price_table }}
-                                    </b>
-                                </h5>
-                                <div class="d-inline">id:
-                                    <b class="base_color_1">
-                                        {{ price.id }}
-                                    </b>
-                                </div>
+                            <div class="col-12">
+                                <nav class="navbar navbar-expand-md navbar-light pl-0 pb-0">
+                                    <ul class="navbar-nav mr-auto">
+                                        <li class="nav-item">
+                                            <h5> Имя прайса:
+                                                <b class="base_color_1">
+                                                    {{ price.name_price_table }}</b>
+                                            </h5>
+                                        </li>&nbsp;&nbsp;&nbsp;
+                                        <li class="nav-item">
+                                            id:
+                                            <b class="base_color_1">
+                                                {{ price.id }}
+                                            </b>
+                                        </li>
+                                    </ul>
+                                    <ul class="navbar-nav ml-auto">
+                                        <li class="nav-item pr-0">
+                                            {% if price.arhive %}
+                                            <span class="badge badge-pill badge-danger">
+                                            Прайс в архиве
+                                            </span>
+                                            {% endif %}
+                                        </li>
+
+                                    </ul>
+                                </nav>
+
                             </div>
                         </div>
-                        <!--Имя прайса и id - начало-->
+                        <!--Имя прайса, id, архив - начало-->
 
                         <!--Ссылки - Редактировать и удалить прайс - начало-->
+                        {% if price.arhive==False %}
                         <div class="row py-2">
 
                             <!--Ссылка - Редактировать прайс - начало-->
@@ -589,6 +606,7 @@
                             </div>
 
                         </div>
+                        {% endif %}
                         <!--Ссылки - Редактировать и удалить прайс - начало-->
 
                         <!--Таблица прайса - начало-->

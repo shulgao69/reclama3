@@ -1,5 +1,6 @@
 
 import os
+import datetime
 
 from os.path import join, dirname, realpath
 
@@ -21,6 +22,12 @@ class Config:
 class DevelopConfig:
     DEBUG = True
     FLASK_APP = flaskapp
+    # Время жизни сессии
+    # https: // office - guru.ru / python - onlajn - kurs / uroki / sessii - vo - flask.html
+    # PERMANENT_SESSION_LIFETIME= datetime.timedelta(days=1)
+    # Настройка сессий для их лбнуления при закрытии браузера?? Читать
+    SESSION_PERMANENT = False
+
     SQLALCHEMY_DATABASE_URI = "postgresql://postgres:postgres@127.0.0.1:5432/datarecl3"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PASSWORD_MIN_LENGTH = 2
