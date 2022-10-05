@@ -13,5 +13,7 @@ logout_blueprint = Blueprint('logout', __name__, template_folder='templates', st
 @login_required
 def render_logout():
     logout_user()
+    # session.pop('user_id')
+    # session.pop('user_email')
     return redirect('/')
 

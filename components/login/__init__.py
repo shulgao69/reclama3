@@ -76,7 +76,7 @@ def login():
     # err = ''
     err=request.args.get('err')
     # print('err from login=', err)
-    links_menu = Link.query.all()
+    # links_menu = Link.query.all()
     form = LoginForm()
     # проверяет что метод POST
     # if request.method == "POST":
@@ -206,5 +206,9 @@ def login():
             # return render_template('login/login.html', form=form, err=err, links_menu=links_menu)
             return redirect(url_for('login.login', err=err))
 
-    return render_template('login/login.html', form=form, err=err, links_menu=links_menu)
+    return render_template('login/login.html',
+                           form=form,
+                           err=err,
+                           # links_menu=links_menu
+                           )
 

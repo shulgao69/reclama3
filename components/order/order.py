@@ -29,6 +29,7 @@ order_blueprint = Blueprint('order_bp', __name__, template_folder='templates/ord
 @order_blueprint.route('/cart/', methods=['GET', 'POST'])
 def cart():
     session['order_request_add_to_cart'] = False
+    session['order_request'] = {}
     cart = session.get('cart', [])
     # print('cart from cart=', cart)
     orders_requests = []
@@ -58,16 +59,20 @@ def cart():
 def order_request_add_to_cart():
     session['order_request_add_to_cart'] = True
     order_request = session.get('order_request', {})
-    print("order_request, type(order_request)=", order_request, type(order_request))
-    print("order_request['order_request_sum']=", order_request['order_request_sum'])
+    # print("order_request, type(order_request)=", order_request, type(order_request))
+
+    card_usluga_id = order_request['card_usluga_id']
+    price_id = order_request['price_id']
+    i = order_request['i']
+    j = order_request['j']
+
     cart = session.get('cart', [])
-    print('session.get("count", 1) order_request_add_to_cart=', session.get('count', 1))
-    print('order_request from add_to_cart=', order_request)
-    print('cart from add_to_cart=', cart)
+    # print('order_request from add_to_cart=', order_request)
+    # print('cart from add_to_cart=', cart)
 
     if cart == []:
         cart.append(order_request)
-        print('элемент добавлен в пустую корзину')
+        # print('элемент добавлен в пустую корзину')
 
     else:
         session['order_request_in_cart'] = False
@@ -77,11 +82,11 @@ def order_request_add_to_cart():
             for element in cart:
                 if element['card_usluga_id'] == order_request['card_usluga_id'] and element['price_id'] == order_request['price_id'] and \
                         element['i'] == order_request['i'] and element['j'] == order_request['j']:
-                    print('element["card_usluga_id"]=', element['card_usluga_id'])
-                    print('order["card_usluga_id"]=', order_request['card_usluga_id'])
-                    print('element["i"]=', element['i'], 'order["i"]=', order_request['i'])
+                    # print('element["card_usluga_id"]=', element['card_usluga_id'])
+                    # print('order["card_usluga_id"]=', order_request['card_usluga_id'])
+                    # print('element["i"]=', element['i'], 'order["i"]=', order_request['i'])
                     # print('element=', element)
-                    print('такой заказ есть в корзине. изменим кол-во и сумму заказа')
+                    # print('такой заказ есть в корзине. изменим кол-во и сумму заказа')
 
                     # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
                     # y=float(price.value_table[i][j])
@@ -90,16 +95,16 @@ def order_request_add_to_cart():
                     # type(y)= <class 'decimal.Decimal'>
                     # https://www.delftstack.com/howto/python/string-to-decimal-python/
                     price = PriceTable.query.filter(PriceTable.id == element['price_id']).first()
-                    y = Decimal(price.value_table[element['i']][element['j']])
-                    print('y=', y)
+                    value = Decimal(price.value_table[element['i']][element['j']])
+                    print('value=', value)
                     print('order_request["count"]=', order_request['count'])
                     print('element["count"]=', element['count'])
-                    x = order_request['count'] + element['count']
-                    print('x=', x)
+                    count = order_request['count'] + element['count']
+                    print('count=', count)
 
                     # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
-                    element['order_request_sum'] = round(x * y, 2)
-                    element['count'] = x
+                    element['order_request_sum'] = round(count * value, 2)
+                    element['count'] = count
 
                     session['order_request_in_cart']=True
             if session.get('order_request_in_cart')==False:
@@ -107,11 +112,12 @@ def order_request_add_to_cart():
 
     session['cart'] = cart
 
+    session['order_request'] = {}
     return redirect(url_for('order_bp.order_request',
-                            card_usluga_id=order_request['card_usluga_id'],
-                            price_id=order_request['price_id'],
-                            i=order_request['i'],
-                            j=order_request['j']
+                            card_usluga_id=card_usluga_id,
+                            price_id=price_id,
+                            i=i,
+                            j=j
                             )
                     )
 
@@ -126,6 +132,7 @@ def delete_from_cart(number):
     session['cart'] = cart
     cart = session.get('cart', [])
     print('cart after delete=', cart)
+    print('session=', session)
     return redirect(url_for('order_bp.cart')
                     )
 

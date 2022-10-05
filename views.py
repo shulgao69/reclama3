@@ -79,8 +79,9 @@ migrate = Migrate(app, db)
 # импорты, необходимые для загрузки файлов
 import imghdr
 import os
-from flask import render_template, request, redirect, url_for, abort
+from flask import render_template, request, redirect, url_for, abort, current_app
 from werkzeug.utils import secure_filename
+from flask_security import current_user
 from os.path import join, dirname, realpath
 # импорты, необходимые для загрузки файлов - конец
 
@@ -253,12 +254,39 @@ def usluga(menu):
 
 @app.route('/', methods=['GET','POST']) # Главная страница
 def render_main():
-    # print('session.get(sum, 1) from render_main=', session.get('sum', 1))
+    # Очистить все!!! данные сессии - пока оставить
+    # print('session before clear=', session)
+    # session.clear()
+    # print('session after clear=', session)
+
+    print("session.new=", session.new)
+    print('current_app=', current_app)
+    print('current_user=', current_user, type(current_user))
+    # print('current_user.id=', current_user.id)
+    print('current_user.is_anonymous=', current_user.is_anonymous)
+    # user_var={}
+    # if current_user.is_authenticated:
+    #     session['user_email']=current_user.email
+    #     session['user_id'] =current_user.id
+    #     user_id=session.get('user_id')
+        # user_var[user_id]['ggggg']='gggggg'
+
+    # print('user_var=', user_var)
+
+    # Объект сессии (например session= <SecureCookieSession {'_fresh': False, 'csrf_token': .......}>)
+    print('session=', session)
+
+    # например session.items() = dict_items([('_fresh', False), ('csrf_token',
+    # '400c0d486df2f7e805902caacbc5f3533cbefbb7')])
+    # print('session.items()=', session.items())
+
+    # Ключи сессии (например session.keys()= dict_keys(['_fresh', 'csrf_token']))
+    # print('session.keys()=', session.keys())
 
     # это не удалять, тк нужно для проверки согласия на сбор cookies
     # session["cookies_success"] = False
     # print(url_for('render_main'))
-    # load_user(user_id)
+    # # load_user(user_id)
     # if current_user.is_authenticated:
     #     print(True)
     # print(False)
