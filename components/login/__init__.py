@@ -183,6 +183,27 @@ def login():
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('render_main')
                 # print('next_page2=', next_page)
+
+            cart = session.get('cart', [])
+            user_id = session.get('_user_id')
+            carts_users = session.get('carts_users', [])
+            cart_user = {}
+            if len(cart) != 0:
+                if len(carts_users) == 0:
+                    cart_user['user_id'] = user_id
+                    cart_user['cart'] = cart
+                    carts_users.append(cart_user)
+
+                else:
+                    for cart_user in carts_users:
+                        if cart_user['user_id'] == user_id:
+                            cart_user['cart'].append(cart)
+
+                # session['cart'] = []
+            session['carts_users'] = carts_users
+
+            print('session=', session)
+
             return redirect(next_page)
 
             # Вариант2 (не проверила!!! 23.04.21)
