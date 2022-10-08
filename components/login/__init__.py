@@ -184,25 +184,60 @@ def login():
                 next_page = url_for('render_main')
                 # print('next_page2=', next_page)
 
-            cart = session.get('cart', [])
+
             user_id = session.get('_user_id')
             carts_users = session.get('carts_users', [])
-            cart_user = {}
-            if len(cart) != 0:
-                if len(carts_users) == 0:
-                    cart_user['user_id'] = user_id
-                    cart_user['cart'] = cart
-                    carts_users.append(cart_user)
+            print('carts_users=', carts_users)
+            list_users_id = []
+            for cart_user in carts_users:
+                list_users_id.append(cart_user['user_id'])
+            print('list_users_id=', list_users_id)
+            dict_anonymous = {}
+            dict_user_id = {}
+            # user_anonymous_in_carts_users = False
+            user_authenticated_in_carts_users = False
+            if len(carts_users) != 0:
+                print('len(carts_users)=', len(carts_users))
+                for cart_user in carts_users:
+                    if cart_user['user_id'] == 'anonymous' and len(cart_user['cart']) != 0:
+                        # user_anonymous_in_carts_users = True
+                        dict_anonymous['user_id'] = cart_user['user_id']
+                        dict_anonymous['cart'] = cart_user['cart']
+                        carts_users.remove(cart_user)
+                        print('dict_anonymous=', dict_anonymous)
+                    if cart_user['user_id'] == current_user.id:
+                        user_authenticated_in_carts_users = True
+                        dict_user_id['user_id'] = cart_user['user_id']
+                        dict_user_id['cart'] = cart_user['cart']
+                        print('dict_user_id=', dict_user_id)
 
-                else:
+                # Если авторизуемого пользователя нет в списке корзин пользователей
+                # и словарь, кот. создали из анонимной корзины не пуст добавим в список корзин
+                if user_authenticated_in_carts_users == False and len(dict_anonymous['cart']) != 0:
+                    cart_user['user_id']=current_user.id
+                    cart_user['cart']=dict_anonymous['cart']
+                    carts_users.append(cart_user)
+                # Если авторизуемый пользователь в списке корзин пользователей
+                # и словарь, кот. создали из анонимной корзины не пуст добавим
+                # его в корзину польбзователя
+                if user_authenticated_in_carts_users == True and len(dict_anonymous['cart']) != 0:
+
                     for cart_user in carts_users:
-                        if cart_user['user_id'] == user_id:
-                            cart_user['cart'].append(cart)
+                        print('cart_user=', cart_user)
+                        if cart_user['user_id'] == current_user.id:
+                            cart_user['cart'].append(dict_anonymous['cart'])
+                            print('cart_user user_id=', cart_user, cart_user['user_id'])
+
+                    # if cart_user['user_id'] == 'anonymous':
+                    #     cart_user['cart'] = []
+                    #     print('cart_user anonymous=', cart_user)
 
                 # session['cart'] = []
             session['carts_users'] = carts_users
-
-            print('session=', session)
+            session['user_id'] = user_id
+            # print('session.get("carts_users")=', session.get('carts_users'))
+            #
+            print('session from login=', session)
 
             return redirect(next_page)
 

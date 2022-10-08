@@ -254,17 +254,19 @@ def usluga(menu):
 
 @app.route('/', methods=['GET','POST']) # Главная страница
 def render_main():
+    print('session с главной стр=', session)
+
     # Очистить все!!! данные сессии - пока оставить
     # print('session before clear=', session)
     # session.clear()
     # print('session after clear=', session)
 
-    print("session.new=", session.new)
-    print('current_app=', current_app)
-    print('current_user=', current_user, type(current_user))
+    # print("session.new=", session.new)
+    # print('current_app=', current_app)
+    # print('current_user=', current_user, type(current_user))
     # print('current_user.id=', current_user.id)
-    print('current_user.is_anonymous=', current_user.is_anonymous)
-    print('request.cookies=', request.cookies)
+    # print('current_user.is_anonymous=', current_user.is_anonymous)
+    # print('request.cookies=', request.cookies)
     # user_var={}
     # if current_user.is_authenticated:
     #     session['user_email']=current_user.email
@@ -273,10 +275,10 @@ def render_main():
         # user_var[user_id]['ggggg']='gggggg'
 
     # print('user_var=', user_var)
-    print('session.get("_user_id")=', session.get('_user_id'))
+    # print('session.get("_user_id")=', session.get('_user_id'))
 
     # Объект сессии (например session= <SecureCookieSession {'_fresh': False, 'csrf_token': .......}>)
-    print('session=', session)
+    # print('session=', session)
 
     # например session.items() = dict_items([('_fresh', False), ('csrf_token',
     # '400c0d486df2f7e805902caacbc5f3533cbefbb7')])
