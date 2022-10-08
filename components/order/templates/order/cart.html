@@ -24,7 +24,7 @@
             {% endif %}
         </h5>
         <!-- если корзина пуста - начало-->
-        {% if session.get('len_carts_users') == 0 %}
+        {% if orders_requests == [] %}
         <div>
             Ваша корзина пока пуста!
         </div>

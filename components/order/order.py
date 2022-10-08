@@ -101,7 +101,7 @@ def order_request_add_to_cart():
     print('session before add=', session)
     session['order_request_add_to_cart'] = True
     order_request = session.get('order_request', {})
-    print("order_request=", order_request)
+    # print("order_request=", order_request)
 
     card_usluga_id = order_request['card_usluga_id']
     price_id = order_request['price_id']
@@ -113,20 +113,20 @@ def order_request_add_to_cart():
     # print('cart from add_to_cart=', cart)
 
     carts_users=session.get('carts_users', [])
-    print('carts_users=', carts_users)
+    # print('carts_users=', carts_users)
 
     if current_user.is_anonymous:
         user_id='anonymous'
     else:
         user_id=current_user.id
-        print('user_id=', user_id)
+        # print('user_id=', user_id)
     session['user_id']=user_id
     user_id=session.get('user_id')
 
     list_users_id=[]
     for cart_user in carts_users:
         list_users_id.append(cart_user['user_id'])
-    print('list_users_id=', list_users_id)
+    # print('list_users_id=', list_users_id)
 
     cart_new_user = {}
     if user_id not in list_users_id:
@@ -134,7 +134,7 @@ def order_request_add_to_cart():
         cart_new_user['cart']=[]
         cart_new_user['cart'].append(order_request)
         carts_users.append(cart_new_user)
-        print('cart_new_user=', cart_new_user)
+        # print('cart_new_user=', cart_new_user)
 
     else:
         for cart_user in carts_users:
@@ -145,17 +145,17 @@ def order_request_add_to_cart():
                     session['order_request_in_cart'] = False
                     for element in cart_user['cart']:
                         if element['card_usluga_id'] == order_request['card_usluga_id'] and element['price_id'] == order_request['price_id'] and element['i'] == order_request['i'] and element['j'] == order_request['j']:
-                                # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
-                                # y=float(price.value_table[i][j])
-                                # см. https://pyprog.pro/python/py/nums/nums.html
-                                # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
-                                # type(y)= <class 'decimal.Decimal'>
-                                # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                            # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
+                            # y=float(price.value_table[i][j])
+                            # см. https://pyprog.pro/python/py/nums/nums.html
+                            # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                            # type(y)= <class 'decimal.Decimal'>
+                            # https://www.delftstack.com/howto/python/string-to-decimal-python/
                             price = PriceTable.query.filter(PriceTable.id == element['price_id']).first()
                             value = Decimal(price.value_table[element['i']][element['j']])
                             count = order_request['count'] + element['count']
 
-                                # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
+                            # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
                             element['order_request_sum'] = round(count * value, 2)
                             element['count'] = count
                             session['order_request_in_cart'] = True
@@ -164,47 +164,7 @@ def order_request_add_to_cart():
                         cart_user['cart'].append(order_request)
 
     session['carts_users'] = carts_users
-    print('carts_users=', carts_users)
-
-
-    #
-    # if cart == []:
-    #     cart.append(order_request)
-    #     # print('элемент добавлен в пустую корзину')
-    #
-    # else:
-    #     session['order_request_in_cart'] = False
-    #     if order_request['order_request_sum'] == -1:
-    #         cart.append(order_request)
-    #     else:
-    #         for element in cart:
-    #             if element['card_usluga_id'] == order_request['card_usluga_id'] and element['price_id'] == order_request['price_id'] and \
-    #                     element['i'] == order_request['i'] and element['j'] == order_request['j']:
-    #
-    #                 # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
-    #                 # y=float(price.value_table[i][j])
-    #                 # см. https://pyprog.pro/python/py/nums/nums.html
-    #                 # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
-    #                 # type(y)= <class 'decimal.Decimal'>
-    #                 # https://www.delftstack.com/howto/python/string-to-decimal-python/
-    #                 price = PriceTable.query.filter(PriceTable.id == element['price_id']).first()
-    #                 value = Decimal(price.value_table[element['i']][element['j']])
-    #                 print('value=', value)
-    #                 print('order_request["count"]=', order_request['count'])
-    #                 print('element["count"]=', element['count'])
-    #                 count = order_request['count'] + element['count']
-    #                 print('count=', count)
-    #
-    #                 # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
-    #                 element['order_request_sum'] = round(count * value, 2)
-    #                 element['count'] = count
-    #
-    #                 session['order_request_in_cart']=True
-    #         if session.get('order_request_in_cart')==False:
-    #             cart.append(order_request)
-    #
-    # session['cart'] = cart
-
+    # print('carts_users=', carts_users)
     session['order_request'] = {}
     print('session after add=', session)
     return redirect(url_for('order_bp.order_request',
@@ -225,56 +185,47 @@ def cart():
     # print('cart from cart=', cart)
     orders_requests = []
     carts_users = session.get('carts_users', [])
+    # print('carts_users=', carts_users)
     session['len_carts_users']=len(carts_users)
+    if current_user.is_anonymous:
+        user_id='anonymous'
+    else:
+        user_id=current_user.id
+    dict = {}
+    if carts_users != []:
+        for cart_user in carts_users:
+            print('cart_user=', cart_user)
 
-    if len(carts_users) != 0:
-        if current_user.is_authenticated:
-            for cart_user in carts_users:
-                if cart_user['user_id']==session.get('_user_id'):
-                    if len(cart_user['cart']) !=0:
-                        for order_request in cart_user['cart']:
-                            # print('order_request=', order_request)
-                            dict = {}
-                            card_usluga = CardUsluga.query.filter(CardUsluga.id == order_request['card_usluga_id']).first()
-                            price = PriceTable.query.filter(PriceTable.id == order_request['price_id']).first()
-                            dict['card_usluga_arhive'] = card_usluga.arhive
-                            dict['card_usluga_active'] = card_usluga.active
-                            dict['price_arhive']=price.arhive
-                            dict['card_usluga'] = card_usluga
-                            dict['price'] = price
-                            dict['i'] = order_request['i']
-                            dict['j'] = order_request['j']
-                            dict['count'] = order_request['count']
-                            dict['order_request_sum'] = order_request['order_request_sum']
-                            orders_requests.append(dict)
-                            # session['len_cart_user'] = len(orders_requests)
-        else:
-            for cart_user in carts_users:
-                if cart_user['user_id']=='anonymous':
-                    if len(cart_user['cart']) !=0:
-                        for order_request in cart_user['cart']:
-                            # print('order_request=', order_request)
-                            dict = {}
-                            card_usluga = CardUsluga.query.filter(CardUsluga.id == order_request['card_usluga_id']).first()
-                            price = PriceTable.query.filter(PriceTable.id == order_request['price_id']).first()
-                            dict['card_usluga_arhive'] = card_usluga.arhive
-                            dict['card_usluga_active'] = card_usluga.active
-                            dict['price_arhive']=price.arhive
-                            dict['card_usluga'] = card_usluga
-                            dict['price'] = price
-                            dict['i'] = order_request['i']
-                            dict['j'] = order_request['j']
-                            dict['count'] = order_request['count']
-                            dict['order_request_sum'] = order_request['order_request_sum']
-                            orders_requests.append(dict)
-                            # session['len_cart_user'] = len(orders_requests)
-    # print('orders_requests from cart=', orders_requests)
-    print('orders_requests from cart=', orders_requests)
+            if cart_user['user_id']==user_id:
+
+                if cart_user['cart'] !=[]:
+                    print('len(cart_user["cart"])=', len(cart_user['cart']))
+                    for order_request in cart_user['cart']:
+                        print('order_request=', order_request)
+
+                        card_usluga = CardUsluga.query.filter(CardUsluga.id==order_request['card_usluga_id']).first()
+                        price = PriceTable.query.filter(PriceTable.id==order_request['price_id']).first()
+
+                        dict['card_usluga_arhive'] = card_usluga.arhive
+                        dict['card_usluga_active'] = card_usluga.active
+                        dict['price_arhive']=price.arhive
+                        dict['card_usluga'] = card_usluga
+                        dict['price'] = price
+                        dict['i'] = order_request['i']
+                        dict['j'] = order_request['j']
+                        dict['count'] = order_request['count']
+                        dict['order_request_sum'] = order_request['order_request_sum']
+                        orders_requests.append(dict)
+                        dict = {}
+                        # session['len_cart_user'] = len(orders_requests)
+                        print('orders_requests from cart=', type(orders_requests), orders_requests)
+                        print('session from cart=', session)
+                    #
+    print('orders_requests from cart=', type(orders_requests), orders_requests)
     print('session from cart=', session)
     return render_template('cart.html',
                            orders_requests=orders_requests
                            )
-
 
 # удалить из корзины
 @order_blueprint.route('/cart/delete/<int:number>', methods=['GET', 'POST'])
