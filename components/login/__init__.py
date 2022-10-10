@@ -13,8 +13,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # from RECL.models import db
 from RECL.models import Usluga, Link, Order, User, Role, roles_users
+from RECL.models import CardUsluga, PriceTable
 from RECL.forms import LoginForm
 # from RECL.components.security import security, user_datastore
+
+#  модуль используем для перевода строки в десятичное число
+from decimal import Decimal
 
 # migrate = Migrate()
 
@@ -198,12 +202,9 @@ def login():
             dict_user_id = {}
             # user_anonymous_in_carts_users = False
             user_authenticated_in_carts_users = False
-            if len(carts_users) != 0:
-                print('len(carts_users)=', len(carts_users))
+            if carts_users != []:
                 for cart_user in carts_users:
-                    if cart_user['user_id'] == 'anonymous' and len(cart_user['cart']) != 0:
-                        # user_anonymous_in_carts_users = True
-                        # dict_anonymous['user_id'] = cart_user['user_id']
+                    if cart_user['user_id'] == 'anonymous' and cart_user['cart'] != []:
                         dict_anonymous['cart'] = cart_user['cart']
                         cart_user['cart']=[]
                         print('dict_anonymous=', dict_anonymous)
@@ -215,7 +216,10 @@ def login():
 
                 # Если авторизуемого пользователя нет в списке корзин пользователей
                 # и словарь, кот. создали из анонимной корзины не пуст добавим в список корзин
-                if user_authenticated_in_carts_users == False and len(dict_anonymous['cart']) != 0:
+                # if user_authenticated_in_carts_users == False and len(dict_anonymous['cart']) != 0:
+
+                # Если авторизуемого пользователя нет в списке корзин пользователей:
+                if user_authenticated_in_carts_users == False:
                     new_cart_user={}
                     new_cart_user['user_id']=current_user.id
                     new_cart_user['cart']=dict_anonymous['cart']
@@ -223,23 +227,48 @@ def login():
                 # Если авторизуемый пользователь в списке корзин пользователей
                 # и словарь, кот. создали из анонимной корзины не пуст добавим
                 # его в корзину пользователя
-                if user_authenticated_in_carts_users == True and len(dict_anonymous['cart']) != 0:
+                if user_authenticated_in_carts_users == True and dict_anonymous['cart'] != []:
 
                     for cart_user in carts_users:
-                        print('cart_user=', cart_user)
                         if cart_user['user_id'] == current_user.id:
-                            print('cart_user["cart"]=', cart_user['cart'], type(cart_user['cart']))
-                            print('dict_anonymous["cart"]=', dict_anonymous['cart'], type(dict_anonymous['cart']))
-                            # cart_user['cart'].append(dict_anonymous['cart'])
+                            print('cart_user["cart"] 0=', cart_user['cart'])
                             for d in dict_anonymous['cart']:
-                                cart_user['cart'].append(d)
-                            # cart_user['cart']+dict_anonymous['cart']
-                            # print('cart_user user_id=', cart_user, cart_user['user_id'])
+                                if d['order_request_sum']==-1:
+                                    print('d если order_request_sum==-1 =', d)
+                                    cart_user['cart'].append(d)
+                                    dict_anonymous['cart'].remove(d)
+                                    print('dict_anonymous =', dict_anonymous)
+                                else:
+                                    session['d_in_cart'] = False
+                                    for c in cart_user["cart"]:
+                                        print('d если order_request_sum != -1=', d)
+                                        print('c=', c)
+                                        if d['card_usluga_id'] == c['card_usluga_id'] and d['price_id'] == c['price_id'] and d['i'] == c['i'] and d['j'] == c['j']:
+                                            # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
+                                            # y=float(price.value_table[i][j])
+                                            # см. https://pyprog.pro/python/py/nums/nums.html
+                                            # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                                            # type(y)= <class 'decimal.Decimal'>
+                                            # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                                            price = PriceTable.query.filter(PriceTable.id == d['price_id']).first()
+                                            value = Decimal(price.value_table[d['i']][d['j']])
+                                            count = c['count'] + d['count']
+                                            print('count=', count)
+
+                                            # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
+                                            c['order_request_sum'] = round(count * value, 2)
+                                            c['count'] = count
+                                            session['d_in_cart'] = True
+                                            print('cart_user["cart"] 1=', cart_user['cart'])
+                                            # dict_anonymous['cart'].remove(d)
+
+
+                                    if session.get('d_in_cart') == False:
+                                        cart_user['cart'].append(d)
+
 
             session['carts_users'] = carts_users
             session['user_id'] = user_id
-            # print('session.get("carts_users")=', session.get('carts_users'))
-            #
             print('session from login=', session)
 
             return redirect(next_page)

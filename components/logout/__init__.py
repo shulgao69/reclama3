@@ -12,11 +12,13 @@ logout_blueprint = Blueprint('logout', __name__, template_folder='templates', st
 @logout_blueprint.route('/')
 @login_required
 def render_logout():
-
     logout_user()
-
+    session['user_id']='anonymos'
+    if session.get('order_request_add_to_cart'):
+        session.pop('order_request_add_to_cart')
+    if session.get('order_request'):
+        session.pop('order_request')
     print('session from logout=', session)
-    # session.pop('user_id')
     # session.pop('user_email')
     return redirect('/')
 
