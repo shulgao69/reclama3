@@ -182,62 +182,146 @@ def order_request_add_to_cart():
 def cart():
     session['order_request_add_to_cart'] = False
     session['order_request'] = {}
-    # cart = session.get('cart', [])
-    # print('cart from cart=', cart)
     orders_requests = []
+    # Список корзин пользователей в рамках одной сессии
     carts_users = session.get('carts_users', [])
-    # print('carts_users=', carts_users)
-    # session['len_carts_users']=len(carts_users)
     if current_user.is_anonymous:
         user_id='anonymous'
     else:
         user_id=current_user.id
-    dict = {}
+    dict_cart_user = {}
     if carts_users != []:
         for cart_user in carts_users:
-            # print('cart_user=', cart_user)
-
             if cart_user['user_id']==user_id:
-
                 if cart_user['cart'] !=[]:
-                    # print('len(cart_user["cart"])=', len(cart_user['cart']))
+                    # Эта сессия нужна для удаления заявки на заказ карточки услуги из корзины конкретного
+                    # пользователя, тк список словарей orders_requests мы не можем передать через сессию,
+                    # тк там есть объекты запроса а не строки
+                    session['cart']=cart_user['cart']
                     for order_request in cart_user['cart']:
-                        # print('order_request=', order_request)
-
                         card_usluga = CardUsluga.query.filter(CardUsluga.id==order_request['card_usluga_id']).first()
                         price = PriceTable.query.filter(PriceTable.id==order_request['price_id']).first()
 
-                        dict['card_usluga_arhive'] = card_usluga.arhive
-                        dict['card_usluga_active'] = card_usluga.active
-                        dict['price_arhive']=price.arhive
-                        dict['card_usluga'] = card_usluga
-                        dict['price'] = price
-                        dict['i'] = order_request['i']
-                        dict['j'] = order_request['j']
-                        dict['count'] = order_request['count']
-                        dict['order_request_sum'] = order_request['order_request_sum']
-                        orders_requests.append(dict)
-                        dict = {}
-                        # session['len_cart_user'] = len(orders_requests)
-    #                     print('orders_requests from cart=', type(orders_requests), orders_requests)
-    #                     print('session from cart=', session)
-    #                 #
-    # print('orders_requests from cart=', type(orders_requests), orders_requests)
-    # print('session from cart=', session)
+                        dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
+                        dict_cart_user['card_usluga_active'] = card_usluga.active
+                        dict_cart_user['price_arhive']=price.arhive
+                        dict_cart_user['card_usluga'] = card_usluga
+                        dict_cart_user['price'] = price
+                        dict_cart_user['i'] = order_request['i']
+                        dict_cart_user['j'] = order_request['j']
+                        dict_cart_user['count'] = order_request['count']
+                        dict_cart_user['order_request_sum'] = order_request['order_request_sum']
+                        orders_requests.append(dict_cart_user)
+                        dict_cart_user = {}
+    print('orders_requests=', type(orders_requests), orders_requests)
+    # session['orders_requests']=orders_requests
     return render_template('cart.html',
                            orders_requests=orders_requests
                            )
 
+
+# уменьшить внутри корзины
+@order_blueprint.route('/cart_sum_minus/<int:number>/', methods=['GET', 'POST'])
+def cart_sum_minus(number):
+    # number - это порядковый номер элемента списка словарей (это словарь) заявки на заказ
+    # из корзины конкретного пользователя
+    # print('number=', number)
+    carts_users = session.get('carts_users', [])
+    if current_user.is_anonymous:
+        user_id = 'anonymous'
+    else:
+        user_id = current_user.id
+
+    if carts_users != []:
+        for cart_user in carts_users:
+            if cart_user['user_id'] == user_id:
+                price = PriceTable.query.filter(PriceTable.id == cart_user['cart'][number]['price_id']).first()
+                if cart_user['cart'][number]['count']>0:
+                    count=cart_user['cart'][number]['count']-1
+                else:
+                    count=0
+                cart_user['cart'][number]['count']=count
+                # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
+                # y=float(price.value_table[i][j])
+                # см. https://pyprog.pro/python/py/nums/nums.html
+                # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                # type(y)= <class 'decimal.Decimal'>
+                # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                value = Decimal(price.value_table[cart_user['cart'][number]['i']][cart_user['cart'][number]['j']])
+
+                # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
+                order_request_sum = round(count * value, 2)
+
+                cart_user['cart'][number]['order_request_sum'] = order_request_sum
+
+    session['carts_users'] = carts_users
+    print('session=', session)
+    return redirect(url_for('order_bp.cart')
+                    )
+
+
+# добавить внутри корзины
+@order_blueprint.route('/cart_sum_plus/<int:number>/', methods=['GET', 'POST'])
+def cart_sum_plus(number):
+    # number - это порядковый номер элемента списка словарей (это словарь) заявки на заказ
+    # из корзины конкретного пользователя
+    # print('number=', number)
+    carts_users = session.get('carts_users', [])
+    if current_user.is_anonymous:
+        user_id = 'anonymous'
+    else:
+        user_id = current_user.id
+
+    if carts_users != []:
+        for cart_user in carts_users:
+            if cart_user['user_id'] == user_id:
+                price = PriceTable.query.filter(PriceTable.id == cart_user['cart'][number]['price_id']).first()
+                count=cart_user['cart'][number]['count']+1
+                cart_user['cart'][number]['count']=count
+                # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
+                # y=float(price.value_table[i][j])
+                # см. https://pyprog.pro/python/py/nums/nums.html
+                # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                # type(y)= <class 'decimal.Decimal'>
+                # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                value = Decimal(price.value_table[cart_user['cart'][number]['i']][cart_user['cart'][number]['j']])
+
+                # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
+                order_request_sum = round(count * value, 2)
+
+                cart_user['cart'][number]['order_request_sum'] = order_request_sum
+
+    session['carts_users'] = carts_users
+    print('session=', session)
+    return redirect(url_for('order_bp.cart')
+                    )
+
+
 # удалить из корзины
-@order_blueprint.route('/cart/delete/<int:number>', methods=['GET', 'POST'])
+@order_blueprint.route('/cart/delete/<int:number>/', methods=['GET', 'POST'])
 def delete_from_cart(number):
-    print('number=', number)
+    # number - это порядковый номер элемента из списка словарей (это словарь) заявки на заказ
+    # из корзины конкретного пользователя
+    # print('number=', number)
+    # Это корзина конкретного пользователя
     cart = session.get('cart', [])
     print('cart before delete=', cart)
     cart.pop(number)
-    session['cart'] = cart
-    cart = session.get('cart', [])
     print('cart after delete=', cart)
+    carts_users = session.get('carts_users', [])
+    if current_user.is_anonymous:
+        user_id = 'anonymous'
+    else:
+        user_id = current_user.id
+
+    if carts_users != []:
+        for cart_user in carts_users:
+            if cart_user['user_id'] == user_id:
+                cart_user['cart'] = cart
+
+    session['carts_users'] = carts_users
+    session.pop('cart')
+
     print('session=', session)
     return redirect(url_for('order_bp.cart')
                     )

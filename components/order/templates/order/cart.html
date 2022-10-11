@@ -288,7 +288,8 @@
                                 orders_requests[number]['card_usluga'].active == True %}
 
 
-                                <a href="">
+                                <a href="{{ url_for('order_bp.cart_sum_minus',
+                                                number=number) }}">
                                     <!--Значок - для уменьшения количества - начало-->
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
@@ -316,7 +317,8 @@
                                 orders_requests[number]['card_usluga'].active == True %}
 
 
-                                <a href="">
+                                <a href="{{ url_for('order_bp.cart_sum_plus',
+                                                number=number) }}">
                                     <!--Значок + для увеличения количества - начало-->
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
