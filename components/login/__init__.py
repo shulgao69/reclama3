@@ -192,57 +192,61 @@ def login():
             user_id = session.get('_user_id')
             carts_users = session.get('carts_users', [])
             print('carts_users=', carts_users)
-            list_users_id = []
-            for cart_user in carts_users:
-                list_users_id.append(cart_user['user_id'])
-            print('list_users_id=', list_users_id)
+
+            # Список user_id в списке корзин пользователей в рамках одной сессии
+            # (состоит из id либо 'anonymous', если анонимная корзина)
+            # Этот список используем для показа изображения пустой корзины в base.html
+            # его не удалять!!! Обновляется при добавлении корзины нового пользователя
+            # и при слиянии анонимной корзины при входе нового пользователя в login_blueprint
+            list_users_id_in_carts_users=session.get('list_users_id_in_carts_users', [])
+
+            # Создаем словарь для анонимной корзины чтобы слить с корзиной авторизуемого пользователя
             dict_anonymous = {}
             dict_anonymous['user_id']='anonymous'
             dict_anonymous['cart']=[]
+
+            # Создаем словарь для корзины авторизуемого пользователя чтобы слить с анонимной корзиной
             dict_user_id = {}
-            # user_anonymous_in_carts_users = False
+
+
             user_authenticated_in_carts_users = False
             if carts_users != []:
                 for cart_user in carts_users:
                     if cart_user['user_id'] == 'anonymous' and cart_user['cart'] != []:
                         dict_anonymous['cart'] = cart_user['cart']
                         cart_user['cart']=[]
-                        print('dict_anonymous=', dict_anonymous)
                     if cart_user['user_id'] == current_user.id and cart_user['user_id'] != 'anonymous':
                         user_authenticated_in_carts_users = True
                         dict_user_id['user_id'] = cart_user['user_id']
                         dict_user_id['cart'] = cart_user['cart']
-                        print('dict_user_id=', dict_user_id)
 
                 # Если авторизуемого пользователя нет в списке корзин пользователей
                 # и словарь, кот. создали из анонимной корзины не пуст добавим в список корзин
                 # if user_authenticated_in_carts_users == False and len(dict_anonymous['cart']) != 0:
 
                 # Если авторизуемого пользователя нет в списке корзин пользователей:
-                if user_authenticated_in_carts_users == False:
+                if current_user.id not in list_users_id_in_carts_users:
                     new_cart_user={}
                     new_cart_user['user_id']=current_user.id
                     new_cart_user['cart']=dict_anonymous['cart']
                     carts_users.append(new_cart_user)
+                    # добавляем нового пользователя в список id корзин пользователей
+                    list_users_id_in_carts_users.append(current_user.id)
+                    session['list_users_id_in_carts_users']=list_users_id_in_carts_users
                 # Если авторизуемый пользователь в списке корзин пользователей
                 # и словарь, кот. создали из анонимной корзины не пуст добавим
                 # его в корзину пользователя
-                if user_authenticated_in_carts_users == True and dict_anonymous['cart'] != []:
+                if current_user.id in list_users_id_in_carts_users and dict_anonymous['cart'] != []:
 
                     for cart_user in carts_users:
                         if cart_user['user_id'] == current_user.id:
-                            print('cart_user["cart"] 0=', cart_user['cart'])
                             for d in dict_anonymous['cart']:
                                 if d['order_request_sum']==-1:
-                                    print('d если order_request_sum==-1 =', d)
                                     cart_user['cart'].append(d)
-                                    dict_anonymous['cart'].remove(d)
-                                    print('dict_anonymous =', dict_anonymous)
+                                    # dict_anonymous['cart'].remove(d)
                                 else:
                                     session['d_in_cart'] = False
                                     for c in cart_user["cart"]:
-                                        print('d если order_request_sum != -1=', d)
-                                        print('c=', c)
                                         if d['card_usluga_id'] == c['card_usluga_id'] and d['price_id'] == c['price_id'] and d['i'] == c['i'] and d['j'] == c['j']:
                                             # Если перевести в плавающее число (как сначала хотела) то могут быть погрешности при расчетах
                                             # y=float(price.value_table[i][j])
@@ -253,15 +257,12 @@ def login():
                                             price = PriceTable.query.filter(PriceTable.id == d['price_id']).first()
                                             value = Decimal(price.value_table[d['i']][d['j']])
                                             count = c['count'] + d['count']
-                                            print('count=', count)
 
                                             # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
                                             c['order_request_sum'] = round(count * value, 2)
                                             c['count'] = count
                                             session['d_in_cart'] = True
-                                            print('cart_user["cart"] 1=', cart_user['cart'])
                                             # dict_anonymous['cart'].remove(d)
-
 
                                     if session.get('d_in_cart') == False:
                                         cart_user['cart'].append(d)

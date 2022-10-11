@@ -117,17 +117,24 @@ def order_request_add_to_cart():
     session['user_id']=user_id
     # user_id=session.get('user_id')
 
-    list_users_id=[]
+    # Список user_id в списке корзин пользователей в рамках одной сессии
+    # (состоит из id либо 'anonymous', если анонимная корзина)
+    # Этот список используем для показа изображения пустой корзины в base.html
+    # его не удалять!!! Обновляется при добавлении корзины нового пользователя
+    # и при слиянии анонимной корзины при входе нового пользователя в login_blueprint
+    list_users_id_in_carts_users=[]
     for cart_user in carts_users:
-        list_users_id.append(cart_user['user_id'])
+        list_users_id_in_carts_users.append(cart_user['user_id'])
 
     cart_new_user = {}
-    if user_id not in list_users_id:
+    if user_id not in list_users_id_in_carts_users:
         cart_new_user['user_id'] = user_id
         cart_new_user['cart']=[]
         cart_new_user['cart'].append(order_request)
         carts_users.append(cart_new_user)
-
+        # добавляем нового пользователя в список id
+        list_users_id_in_carts_users.append(cart_new_user['user_id'])
+        session['list_users_id_in_carts_users'] = list_users_id_in_carts_users
     else:
         for cart_user in carts_users:
             if cart_user['user_id'] == user_id:
