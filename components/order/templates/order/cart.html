@@ -386,6 +386,7 @@
             </div>
             <!--Все заказы в корзине - конец-->
 
+
             <!--Оформление заказа-начало-->
             <div class="col-2">
                 <!--Сделала правую колонку липкой (работает в пределах родит. элемента)-->
@@ -397,6 +398,14 @@
                     <div>
                         Итого:
                     </div>
+                    <div>
+                        {{ sum_total }}
+                    </div>
+                    {% for element in list_total_without_sum_total %}
+                    <div>
+                        {{ element }}
+                    </div>
+                    {% endfor %}
                     <div>
                         <a class="btn btn-success container-fluid"
                            href="">
