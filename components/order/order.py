@@ -219,8 +219,9 @@ def cart():
                             try:
                                 # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
                                 # https://www.delftstack.com/howto/python/string-to-decimal-python/
-                                order_request_sum = Decimal(order_request['order_request_sum'])
+                                # order_request_sum = Decimal(order_request['order_request_sum'])
                                 value_i_j=Decimal(price.value_table[order_request['i']][order_request['j']])
+                                order_request_sum=value_i_j*order_request['count']
                                 dict_cart_user['order_request_sum'] = order_request_sum
                                 dict_cart_user['count'] = order_request['count']
                                 dict_cart_user['value_i_j'] = value_i_j
