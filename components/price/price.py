@@ -18,7 +18,8 @@ from RECL.components.price.forms import PriceForm
 from RECL.models import db
 from RECL.models import Usluga, Link, Order, User, Role, roles_users, UploadFileMy, PriceTable
 
-
+#  модуль используем для перевода строки в десятичное число
+from decimal import Decimal
 
 
 # Создаем блюпринт управления прайсами- создание, редактирование, копирование, удаление таблиц прайсов
@@ -223,9 +224,31 @@ def edit_price(id):
 
         # Заполняем таблицу с нулями данными из формы
         for i in range(len(mycol)):
+            # for j in range(len(mycol[i]['row'])):
+            #     price_table[j][i]=mycol[i]['row'][j]['pole']
             for j in range(len(mycol[i]['row'])):
-                price_table[j][i]=mycol[i]['row'][j]['pole']
-
+                # *** Т.к. в сложной форме параметр поле везде одинаков по типу, то установить
+                # разные типы данных(и соответственно их валидацию) для разных ячеек
+                # не возможною Поэтому решила сделать так:
+                # Первую строку и первый столбец вводим без изменений, как внес пользователь
+                # а остальные ячейки - если число целое - оставляем как есть, если с точкой и числа после нее
+                # тогда переводим в decimal, округляем до 2 знаков после точки и снова преобразуем в строку
+                if i != 0 or j != 0:
+                    try:
+                        value_i_j = int(mycol[i]['row'][j]['pole'])
+                        price_table[j][i] = str(value_i_j)
+                    except:
+                        try:
+                            # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                            # и округлим до 2 знаков после запятой
+                            # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                            value_i_j = round(Decimal(mycol[i]['row'][j]['pole']), 2)
+                            price_table[j][i] = str(value_i_j)
+                        except:
+                            price_table[j][i] = mycol[i]['row'][j]['pole']
+                else:
+                    price_table[j][i] = mycol[i]['row'][j]['pole']
+                # ****
         price.value_table = price_table
 
         db.session.commit()
@@ -309,8 +332,10 @@ def priceindex():
 def createprice(row_table, col_table):
     row_table=row_table  # количество строк в будущей таблице
     col_table=col_table # количество столбцов(колонок) в будущей таблице
-    message=''
-    err=''
+
+    # Флаг для показа формы ввода данных. Если button=True- форму аоказывать
+    # Если данные сохранены успешно button=False- форму не показывать
+    button=True
 
     # Для объявления формы применим свою функцию (см выше) create_form_price(row_table=row_table, col_table=col_table)
     # объявленную в начале блюпринта. Она возвращает ColForm() (т.е.это все равно что form = ColForm())-
@@ -320,31 +345,64 @@ def createprice(row_table, col_table):
     # создали матрицу price_table(список списков) например из нулей(если пустую сделать то ошибка)
     price_table=[[0]*col_table for _ in range(row_table)]
 
-    names=PriceTable.query.all()
-    name_spisok=[]
-    for name in names:
-         name_spisok.append(name.name_price_table)
+
 
     if form.validate_on_submit():
         name_price_table = form.name_price_table.data
+
+        # Сформируем список имен прайсов для проверки введенного имени прайса на уникальность
+        prices = PriceTable.query.all()
+        name_spisok = []
+        for price in prices:
+            name_spisok.append(price.name_price_table)
+
         if name_price_table in name_spisok:
-            message = 'Такое имя прайса уже существует. Задайте другое имя'
+            message = 'Такое имя прайса уже существует! Задайте другое имя.'
+            # Флаг для показа формы ввода данных. Если button=True- форму аоказывать
+            # Если данные сохранены успешно button=False- форму не показывать
+            button=True
             return render_template('pricestr.html',
                            form=form,
                            col_table=col_table,
                            row_table=row_table,
                            message=message,
-                           err=err
+                           button=button
                            )
         else:
             # Получили список списков
             mycol = form.mycol.data
 
+
             # Заполняем таблицу с нулями данными из формы
             for i in range(len(mycol)):
                 for j in range(len(mycol[i]['row'])):
-                    price_table[j][i]=mycol[i]['row'][j]['pole']
+                    # *** Т.к. в сложной форме параметр поле везде одинаков по типу, то установить
+                    # разные типы данных(и соответственно их валидацию) для разных ячеек
+                    # не возможно Поэтому решила сделать так:
+                    # Первую строку и первый столбец вводим без изменений, как внес пользователь
+                    # а остальные ячейки:
+                    # 1) если строку можно перевести в целое число - тогда эту строку оставляем как есть,
+                    # 2) если строку можно перевести в decimal(те строка- числа с точкой и числа после нее)
+                    # тогда переводим в decimal, округляем до 2 знаков после точки и снова преобразуем в строку
+                    if i !=0 or j !=0:
+                        try:
+                            value_i_j = int(mycol[i]['row'][j]['pole'])
+                            price_table[j][i] = str(value_i_j)
 
+                        except:
+                            try:
+                                # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                                # и округлим до 2 знаков после запятой
+                                # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                                value_i_j = round(Decimal(mycol[i]['row'][j]['pole']), 2)
+                                price_table[j][i] = str(value_i_j)
+
+                            except:
+                                price_table[j][i]=mycol[i]['row'][j]['pole']
+
+                    else:
+                        price_table[j][i] = mycol[i]['row'][j]['pole']
+                    # ****
             # ***Сериализация -  начало
              # Как я поняла при записи в базу в поле db.Column(JSON) (например списка)
             # сериализация происходит  автоматически (встроена) и не надо делать специально json.dumps(имя списка)
@@ -367,39 +425,48 @@ def createprice(row_table, col_table):
                                  col_table = col_table,
                                  value_table = price_table
                                 )
+                print('price.value_table=', price.value_table)
                 db.session.add(price)
                 db.session.commit()
-                err=''
-
+                price=PriceTable.query.filter(PriceTable.name_price_table==name_price_table).first()
+                print('price=', price)
+                # Флаг для показа формы ввода данных. Если button=True- форму аоказывать
+                # Если данные сохранены успешно button=False- форму не показывать
+                button=False
+                message_success_1 = 'Данные успешно загружены.'
+                message_success_2 = 'Если вам нужно другое кол-во ' \
+                                    'строк или столбцов - создайте новый прайс.'
+                message_success_3 = 'Если вы хотите отредактировать ' \
+                                    'ячейки прайса - перейдите в список прайсов.'
+                return render_template('pricestr.html',
+                                       form=form,
+                                       col_table=col_table,
+                                       row_table=row_table,
+                                       button=button,
+                                       message_success_1=message_success_1,
+                                       message_success_2=message_success_2,
+                                       message_success_3=message_success_3,
+                                       price=price
+                                       )
 
             except:
-                err = "Такое имя прайса уже существует - из except"
+                message = "Проверьте корректность введенных данных."
+                # Флаг для показа формы ввода данных. Если button=True- форму аоказывать
+                # Если данные сохранены успешно button=False- форму не показывать
+                button = True
                 return render_template('pricestr.html',
-                                   row_table = row_table,
-                                   col_table = col_table,
-                                   err = err,
-                                   form=form
-                                   )
+                                       form=form,
+                                       row_table=row_table,
+                                       col_table=col_table,
+                                       message=message,
+                                       button=button
+                                       )
 
-
-            message = 'Данные загружены. Вы можете сохранить этот прайс ' \
-                      'с другим именем. Если вам нужно другое количество ' \
-                      'строк или столбцов - перейдите к созданию нового прайса.'
-            return render_template('pricestr.html',
-                           form=form,
-                           col_table=col_table,
-                           row_table=row_table,
-                           message=message,
-                           err=err
-                           )
-
-    err=''
     return render_template('pricestr.html',
                            form=form,
                            col_table=col_table,
                            row_table=row_table,
-                           message=message,
-                           err=err
+                           button=button
                            )
 
 

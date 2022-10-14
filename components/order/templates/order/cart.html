@@ -340,7 +340,7 @@
                         </div>
                         <!--Количество-конец-->
 
-                        <!--Итого-начало-->
+                        <!--Итого по каждому наименованию услуги -начало-->
                         <div class="col-1">
                             <div class="base_color_1">
                                 <b>Итого</b>
@@ -354,7 +354,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        <!--Итого-конец-->
+                        <!--Итого по каждому наименованию услуги  - конец-->
 
                         <!--Удалить из корзины-начало-->
                         <div class="col-1">
@@ -375,7 +375,7 @@
                                 </a>
                             </div>
                         </div>
-                        <!--                        Удалить из корзины-конец-->
+                        <!--Удалить из корзины-конец-->
 
                     </div>
 
@@ -395,12 +395,14 @@
                 <!-- https://bootstrap-4.ru/docs/5.2/helpers/position/-->
                 <div class="sticky-top pt-5">
 
-                    <div>
+                    <h4 class="base_color_1">
                         Итого:
-                    </div>
+                    </h4>
+                    {% if sum_total !=0 %}
                     <div>
                         {{ sum_total }}
                     </div>
+                    {% endif %}
                     {% for element in list_total_without_sum_total %}
                     <div>
                         {{ element }}

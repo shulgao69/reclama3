@@ -74,6 +74,39 @@ def createprice(row_table, col_table)-->
             <b> Шаг 2 </b>
         </h3>
 
+        <!--Сообщения о загрузке данных (успешно, такое имя уже есть и тп) - начало-->
+        <div class="row">
+            <div class="col-6">
+                {% if message %}
+                <h6 class="text-danger">
+                    {{ message }}
+                </h6>
+                {% endif %}
+                {% if message_success_1 %}
+                <h6 class="text-success">
+                    {{ message_success_1 }}
+                </h6>
+                {% endif %}
+                {% if message_success_2 %}
+                <div>
+                    {{ message_success_2 }}
+                </div>
+                {% endif %}
+                {% if message_success_3 %}
+                <div>
+                    {{ message_success_3 }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <!--Сообщения о загрузке данных (успешно, такое имя уже есть и тп) - конец-->
+
+    <!-- Если данные не вводились или введены не верно-показываем форму и инструкцию -начало-->
+        {% if button %}
+
+        <!--Инструкция пользователю по вводу данных - начало-->
+        <span>
+
         <h5 class="text-left pl-0 my-2">
             Введите данные
         </h5>
@@ -95,17 +128,21 @@ def createprice(row_table, col_table)-->
         </b>
         </div>
         <div class="pl-3"><b>3.1 Ввод цены:</b></div>
-            <div class="pl-3">Если вы хотите ввести в ячейку прайса цену, то в этой строке не должно быть других символов,
+            <div class="pl-3">- Если вы хотите ввести в ячейку прайса цену, то в этой строке не должно быть других
+                символов,
             кроме цифр и точки. </div>
-        <div class="pl-3">Копейки указывайте через точку, а не запятую. </div>
-        <div class="pl-3">Размерность указывайте в столбце (строке) заголовка.</div>
+        <div class="pl-3">- Копейки указывайте через точку, а не запятую (не более 2 знаков после точки). </div>
+        <div class="pl-3">- При ошибочном вводе после точки более 2 цифр произойдет автоматическое округление до 2
+            знаков после запятой. </div>
+            <div class="pl-3">- Размерность указывайте в столбце (строке) заголовка.</div>
         <div class="pl-3">В этом случае будет доступно изменение кол-ва услуг в заказе.</div>
         <div class="pl-3"><b>3.2 Ввод текста:</b></div>
         <div class="pl-3">Вы также можете ввести текст, не более 20 символов (например: Цена по запросу) или не вводить ничего.</div>
-        <div class="pl-3">В этом случае изменение кол-ва услуг в заказе будет НЕ доступно. </div>
+        <div class="pl-3">В этом случае изменение кол-ва услуг в данном заказе будет НЕ доступно. </div>
+        </span>
+        <!--Инструкция пользователю по вводу данных - конец-->
 
-
-
+        <!--Форма ввода данных - начало-->
         <!--https://bootstrap-4.ru/docs/4.6/components/forms/-->
         <form method="POST" action="">
             {{ form.csrf_token }}
@@ -119,12 +156,7 @@ def createprice(row_table, col_table)-->
                 {% endfor %}
             </ul>
             {% endif %}
-            {{ err }}
-            <div class="row">
-                <div class="col-4">
-                    {{ message }}
-                </div>
-            </div>
+
 
             <!--class="table-responsive" - добавляет прокрутку-->
             <!--см. https://bootstrap-4.ru/articles/cheatsheet/#table-reflow-->
@@ -152,11 +184,13 @@ def createprice(row_table, col_table)-->
                 </tbody>
             </table>
 
+
             <div class="row pt-5">
                 <div class="col-2">
                     {{ form.submit(class='btn btn-success form-control') }}
                 </div>
             </div>
+
             <!--<div class="form-row">-->
             <!--{% for field in form %}-->
             <!--<div class="col col-sm">-->
@@ -165,11 +199,63 @@ def createprice(row_table, col_table)-->
             <!--{% endfor %}-->
             <!--</div>-->
 
+        </form>
+        <!--Форма ввода данных - конец-->
+        {% endif %}
+        <!-- Если данные не вводились или введены не верноо - показываем форму и инструкцию -конец-->
+
+        <br>
+
+        <!-- Если данные введены верно-показываем готовый прайс -начало-->
+        {% if not button %}
+        {% if price %}
+        <!--Новый прайс после успешной загрузки данных - начало-->
+        <div class="row pb-4">
 
 
-    </form>
-    <br>
+            <!--Таблица готового прайса -  начало-->
+
+            <div class="col-8">
+                <h5>
+                    {{ price.name_price_table }}
+                </h5>
+                <!--class="table-responsive" в отдельном div позволяет сделать прокрутку таблицы -->
+                <!--см. https://bootstrap-4.ru/docs/4.0/content/tables/-->
+                <div class="table-responsive">
+                    <table class="table table-reflow mb-1">
+                        {% for i in range(price.value_table|length) %}
+                        {% if i == 0 %}
+                        <thead>
+                        <tr>
+                            {% for val in price.value_table[i] %}
+                            <th>{{ val }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        {% else %}
+                        <tbody>
+                        <tr>
+                            {% for val in price.value_table[i] %}
+                            <td>{{ val }}</td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                        {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <!--Таблица готового прайса -  конец-->
+        </div>
+        <!--Новый прайс после успешной загрузки данных - конец-->
+        {% endif %}
+        {% endif %}
+        <!-- Если данные введены верно-показываем готовый прайс -конец-->
+
+
     </div>
+
 </main>
 {% endblock %}
 

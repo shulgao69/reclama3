@@ -177,6 +177,7 @@ def order_request_add_to_cart():
 def cart():
     session['order_request_add_to_cart'] = False
     session['order_request'] = {}
+    session['cart']=[]
     orders_requests = []
     # Список корзин пользователей в рамках одной сессии
     carts_users = session.get('carts_users', [])
@@ -209,37 +210,65 @@ def cart():
                         dict_cart_user['price'] = price
                         dict_cart_user['i'] = order_request['i']
                         dict_cart_user['j'] = order_request['j']
-
+                        print('order_request=', order_request)
+                        print('order_request["order_request_sum"]=', order_request['order_request_sum'])
                         # *** Этот перевод делаем потому, что при передаче через сессию (видимо?)
                         # класс decimal превращается в строку и поэтому в корзине невозможно
                         # провести сортировку по этому параметру
-                        if order_request['order_request_sum'] !=-1 and \
-                                type(price.value_table[order_request['i']][order_request['j']]) is not str:
-                            # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
-                            # type(y)= <class 'decimal.Decimal'>
-                            # https://www.delftstack.com/howto/python/string-to-decimal-python/
-                            order_request_sum = Decimal(order_request['order_request_sum'])
-                            dict_cart_user['order_request_sum'] = order_request_sum
-                            dict_cart_user['count'] = order_request['count']
-                            sum_total=sum_total+order_request_sum
+                        if order_request['order_request_sum'] !=-1:
+                            try:
+                                # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                                # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                                order_request_sum = Decimal(order_request['order_request_sum'])
+                                value_i_j=Decimal(price.value_table[order_request['i']][order_request['j']])
+                                dict_cart_user['order_request_sum'] = order_request_sum
+                                dict_cart_user['count'] = order_request['count']
+                                dict_cart_user['value_i_j'] = value_i_j
+                                sum_total = sum_total+order_request_sum
 
-                        if order_request['order_request_sum'] ==-1 or \
-                                type(price.value_table[order_request['i']][order_request['j']]) is str:
-                            order_request_sum = -1
-                            dict_cart_user['order_request_sum'] = order_request_sum
-                            dict_cart_user['count'] = 1
-                            list_total_without_sum_total.append(price.value_table[order_request['i']][order_request[
-                                                                    'j']])
+                            except:
+                                order_request['order_request_sum'] = -1
+                                dict_cart_user['order_request_sum']=order_request['order_request_sum']
+                                order_request['count']=1
+                                dict_cart_user['count']=order_request['count']
+                                dict_cart_user['value_i_j'] = price.value_table[order_request['i']][order_request['j']]
+                                list_total_without_sum_total.append(price.value_table[order_request['i']][order_request['j']])
                         # ***
+                        else:
+                            try:
+                                # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                                # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                                value_i_j = Decimal(price.value_table[order_request['i']][order_request['j']])
+                                order_request['order_request_sum']=value_i_j
+                                dict_cart_user['order_request_sum'] = order_request['order_request_sum']
+                                order_request['count'] = 1
+                                dict_cart_user['count'] = order_request['count']
+                                dict_cart_user['value_i_j'] = value_i_j
+                                sum_total = sum_total + value_i_j
+
+                            except:
+                                dict_cart_user['count'] = order_request['count']
+                                dict_cart_user['order_request_sum'] = order_request['order_request_sum']
+                                dict_cart_user['value_i_j']=price.value_table[order_request['i']][order_request['j']]
+                                list_total_without_sum_total.append(
+                                    price.value_table[order_request['i']][order_request['j']])
+
+
 
 
                         orders_requests.append(dict_cart_user)
                         dict_cart_user = {}
+
+                        session['cart'] = cart_user['cart']
+
+        session['carts_users']=carts_users
     print('orders_requests=', type(orders_requests), orders_requests)
+    print('session.get(cart)=', session.get('cart'))
+    print('session1=', session)
 
     # Сортировка словаря по order_request_sum, при этом если цена была класс строка
     # то order_request_sum ==  -1
-    orders_requests=sorted(orders_requests, key= lambda x: x['order_request_sum'], reverse=True)
+    # orders_requests=sorted(orders_requests, key= lambda x: x['order_request_sum'], reverse=True)
 
     return render_template('cart.html',
                            orders_requests=orders_requests,
@@ -263,6 +292,8 @@ def cart_sum_minus(number):
     if carts_users != []:
         for cart_user in carts_users:
             if cart_user['user_id'] == user_id:
+                print('cart_user=', cart_user)
+                print('number=', number)
                 price = PriceTable.query.filter(PriceTable.id == cart_user['cart'][number]['price_id']).first()
                 if cart_user['cart'][number]['count']>0:
                     count=cart_user['cart'][number]['count']-1
@@ -275,6 +306,7 @@ def cart_sum_minus(number):
                 # поэтому переведем в десятичное число с помощью модуля from decimal import Decimal!!!
                 # type(y)= <class 'decimal.Decimal'>
                 # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                print('price.value=', price.value_table[cart_user['cart'][number]['i']][cart_user['cart'][number]['j']])
                 value = Decimal(price.value_table[cart_user['cart'][number]['i']][cart_user['cart'][number]['j']])
 
                 # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
