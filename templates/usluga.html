@@ -194,7 +194,7 @@
 
                     {% if card_usluga.prices %}
                     {% for price in card_usluga.prices %}
-                    {% if price.arhive == False %}
+                    {% if price.arhive == False and price.active==True %}
                     <h5 class="base_color_1">
                         {{ price.name_price_table }}
                     </h5>

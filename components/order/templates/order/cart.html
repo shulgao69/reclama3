@@ -48,19 +48,17 @@
 
                     <div class="row p-2">
                         <div class="col-12 pb-3">
-                            {% if orders_requests[number]['card_usluga'].arhive==True or orders_requests[number]['card_usluga'].active ==
-                            False or orders_requests[number]['price_arhive'] %}
+                            {% if orders_requests[number]['card_usluga'].arhive==True or
+                            orders_requests[number]['card_usluga'].active==False or
+                            orders_requests[number]['price_arhive']==True or
+                            orders_requests[number]['price_active']== False or
+                            orders_requests[number]['price_in_card_usluga']== False %}
                             <small>
                                 <div class="alert alert-success" role="alert">
-                                    <strong class="alert-heading">Поздравляем!</strong>
+                                    <strong class="alert-heading">Приносим свои извинения!</strong>
                                     <br>
-                                    Вы успели сделать заказ услуги и можете
-                                    продолжить оформление заказа по данной цене и параметрам.
+                                    За время хранения в корзине предоставление данной услуги было приостановлено.
                                     <br>
-                                    Далее данная услуга не будет предоставляться или
-                                    условия ее предоставления изменятся.
-                                    <br>Если вы удалите заказ из корзины то данное предложение
-                                    услуги и цены будут не актуальны.
                                 </div>
                             </small>
                             {% endif %}
@@ -295,8 +293,8 @@
                                 <div>
                                     <!--Функция  уменьшения количества - начало-->
                                     {% if orders_requests[number]['order_request_sum']!=-1 %}
-                                    {% if orders_requests[number]['card_usluga'].arhive == False and
-                                    orders_requests[number]['card_usluga'].active == True %}
+
+                                    {% if orders_requests[number]['actual_offer'] %}
 
 
                                     <a href="{{ url_for('order_bp.cart_sum_minus',
@@ -324,8 +322,8 @@
 
                                     <!--Функция  увеличения количества - начало-->
                                     {% if orders_requests[number]['order_request_sum']!=-1 %}
-                                    {% if orders_requests[number]['card_usluga'].arhive == False and
-                                    orders_requests[number]['card_usluga'].active == True %}
+                                    {% if orders_requests[number]['actual_offer'] %}
+
 
                                     <a href="{{ url_for('order_bp.cart_sum_plus',
                                                 number=number) }}">

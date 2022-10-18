@@ -470,7 +470,7 @@ def render_menu(punkt_menu):
 @app.route('/раздел-<punkt_menu>/услуга-<category>/')
 def render_uslugi_link(punkt_menu, category):
     session['order_request_add_to_cart'] = False
-    # print('punkt_menu=', punkt_menu, 'category=', category)
+    print('punkt_menu=', punkt_menu, 'category=', category)
 
     # кол-во в заказе на заказ услуги в def order_request в блюпринте @order_blueprint.route
     # иначе сохранится то кол-во которое было указано в def order_request ранее
@@ -490,7 +490,7 @@ def render_uslugi_link(punkt_menu, category):
     #                                      CardUsluga.prices.any(), CardUsluga.usluga.has(CardUsluga.arhive==False)
     #                                      )
     #                               ).all()
-    # Запрос фильтрует те карточки которые принадлежат данной услуге и не в архиве
+    # Запрос фильтрует те карточки которые принадлежат данной услуге не в архиве и активны
     cards_uslugs = CardUsluga.query.filter(db.and_(CardUsluga.usluga.has(CardUsluga.usluga_id == usluga.id),
                                                    CardUsluga.usluga.has(CardUsluga.arhive == False),
                                                    CardUsluga.usluga.has(CardUsluga.active == True)
@@ -593,8 +593,8 @@ def render_uslugi_link(punkt_menu, category):
                            link=link,
                            usluga=usluga,
 
-                            spisok_foto_for_usluga=spisok_foto_for_usluga,
-                            show_foto_and_prices=show_foto_and_prices,
+                            # spisok_foto_for_usluga=spisok_foto_for_usluga,
+                            # show_foto_and_prices=show_foto_and_prices,
                             punkt_menu=punkt_menu,
                             category=category,
                             carousels_center=carousels_center,

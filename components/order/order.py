@@ -193,19 +193,26 @@ def cart():
     # Если пользователь авторизован (например его id=1), то в словаре сессии
     # автоматически появляется запись '_user_id': '1'. Если не авторизован - тогда такой записи нет
     # Но мы хотим впоследствии создать словарь, включающий и анонимную корзину, поэтому
-    # создадим user_id, кот. == 'anonymous' если пользователь не авторизовался
+    # создадим user_id, кот. == current_user.id  или 'anonymous' если пользователь не авторизовался
     # При авторизации анонимная корзина сливается с корзиной авторизовавшегося пользователя(см login)
-    # После регистрации нового пользователя вход автоматически не происходит, необходимо авторизоваться
-    # поэтому анонимная корзина также сливается с авторизовавшимся пользователем
+    # После регистрации нового пользователя вход автоматически не происходит, необходимо
+    # авторизоваться поэтому анонимная корзина также сливается с авторизовавшимся пользователем
     if current_user.is_anonymous:
         user_id='anonymous'
     else:
         user_id=current_user.id
     # Временный словарь, который добавляется в список orders_requests
     dict_cart_user = {}
-    # Общая сумма заказа (кроме тех, у которых ячейки - строки!)
+    # Общая сумма заказа (кроме тех карточек услуг, у которых:
+    # 1) ячейки - строки!
+    # 2) после добавления в корзину прайс или карточка услуги стали не активны,
+    # попали в архив или прайс был откреплен от карточки услуги
+    # (те услуга стала не актуальна!))
     sum_total=0
-    # Список содержимого тех ячеек заказа, у кот.ячейки - строки и сумма заказа не может быть посчитана!
+    # Список содержимого тех ячеек заказа, у кот.
+    # 1) ячейки - строки и сумма заказа не может быть посчитана!
+    # и прайс или карточка услуги активны и не в архиве и
+    # прайс прикреплен к карточке услуги (те услуга еще актуальна!))
     list_total_without_sum_total=[]
 
     # Если список корзин всех пользователей в рамках одной сессии не пуст
@@ -225,21 +232,30 @@ def cart():
                     for order_request in cart_user['cart']:
                         card_usluga = CardUsluga.query.filter(CardUsluga.id==order_request['card_usluga_id']).first()
 
+                        price_in_card_usluga = False
+                        # Проверяем не удален ли прайс из карточки услуги
                         for price in card_usluga.prices:
                             if price.id==order_request['price_id']:
-                                flag_price=True
-                                print('flag_price=', flag_price, "Прайс id=", price.id, " не удален из карточки услуги")
-                            else:
-                                flag_price = False
-                                print('flag_price=', flag_price, "Прайс  id=", price.id, " удален из карточки услуги")
+                                price_in_card_usluga=True
+
                         price = PriceTable.query.filter(PriceTable.id==order_request['price_id']).first()
+                        dict_cart_user['price_in_card_usluga'] = price_in_card_usluga
                         dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
                         dict_cart_user['card_usluga_active'] = card_usluga.active
                         dict_cart_user['price_arhive']=price.arhive
+                        dict_cart_user['price_active'] = price.active
                         dict_cart_user['card_usluga'] = card_usluga
                         dict_cart_user['price'] = price
                         dict_cart_user['i'] = order_request['i']
                         dict_cart_user['j'] = order_request['j']
+                        # Проверяем выполнены ли одновременно 5 условий:
+                        # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                        # 4)прайс не в архиве 5) прайс активен
+                        actual_offer=False
+                        if price_in_card_usluga == True and card_usluga.arhive == False and \
+                                card_usluga.active == True and price.arhive == False and price.active == True:
+                            actual_offer = True
+                        dict_cart_user['actual_offer'] = actual_offer
                         # print('order_request=', order_request)
                         # print('order_request["order_request_sum"]=', order_request['order_request_sum'])
                         # *** Этот перевод делаем потому, что при передаче через сессию (видимо?)
@@ -255,14 +271,22 @@ def cart():
                                 dict_cart_user['order_request_sum'] = order_request_sum
                                 dict_cart_user['count'] = order_request['count']
                                 dict_cart_user['value_i_j'] = value_i_j
-                                sum_total = sum_total+order_request_sum
+                                # Сумму считаем только если actual_offer = True те выполнены 5 условий:
+                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                # 4)прайс не в архиве 5) прайс активен
+                                if actual_offer:
+                                    sum_total = sum_total+order_request_sum
                             except:
                                 order_request['order_request_sum'] = -1
                                 dict_cart_user['order_request_sum']=order_request['order_request_sum']
                                 order_request['count']=1
                                 dict_cart_user['count']=order_request['count']
                                 dict_cart_user['value_i_j'] = price.value_table[order_request['i']][order_request['j']]
-                                list_total_without_sum_total.append(price.value_table[order_request['i']][order_request['j']])
+                                # В список добавляем только если actual_offer = True те выполнены 5 условий:
+                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                # 4)прайс не в архиве 5) прайс активен
+                                if actual_offer:
+                                    list_total_without_sum_total.append(price.value_table[order_request['i']][order_request['j']])
                         # ***
                         else:
                             try:
@@ -274,12 +298,20 @@ def cart():
                                 order_request['count'] = 1
                                 dict_cart_user['count'] = order_request['count']
                                 dict_cart_user['value_i_j'] = value_i_j
-                                sum_total = sum_total + value_i_j
+                                # Сумму считаем только если actual_offer = True те выполнены 5 условий:
+                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                # 4)прайс не в архиве 5) прайс активен
+                                if actual_offer:
+                                    sum_total = sum_total + value_i_j
                             except:
                                 dict_cart_user['count'] = order_request['count']
                                 dict_cart_user['order_request_sum'] = order_request['order_request_sum']
                                 dict_cart_user['value_i_j']=price.value_table[order_request['i']][order_request['j']]
-                                list_total_without_sum_total.append(
+                                # В список добавляем только если actual_offer = True те выполнены 5 условий:
+                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                # 4)прайс не в архиве 5) прайс активен
+                                if actual_offer:
+                                    list_total_without_sum_total.append(
                                     price.value_table[order_request['i']][order_request['j']])
 
                         orders_requests.append(dict_cart_user)
@@ -287,10 +319,12 @@ def cart():
                         session['cart'] = cart_user['cart']
 
         session['carts_users']=carts_users
-    print('orders_requests=', type(orders_requests), orders_requests)
-    print('session.get(cart)=', session.get('cart'))
-    print('session1=', session)
+    # print('orders_requests=', type(orders_requests), orders_requests)
+    # print('session.get(cart)=', session.get('cart'))
+    # print('session1=', session)
 
+    # Сортировка в корзине по списку(те по порядку добавления в корзину)-так и оставить!
+    # Попыталась сортировать по сумме максим - Не получилось ( и не надо)
     # Сортировка словаря по order_request_sum, при этом если цена была класс строка
     # то order_request_sum ==  -1
     # orders_requests=sorted(orders_requests, key= lambda x: x['order_request_sum'], reverse=True)
