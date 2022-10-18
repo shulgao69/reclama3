@@ -651,7 +651,9 @@ def upload_prices_in_card_usluga(card_usluga_id):
     usluga=card_usluga.usluga
     menu=card_usluga.usluga.punkt_menu
     # desc() - сортировка по убыванию
-    prices=PriceTable.query.order_by(PriceTable.card_usluga_id.desc()).order_by('name_price_table').all()
+    # prices=PriceTable.query.order_by(PriceTable.card_usluga_id.desc()).order_by('name_price_table').all()
+    prices = PriceTable.query.filter(PriceTable.active!= False, PriceTable.arhive!= True).order_by(
+        PriceTable.card_usluga_id.desc()).order_by('name_price_table').all()
 
     return render_template('upload_prices_in_card_usluga.html',
                            card_usluga=card_usluga,

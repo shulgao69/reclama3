@@ -53,7 +53,6 @@
 
                 <div class="row">
 
-
                     <div class="col-6 col-lg-6 col-sm-12">
 
                         <h5 class="pt-3">Выбор прайса</h5>
@@ -178,8 +177,9 @@
 
                 {% set ns = namespace(counter=1) %}
                 {% for price in prices %}
-                {% if price not in card_usluga.prices and price.arhive != True %}
-
+                <!--Это условие отфильтровали в запросе-->
+                {#{% if price not in card_usluga.prices and price.arhive != True %}#}
+                {% if price not in card_usluga.prices %}
                 <!--Модальное окно  - начало-->
                 <!--Его не видно пока не нажать ссылку Добавить прайс... !!!!!!!-->
                 <!--активируется после нажатия на триггер(ссылка )-->
@@ -277,20 +277,52 @@
                         </div>
 
                         <div class="col-6 text-right">
+                            <!--В архиве или нет, активен или нет - начало-->
+                            <div>
+                                <!--В архиве или нет - начало-->
+                                {% if not price.arhive %}
+                                <span class="badge badge-pill badge-success d-inline">
+                                    Не в архиве
+                                </span>
+                                {% else %}
+                                <span class="badge badge-pill badge-danger d-inline">
+                                    В архиве
+                                </span>
+                                {% endif %}
+                                <!--В архиве или нет - конец-->
+
+                                &nbsp;&nbsp;
+
+                                <!--Активен или нет - начало-->
+                                {% if price.active %}
+                                <span class="badge badge-pill badge-success d-inline">
+                                    Активен
+                                </span>
+                                {% else %}
+                                <span class="badge badge-pill badge-danger d-inline">
+                                    Не активен
+                                </span>
+                                {% endif %}
+                                <!--Активен или нет - конец-->
+
+                            </div>
+                            <!--В архиве или нет, активен или нет - конец-->
+
+                            <!--Скопировать - начало-->
                             <a href="{{ url_for('price_bp.copy_price',
                            id=price.id) }}">
-                                Скопировать прайс
-                            </a>&nbsp;&nbsp;&nbsp;
-                            <!-- Триггер модального окна  - начало -->
+                                Скопировать
+                            </a>&nbsp;&nbsp;
+                            <!--Скопировать - начало-->
+                              &nbsp;
+                            <!--Триггер модального окна ссылка Добавить - начало-->
                             <a href=""
                                data-toggle="modal"
                                data-target="#addPrice{{ price['id'] }}">
-                                Добавить прайс <b>"{{ price }}"</b> <br>в карточку услуг <b>"{{
-                                card_usluga.name_card_usluga }}"</b>
-                            </a>
-                            <!-- Триггер модального окна  - конец-->
+                                Добавить
+                             </a>
+                            <!--Триггер модального окна ссылка Добавить - конец-->
                         </div>
-
                     </div>
 
                     <div class="row pt-2">

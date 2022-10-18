@@ -2733,16 +2733,18 @@ class MyStatusCardUsluga(SpecificView):
 class PriceTableView(SpecificView):
     # Задает поля из базы, отображаемые в админ панели
     # Столбцы будут расположены в порядке, указанном в списке!!!
-    column_list = ['id', 'name_price_table', 'arhive', 'card_usluga', 'row_table', 'col_table', 'value_table']
+    column_list = ['id', 'name_price_table', 'arhive', 'active', 'card_usluga', 'row_table', 'col_table', 'value_table']
 
-    column_sortable_list = ['id', 'arhive', 'name_price_table', ('card_usluga', 'card_usluga.name_card_usluga')]
+    column_sortable_list = ['id', 'arhive', 'active', 'name_price_table', ('card_usluga',
+                                                                           'card_usluga.name_card_usluga')]
 
     # Быстрое редактирование
-    column_editable_list = ['arhive', 'name_price_table']
+    column_editable_list = ['arhive', 'active', 'name_price_table']
 
     # Задает поля, в которых возможна фильтрация (в том числе булева )
     column_filters = ('id', 'name_price_table', 'row_table',
                       BooleanEqualFilter(column=PriceTable.arhive, name='arhive'),
+                      BooleanEqualFilter(column=PriceTable.arhive, name='active'),
                       'col_table',
                       'card_usluga.name_card_usluga')
 

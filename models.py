@@ -483,6 +483,7 @@ class PriceTable(db.Model):
     card_usluga_id = db.Column(db.Integer, db.ForeignKey("cards_uslugs.id"))
     card_usluga = db.relationship('CardUsluga', back_populates="prices")
     arhive = db.Column(db.Boolean, default=False)
+    active = db.Column(db.Boolean, default=False)
 
 
     def __repr__(self):

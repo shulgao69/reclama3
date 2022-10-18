@@ -86,6 +86,25 @@ def create_form_price(row_table, col_table):
  # **** Создание формы с FieldList(FormField...) - конец
 
 
+# Деактивировать прайс
+@price_blueprint.route('/deactiveprice/<int:id>/', methods=['GET', 'POST'])
+def deactive_price(id):
+    price=PriceTable.query.filter_by(id=id).first()
+    price.active=False
+    db.session.commit()
+    return redirect(url_for('price_bp.choose_price'))
+
+
+# Активировать прайс
+@price_blueprint.route('/activeprice/<int:id>/', methods=['GET', 'POST'])
+def active_price(id):
+    price=PriceTable.query.filter_by(id=id).first()
+    price.active=True
+    db.session.commit()
+    return redirect(url_for('price_bp.choose_price'))
+
+
+
 # создание копии прайса (ссылки из списка всех прайсов)
 @price_blueprint.route('/copyprice/<int:id>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
@@ -278,7 +297,8 @@ def choose_price():
     # prices = PriceTable.query.order_by('name_price_table').all()
     # prices = PriceTable.query.order_by(and_(PriceTable.name_price_table(), PriceTable.arhive())).all()
     # prices = PriceTable.query.order_by(and_(text('name_price_table', 'arhive'))).all()
-    prices = PriceTable.query.order_by('arhive').all()
+    prices = PriceTable.query.order_by(PriceTable.active, PriceTable.arhive).all()
+    # prices = PriceTable.query.order_by('arhive').all()
     # print('type prices=', type(prices))
     # list_prices = []
     #

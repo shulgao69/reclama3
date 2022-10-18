@@ -121,14 +121,33 @@
         <!--Имя, id прайса и ссылки для редактирования - начало-->
 
         <!--Имя и id прайса - начало-->
-        <div>
-            <!--class d-inline позволяет расположить текст с разными реквизитами
-            на одной строке-->
-            <h4 class="px-3 base_color_1 d-inline">
-                {{ price.name_price_table }}
-            </h4>
-            <div class="d-inline">
-                id прайса: {{ price.id }}
+        <div class="row">
+            <div class="col-6">
+                <!--class d-inline позволяет расположить текст с разными реквизитами
+                на одной строке-->
+                <h4 class="px-3 base_color_1 d-inline">
+                    {{ price.name_price_table }}
+                </h4>
+                <div class="d-inline">
+                    id прайса: {{ price.id }}
+                </div>
+
+            </div>
+            <div class="col-6">
+                {% if price.active %}
+                <div class="text-right">
+                    <span class="badge badge-pill badge-success">
+                    Активен
+                </span>
+
+                </div>
+                {% else %}
+                <div class="text-right">
+                <span class="badge badge-pill badge-danger">
+                    Не активен
+                </span>
+                </div>
+                {% endif %}
             </div>
         </div>
         <!--Имя и id прайса - конец-->
@@ -153,25 +172,32 @@
             </div>
             <!--Имя и id карточки услуги - конец-->
 
-            <div class="col-1">
-            </div>
 
             <!--Ссылки для редактирования прайса - начало-->
-            <div class="col-7 text-right">
+            <div class="col-8 text-right">
                 {% if price.arhive==True %}
                  <b class="text-danger"> Прайс в архиве &nbsp &nbsp</b>
                 <a href="{{ url_for('price_bp.copy_price', id=price.id) }}">
-                    Скопировать прайс
+                    Скопировать
                 </a>
                 {% else %}
                 <b class="text-success">Прайс не в архиве &nbsp &nbsp</b>
 
+                {% if price.active %}
+                <a href="{{ url_for('price_bp.deactive_price', id=price.id) }}">
+                    Сделать не активным &nbsp; &nbsp;
+                </a>
+                {% else %}
+                <a href="{{ url_for('price_bp.active_price', id=price.id) }}">
+                    Активировать &nbsp; &nbsp;
+                </a>
+                {% endif %}
                 <a href="{{ url_for('price_bp.edit_price', id=price.id) }}">
-                    Редактировать прайс &nbsp; &nbsp;
+                    Редактировать  &nbsp; &nbsp;
                 </a>
 
                 <a href="{{ url_for('price_bp.copy_price', id=price.id) }}">
-                    Скопировать прайс
+                    Скопировать
                 </a>
 
                 <!--&nbsp; Это пробел-->
