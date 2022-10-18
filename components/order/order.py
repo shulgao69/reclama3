@@ -201,8 +201,15 @@ def cart():
                     session['cart']=cart_user['cart']
                     for order_request in cart_user['cart']:
                         card_usluga = CardUsluga.query.filter(CardUsluga.id==order_request['card_usluga_id']).first()
-                        price = PriceTable.query.filter(PriceTable.id==order_request['price_id']).first()
 
+                        for price in card_usluga.prices:
+                            if price.id==order_request['price_id']:
+                                flag_price=True
+                                print('flag_price=', flag_price, "Прайс id=", price.id, " не удален из карточки услуги")
+                            else:
+                                flag_price = False
+                                print('flag_price=', flag_price, "Прайс  id=", price.id, " удален из карточки услуги")
+                        price = PriceTable.query.filter(PriceTable.id==order_request['price_id']).first()
                         dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
                         dict_cart_user['card_usluga_active'] = card_usluga.active
                         dict_cart_user['price_arhive']=price.arhive
@@ -210,8 +217,8 @@ def cart():
                         dict_cart_user['price'] = price
                         dict_cart_user['i'] = order_request['i']
                         dict_cart_user['j'] = order_request['j']
-                        print('order_request=', order_request)
-                        print('order_request["order_request_sum"]=', order_request['order_request_sum'])
+                        # print('order_request=', order_request)
+                        # print('order_request["order_request_sum"]=', order_request['order_request_sum'])
                         # *** Этот перевод делаем потому, что при передаче через сессию (видимо?)
                         # класс decimal превращается в строку и поэтому в корзине невозможно
                         # провести сортировку по этому параметру
@@ -226,7 +233,6 @@ def cart():
                                 dict_cart_user['count'] = order_request['count']
                                 dict_cart_user['value_i_j'] = value_i_j
                                 sum_total = sum_total+order_request_sum
-
                             except:
                                 order_request['order_request_sum'] = -1
                                 dict_cart_user['order_request_sum']=order_request['order_request_sum']
@@ -246,7 +252,6 @@ def cart():
                                 dict_cart_user['count'] = order_request['count']
                                 dict_cart_user['value_i_j'] = value_i_j
                                 sum_total = sum_total + value_i_j
-
                             except:
                                 dict_cart_user['count'] = order_request['count']
                                 dict_cart_user['order_request_sum'] = order_request['order_request_sum']
@@ -254,12 +259,8 @@ def cart():
                                 list_total_without_sum_total.append(
                                     price.value_table[order_request['i']][order_request['j']])
 
-
-
-
                         orders_requests.append(dict_cart_user)
                         dict_cart_user = {}
-
                         session['cart'] = cart_user['cart']
 
         session['carts_users']=carts_users
