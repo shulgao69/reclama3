@@ -86,6 +86,24 @@ def create_form_price(row_table, col_table):
  # **** Создание формы с FieldList(FormField...) - конец
 
 
+# Извлечь прайс из архива
+@price_blueprint.route('/not_arhive_price/<int:id>/', methods=['GET', 'POST'])
+def not_arhive_price(id):
+    price=PriceTable.query.filter_by(id=id).first()
+    price.arhive=False
+    db.session.commit()
+    return redirect(url_for('price_bp.choose_price'))
+
+
+# Архивировать прайс
+@price_blueprint.route('/arhive_price/<int:id>/', methods=['GET', 'POST'])
+def arhive_price(id):
+    price=PriceTable.query.filter_by(id=id).first()
+    price.arhive=True
+    db.session.commit()
+    return redirect(url_for('price_bp.choose_price'))
+
+
 # Деактивировать прайс
 @price_blueprint.route('/deactiveprice/<int:id>/', methods=['GET', 'POST'])
 def deactive_price(id):
@@ -217,6 +235,15 @@ def delete_price(id):
 # @roles_accepted('superadmin')
 def edit_price(id):
     message_edit_price=session.get('message_edit_price', '')
+    price_success=session.get('price_success', '')
+
+    prices = PriceTable.query.all()
+    name_spisok = []
+    for price in prices:
+        if price.id != id:
+            name_spisok.append(price.name_price_table)
+    print('name_spisok=', name_spisok)
+
     price = PriceTable.query.filter_by(id=id).first()
     row_table=price.row_table
     col_table=price.col_table
@@ -235,45 +262,55 @@ def edit_price(id):
 
     if form.validate_on_submit():
 
-        price.name_price_table = form.name_price_table.data
+        if form.name_price_table.data in name_spisok:
 
-        # Получили список списков
-        mycol = form.mycol.data
-        # print('mycol=', mycol, 'type(mycol)=', type(mycol))
+            session['message_edit_price'] = 'Имя прайса '+ str(form.name_price_table.data) + \
+                                            ' уже существует! Задайте другое имя либо сохраните с прежним.'
+            # Флаг для показа формы ввода данных. Если button=True- форму аоказывать
+            # Если данные сохранены успешно button=False- форму не показывать
+            session['price_success'] = False
+            return redirect(url_for('price_bp.edit_price', id=price.id))
 
-        # Заполняем таблицу с нулями данными из формы
-        for i in range(len(mycol)):
-            # for j in range(len(mycol[i]['row'])):
-            #     price_table[j][i]=mycol[i]['row'][j]['pole']
-            for j in range(len(mycol[i]['row'])):
-                # *** Т.к. в сложной форме параметр поле везде одинаков по типу, то установить
-                # разные типы данных(и соответственно их валидацию) для разных ячеек
-                # не возможною Поэтому решила сделать так:
-                # Первую строку и первый столбец вводим без изменений, как внес пользователь
-                # а остальные ячейки - если число целое - оставляем как есть, если с точкой и числа после нее
-                # тогда переводим в decimal, округляем до 2 знаков после точки и снова преобразуем в строку
-                if i != 0 or j != 0:
-                    try:
-                        value_i_j = int(mycol[i]['row'][j]['pole'])
-                        price_table[j][i] = str(value_i_j)
-                    except:
+        else:
+            price.name_price_table = form.name_price_table.data
+
+            # Получили список списков
+            mycol = form.mycol.data
+            # print('mycol=', mycol, 'type(mycol)=', type(mycol))
+
+            # Заполняем таблицу с нулями данными из формы
+            for i in range(len(mycol)):
+                # for j in range(len(mycol[i]['row'])):
+                #     price_table[j][i]=mycol[i]['row'][j]['pole']
+                for j in range(len(mycol[i]['row'])):
+                    # *** Т.к. в сложной форме параметр поле везде одинаков по типу, то установить
+                    # разные типы данных(и соответственно их валидацию) для разных ячеек
+                    # не возможною Поэтому решила сделать так:
+                    # Первую строку и первый столбец вводим без изменений, как внес пользователь
+                    # а остальные ячейки - если число целое - оставляем как есть, если с точкой и числа после нее
+                    # тогда переводим в decimal, округляем до 2 знаков после точки и снова преобразуем в строку
+                    if i != 0 or j != 0:
                         try:
-                            # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
-                            # и округлим до 2 знаков после запятой
-                            # https://www.delftstack.com/howto/python/string-to-decimal-python/
-                            value_i_j = round(Decimal(mycol[i]['row'][j]['pole']), 2)
+                            value_i_j = int(mycol[i]['row'][j]['pole'])
                             price_table[j][i] = str(value_i_j)
                         except:
-                            price_table[j][i] = mycol[i]['row'][j]['pole']
-                else:
-                    price_table[j][i] = mycol[i]['row'][j]['pole']
-                # ****
-        price.value_table = price_table
+                            try:
+                                # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                                # и округлим до 2 знаков после запятой
+                                # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                                value_i_j = round(Decimal(mycol[i]['row'][j]['pole']), 2)
+                                price_table[j][i] = str(value_i_j)
+                            except:
+                                price_table[j][i] = mycol[i]['row'][j]['pole']
+                    else:
+                        price_table[j][i] = mycol[i]['row'][j]['pole']
+                    # ****
+            price.value_table = price_table
+            db.session.commit()
+            session['message_edit_price']='Изменения успешно сохранены'
+            session['price_success'] = True
 
-        db.session.commit()
-        session['message_edit_price']='Изменения успешно сохранены'
-
-        return redirect(url_for('price_bp.edit_price', id=price.id))
+            return redirect(url_for('price_bp.edit_price', id=price.id))
 
     # Заполняем форму значениями из выбранного прайса - начало
     form.name_price_table.data=price.name_price_table
@@ -283,11 +320,13 @@ def edit_price(id):
     # Заполняем форму значениями из выбранного прайса - конец
 
     session['message_edit_price']=''
+    session['price_success'] = False
     return render_template('edit_price.html',
                            form=form,
                            id=id,
                            price=price,
-                           message_edit_price=message_edit_price
+                           message_edit_price=message_edit_price,
+                           price_success=price_success
                            )
 
 # список всех прайсов с ссылкой на страницу редактирования прайса
@@ -297,7 +336,7 @@ def choose_price():
     # prices = PriceTable.query.order_by('name_price_table').all()
     # prices = PriceTable.query.order_by(and_(PriceTable.name_price_table(), PriceTable.arhive())).all()
     # prices = PriceTable.query.order_by(and_(text('name_price_table', 'arhive'))).all()
-    prices = PriceTable.query.order_by(PriceTable.active, PriceTable.arhive).all()
+    prices = PriceTable.query.order_by(PriceTable.arhive, PriceTable.name_price_table, ).all()
     # prices = PriceTable.query.order_by('arhive').all()
     # print('type prices=', type(prices))
     # list_prices = []

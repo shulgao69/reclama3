@@ -118,10 +118,10 @@
         <!--Модальное окно - конец-->
 
 
-        <!--Имя, id прайса и ссылки для редактирования - начало-->
+        <!--Имя, id прайса, активен, в архиве и ссылки для редактирования - начало-->
 
-        <!--Имя и id прайса - начало-->
         <div class="row">
+            <!--Имя и id прайса - начало-->
             <div class="col-6">
                 <!--class d-inline позволяет расположить текст с разными реквизитами
                 на одной строке-->
@@ -131,26 +131,36 @@
                 <div class="d-inline">
                     id прайса: {{ price.id }}
                 </div>
-
             </div>
-            <div class="col-6">
+            <!--Имя и id прайса - конец-->
+
+            <!--Активен, в архиве - начало-->
+            <div class="col-6 text-right">
                 {% if price.active %}
-                <div class="text-right">
-                    <span class="badge badge-pill badge-success">
+                <span class="d-inline badge badge-pill badge-success">
                     Активен
                 </span>
-
-                </div>
                 {% else %}
-                <div class="text-right">
-                <span class="badge badge-pill badge-danger">
+                <span class="d-inline badge badge-pill badge-danger">
                     Не активен
                 </span>
-                </div>
+                {% endif %}
+
+                &nbsp &nbsp
+
+                {% if price.arhive %}
+                <span class="d-inline badge badge-pill badge-danger">
+                    В архиве
+                </span>
+                {% else %}
+                <span class="d-inline badge badge-pill badge-success">
+                    Не в архиве
+                </span>
                 {% endif %}
             </div>
+            <!--Активен, в архиве - конец-->
         </div>
-        <!--Имя и id прайса - конец-->
+
 
         <div class="row px-3 py-1">
 
@@ -176,17 +186,24 @@
             <!--Ссылки для редактирования прайса - начало-->
             <div class="col-8 text-right">
                 {% if price.arhive==True %}
-                 <b class="text-danger"> Прайс в архиве &nbsp &nbsp</b>
+                <a href="{{ url_for('price_bp.not_arhive_price', id=price.id) }}">
+                    Извлечь из архива &nbsp &nbsp
+                </a>
                 <a href="{{ url_for('price_bp.copy_price', id=price.id) }}">
                     Скопировать
                 </a>
                 {% else %}
-                <b class="text-success">Прайс не в архиве &nbsp &nbsp</b>
+
+                <a href="{{ url_for('price_bp.arhive_price', id=price.id) }}">
+                    Отправить в архив &nbsp &nbsp
+                </a>
 
                 {% if price.active %}
                 <a href="{{ url_for('price_bp.deactive_price', id=price.id) }}">
-                    Сделать не активным &nbsp; &nbsp;
+                    Деактивировать
                 </a>
+                &nbsp
+                &nbsp
                 {% else %}
                 <a href="{{ url_for('price_bp.active_price', id=price.id) }}">
                     Активировать &nbsp; &nbsp;
