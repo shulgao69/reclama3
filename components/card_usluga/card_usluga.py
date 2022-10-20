@@ -99,16 +99,12 @@ def edit_name_and_text_card(card_usluga_id ):
                            )
 # ******* Редактирование заголовка и сопроводительного текста карточки услуг - конец
 
-# *** Удалить карточку услуг - начало
-# Фактически пока карточку не удаляем, а отправляем в архив вместе с прайсами и фото,
-# тк эта карта может быть в корзинах или заказах.
-@card_usluga_blueprint.route('/delete_card_usluga/<int:card_usluga_id>/', methods=['GET', 'POST'])
-# @roles_accepted('superadmin')
-def delete_card_usluga(card_usluga_id):
-    # Ранее session cart - была корзиной, но потом переделала на корзину с несколькими
-    # пользователями в рамках одной сессии, и cart стала использоваться иначе (см cart)
-    # cart = session.get('cart', [])
 
+# *** Отправить в архив карточку услуг - начало
+# Карточка отправляется в архив вместе с прайсами и фото
+@card_usluga_blueprint.route('/send_to_archive_card_usluga/<int:card_usluga_id>/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def send_to_archive_card_usluga(card_usluga_id):
     card_usluga=CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
     card_usluga.arhive=True
     card_usluga.active=False
@@ -119,37 +115,44 @@ def delete_card_usluga(card_usluga_id):
     if card_usluga.photos:
         for photo in card_usluga.photos:
             photo.arhive=True
-    # *** Проверка на присутствие в корзине - ошибка принципиальная,
-    # тк корзины у разных пользователей разные и удаление не может быть привязана к корзине,
-    # а возможно должна быть привязана к оформленным заказам, кот уже сохраняются
-    # в базе заказов?
-    # Поэтому этот кусок не удалять а потом переделать?
-    # проверяем есть ли в корзине заказы с этой карточкой услуги
-    # Если есть - карточка при попытке удалить отправляется в архив, а не удаляется.
-    # Если у карточки услуги есть фото и прайсы - их тоже отправляем в архив!
-    # Если нет - удаляем
-    # card_usluga_in_cart = False
-    # for element in cart:
-    #     if element['card_usluga_id']==card_usluga_id:
-    #         card_usluga_in_cart = True
-    # if card_usluga_in_cart == True:
-    #     card_usluga.arhive=True
-    #     for price in card_usluga.prices:
-    #         price.arhive=True
-    #     for photo in card_usluga.photos:
-    #         photo.arhive=True    #
-    # else:
-    #     if card_usluga.photos:
-    #         # Формируем путь для удаления файла
-    #         path_delete = current_app.config['CARDS_USLUGS_UPLOAD_PATH'] + str(card_usluga.usluga.punkt_menu.link)+'/' + str(card_usluga.usluga.link) + '/' +str(card_usluga.dir_photos)
-    #     #   # print('path_delete=', path_delete)
-    #         # print('os.listdir(path_delete)=', os.listdir(path_delete))    #
-    #         # Удаляем папку со всем содержимым
-    #         # см https://pythonist.ru/udalenie-fajla-poshagovoe-rukovodstvo/
-    #         shutil.rmtree(path_delete)    #
-    #     # Удаляем запись, соответствующую карточке услуги, из базы
-    #     db.session.delete(card_usluga)
-    # ***
+    db.session.commit()
+    return redirect(url_for('card_usluga_bp.show_cards_uslugs'))
+# *** Отправить в архив карточку услу - конец
+
+
+# *** Удалить карточку услуг - начало
+# Фактическое удаление. Но впоследствии после написания модуля заказов с хранением в базе
+# нужно организовать проверку что карточка не находится в заказах
+# (и корзинах? в корзинах как проверить?),
+# Удаляется карточка и запись в базе,  фото из файловой системы и записи в базе фото
+# прайс не удаляется остается в архиве
+@card_usluga_blueprint.route('/delete_card_usluga/<int:card_usluga_id>/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def delete_card_usluga(card_usluga_id):
+
+    card_usluga=CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
+    if card_usluga.prices:
+        for price in card_usluga.prices:
+            price.active=False
+            price.arhive=True
+    if card_usluga.photos:
+        # Формируем путь для удаления файла
+        path_delete = current_app.config['CARDS_USLUGS_UPLOAD_PATH'] + str(
+            card_usluga.usluga.punkt_menu.link) + '/' + str(card_usluga.usluga.link) + '/' + str(card_usluga.dir_photos)
+            # print('path_delete=', path_delete)
+            # print('os.listdir(path_delete)=', os.listdir(path_delete))    #
+
+        # Удаляем папку со всем содержимым
+        # см https://pythonist.ru/udalenie-fajla-poshagovoe-rukovodstvo/
+        shutil.rmtree(path_delete)
+
+        # Удаляем записи в базе фото
+        for photo in card_usluga.photos:
+            db.session.delete(photo)
+
+    # Удаляем запись, соответствующую карточке услуги, из базы
+    db.session.delete(card_usluga)
+
     # Вносим изменение в базу
     db.session.commit()
 
@@ -330,6 +333,8 @@ def show_arhive_cards_uslugs():
     session['arhive_cards']=True
     session['not_arhive_cards'] = False
     return redirect(url_for('card_usluga_bp.show_cards_uslugs'))
+# Поменять флаг для показа только архива карточки услуг - конец
+
 
 # Поменять флаг для показа только не архива карточки услуг - начало
 @card_usluga_blueprint.route('/show_not_arhive_cards_uslugs/', methods=['GET', 'POST'])
@@ -338,6 +343,7 @@ def show_not_arhive_cards_uslugs():
     session['arhive_cards']=False
     session['not_arhive_cards'] = True
     return redirect(url_for('card_usluga_bp.show_cards_uslugs'))
+# Поменять флаг для показа только не архива карточки услуг - конец
 
 
 # Поменять флаг для показа всех карточек услуг - начало
@@ -347,6 +353,7 @@ def show_all_cards_uslugs():
     session['arhive_cards']=True
     session['not_arhive_cards'] = True
     return redirect(url_for('card_usluga_bp.show_cards_uslugs'))
+# Поменять флаг для показа всех карточек услуг - конец
 
 
 

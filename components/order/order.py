@@ -231,14 +231,16 @@ def cart():
                     # Перебираем все заказы в корзине пользователя
                     for order_request in cart_user['cart']:
                         card_usluga = CardUsluga.query.filter(CardUsluga.id==order_request['card_usluga_id']).first()
-
+                        print('card_usluga=', card_usluga)
                         price_in_card_usluga = False
                         # Проверяем не удален ли прайс из карточки услуги
-                        for price in card_usluga.prices:
-                            if price.id==order_request['price_id']:
-                                price_in_card_usluga=True
+                        if card_usluga.prices:
+                            for price in card_usluga.prices:
+                                if price.id==order_request['price_id']:
+                                    price_in_card_usluga=True
 
                         price = PriceTable.query.filter(PriceTable.id==order_request['price_id']).first()
+                        print('price='. price)
                         dict_cart_user['price_in_card_usluga'] = price_in_card_usluga
                         dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
                         dict_cart_user['card_usluga_active'] = card_usluga.active
