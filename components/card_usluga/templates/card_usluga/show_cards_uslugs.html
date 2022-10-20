@@ -30,10 +30,18 @@
             <!--</a>-->
         <!--</div>-->
         <!--Навигационные ссылки - конец-->
+        <div class="text-right">
+            Показать:
+            <a href="{{ url_for('card_usluga_bp.show_all_cards_uslugs') }}" class="px-2">все карточки</a>
+            <a href="{{ url_for('card_usluga_bp.show_not_arhive_cards_uslugs') }}" class="pr-2">только НЕ в архиве</a>
+            <a href="{{ url_for('card_usluga_bp.show_arhive_cards_uslugs') }}">только архив</a>
+        </div>
 
+        {% if not_arhive_cards %}
         <!--Модуль Карточки услуг не в архиве - начало-->
+        <div>
         {% if menus_not_arhive|length==0 %}
-        <h5 class="text-left base_color_1">Карточек нет</h5>
+        <h5 class="text-left base_color_1">Карточек, не находящихся в архиве нет</h5>
         {% else %}
         <h5 class="text-left base_color_1">Карточки услуг</h5>
         {% endif %}
@@ -270,11 +278,14 @@
             {% endfor %}
         </div>
 
-
         {% endfor %}
+            </div>
         <!--Модуль Карточки услуг не в архиве- конец-->
+        {% endif %}
 
+        {% if arhive_cards %}
         <!--Модуль Карточки услуг в архиве - начало-->
+        <div>
         {% if menus_arhive|length==0 %}
         <h5 class="text-left base_color_1 pt-4">Архив карточек пуст</h5>
         {% else %}
@@ -488,7 +499,9 @@
         </div>
 
         {% endfor %}
+            </div>
         <!--Модуль Карточки услуг в архиве- конец-->
+        {% endif %}
 
     </div>
 </main>

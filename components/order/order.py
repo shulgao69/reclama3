@@ -242,7 +242,7 @@ def cart():
                         dict_cart_user['price_in_card_usluga'] = price_in_card_usluga
                         dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
                         dict_cart_user['card_usluga_active'] = card_usluga.active
-                        dict_cart_user['price_arhive']=price.arhive
+                        dict_cart_user['price_arhive'] = price.arhive
                         dict_cart_user['price_active'] = price.active
                         dict_cart_user['card_usluga'] = card_usluga
                         dict_cart_user['price'] = price
