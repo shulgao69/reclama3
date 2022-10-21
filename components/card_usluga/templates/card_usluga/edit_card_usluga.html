@@ -58,20 +58,27 @@
                 <div class="row">
                     <div class="col-10">
                     </div>
-                    <div class="col-2">
+                    <div class="col-2 text-center">
                         {% if card_usluga.active == False %}
+
                         <span class="badge badge-pill badge-danger">
                                 Ожидает активации
                             </span>
-<!--                        <button class="btn btn-danger">-->
-                            <button class="btn-danger badge badge-pill badge-danger">
+                        <div class="pt-2">
+                        <a href="{{ url_for('card_usluga_bp.active_card_usluga', card_usluga_id=card_usluga.id) }}">
                             Активировать
-                        </button>
-
+                        </a>
+                        </div>
                         {% else %}
-                        <span class="badge badge-pill badge-info">
+                        <span class="badge badge-pill badge-success">
                                 Карточка активна
-                            </span>
+                        </span>
+                        <div class="pt-2">
+                        <a href="{{ url_for('card_usluga_bp.deactive_card_usluga', card_usluga_id=card_usluga.id) }}">
+                            Деактивировать
+                        </a>
+                        </div>
+
                         {% endif %}
                     </div>
                 </div>
@@ -153,6 +160,7 @@
             <!--В противном случае есть небольшие отступы справа и слева-->
 
 
+
             <div>
                 <!--Заголовок Вид карточки услуги на сайте - начало-->
                 <div class="row pt-5">
@@ -164,12 +172,11 @@
                 <!--Заголовок Вид карточки услуги на сайте - конец-->
 
                 <!--Навигация для редактирования карточки - начало-->
-
-                <!--Модальное окно при ссылке Создать новый прайс  - начало-->
-                <!--Его не видно пока не нажать (активировать) на ссылку-тригер  !!!!!!!-->
-                <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
-
-                <div class="modal fade" id="createNewPrice" tabindex="-1" role="dialog"
+                <span>
+                    <!--Модальное окно при ссылке Создать новый прайс  - начало-->
+                    <!--Его не видно пока не нажать (активировать) на ссылку-тригер  !!!!!!!-->
+                    <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+                    <div class="modal fade" id="createNewPrice" tabindex="-1" role="dialog"
                      aria-labelledby="createNewPriceLabel" aria-hidden="true">
 
                     <div class="modal-dialog" role="document">
@@ -227,10 +234,10 @@
 
                     </div>
                 </div>
-                <!--Модальное окно - конец-->
+                    <!--Модальное окно - конец-->
 
-                <!--Ссылки редактирования карточки услуг- начало-->
-                <div class="d-flex justify-content-between">
+                    <!--Ссылки редактирования карточки услуг- начало-->
+                    <div class="d-flex justify-content-between">
                     <!--Ссылка - Редактировать имя и текст карточки - начало-->
                     <a class='text-right'
                        href="{{ url_for('card_usluga_bp.edit_name_and_text_card', card_usluga_id=card_usluga.id) }}">
@@ -271,127 +278,128 @@
                     <!--Ссылка - Создать новый прайс - конец-->
 
                 </div>
-                <!--Ссылки редактирования карточки услуг- конец-->
-
+                    <!--Ссылки редактирования карточки услуг- конец-->
+                </span>
                 <!--Навигация для редактирования карточки  - конец-->
 
-                <div class="pt-2">
+                <!--Вид карточки услуги на сайте  - начало-->
+                <span>
+                    <!--Имя карточки услуг- начало-->
+                    <div class="pt-2">
                     <div class="base_color_1">
                         {{ card_usluga.name_card_usluga }}
                     </div>
-
                 </div>
+                    <!--Имя карточки услуг- конец-->
 
+                    <!--Карусель и прайсы карточки услуг- начало-->
+                    <div class="row pt-2">
 
-                <!--Вид карточки услуги на сайте  - начало-->
-                <div class="row pt-2">
+                        <!--Карусель карточки услуг- начало-->
+                        <div class="col-4">
+                            {% if card_usluga.photos %}
+                            <div id="{{ card_usluga.id }}"
+                                 data-interval="2000"
+                                 class="carousel slide mb-2 p-0 w-100"
+                                 data-ride="carousel"
+                                 data-wrap="true">
+                                <!--class="carousel-indicators" создает внизу слайда индикаторы, -->
+                                <!--показывающие количество слайдов-->
+                                <!--и на каком мы находимся-->
+                                <!--Индикаторы по умолчанию прямоугольныею Сделали их круглыми переопределив их в my.css-->
+                                <ul class="carousel-indicators">
+                                    <li data-target="#{{ card_usluga.id }}" data-slide-to=0 class="active"></li>
+                                    {% for i in range(1, card_usluga.photos|length) %}
+                                    <li data-target="#{{ card_usluga.id }}" data-slide-to=i></li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="carousel-inner w-100" role="listbox">
+                                    <!--Класс active указывать обязательно иначе не будет видно
+                                    он указывает с какого слайда начинается слайд-шоу-->
+                                    <div class="carousel-item active">
+                                        <!--Классы d-none - скрыто на всех размерах экрана
+                                        d-block - показывать на всех размерах экрана
+                                        d-md-block - показывать на размере md
+                                        d-lg-none -  скрыто на размере экрана lg  и тд и тп-->
 
+                                        <img class="img d-none d-md-block w-100"
+                                             src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[0].secure_name_photo }}"
+                                             alt="Название изображения">
 
-                    <!--Карусель карточки услуг- начало-->
-                    <div class="col-4">
-                        {% if card_usluga.photos %}
-                        <div id="{{ card_usluga.id }}"
-                             data-interval="2000"
-                             class="carousel slide mb-2 p-0 w-100"
-                             data-ride="carousel"
-                             data-wrap="true">
-                            <!--class="carousel-indicators" создает внизу слайда индикаторы, -->
-                            <!--показывающие количество слайдов-->
-                            <!--и на каком мы находимся-->
-                            <!--Индикаторы по умолчанию прямоугольныею Сделали их круглыми переопределив их в my.css-->
-                            <ul class="carousel-indicators">
-                                <li data-target="#{{ card_usluga.id }}" data-slide-to=0 class="active"></li>
-                                {% for i in range(1, card_usluga.photos|length) %}
-                                <li data-target="#{{ card_usluga.id }}" data-slide-to=i></li>
-                                {% endfor %}
-                            </ul>
-                            <div class="carousel-inner w-100" role="listbox">
-                                <!--Класс active указывать обязательно иначе не будет видно
-                                он указывает с какого слайда начинается слайд-шоу-->
-                                <div class="carousel-item active">
-                                    <!--Классы d-none - скрыто на всех размерах экрана
-                                    d-block - показывать на всех размерах экрана
-                                    d-md-block - показывать на размере md
-                                    d-lg-none -  скрыто на размере экрана lg  и тд и тп-->
+                                        <!--Текст на изображении - начало-->
+                                        <div class="carousel-caption">
+                                            <!--<h1 class="text-center text-success">-->
+                                            <!--{{ card_usluga.photos[0].secure_name_photo }}-->
+                                            <!--</h1>-->
+                                            <!--<h5 class="text-center text-success">-->
+                                            <!--{{ card_usluga.photos[0].comments }}-->
+                                            <!--</h5>-->
+                                        </div>
+                                        <!--Текст на изображении - конец-->
+                                        <div class="pt-2">
+                                            <h5 class="text-center base_color_1">
+                                                {{ card_usluga.photos[0].title }}
+                                            </h5>
+                                            <div class="px-0 text-center">
+                                                {{ card_usluga.photos[0].comments }}
+                                            </div>
+                                        </div>
 
-                                    <img class="img d-none d-md-block w-100"
-                                         src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[0].secure_name_photo }}"
-                                         alt="Название изображения">
+                                    </div>
 
-                                    <!--Текст на изображении - начало-->
-                                    <div class="carousel-caption">
+                                    {% for i in range(1, card_usluga.photos|length) %}
+                                    <div class="carousel-item">
+                                        <img class="img d-none d-md-block w-100"
+                                             src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[i].secure_name_photo }}"
+                                             alt="слайд {{ i }}">
+
+                                        <!--Текст на изображении - начало-->
+                                        <!--<div class="carousel-caption">-->
                                         <!--<h1 class="text-center text-success">-->
-                                        <!--{{ card_usluga.photos[0].secure_name_photo }}-->
+                                        <!--{{ card_usluga.photos[i].secure_name_photo }}-->
                                         <!--</h1>-->
                                         <!--<h5 class="text-center text-success">-->
-                                        <!--{{ card_usluga.photos[0].comments }}-->
+                                        <!--{{ card_usluga.photos[i].comments }}-->
                                         <!--</h5>-->
-                                    </div>
-                                    <!--Текст на изображении - конец-->
-                                    <div class="pt-2">
-                                        <h5 class="text-center base_color_1">
-                                            {{ card_usluga.photos[0].title }}
-                                        </h5>
-                                        <div class="px-0 text-center">
-                                            {{ card_usluga.photos[0].comments }}
+                                        <!--</div>-->
+                                        <!--Текст на изображении - конец-->
+                                        <div class="pt-2">
+                                            <h5 class="text-center base_color_1">
+                                                {{ card_usluga.photos[i].title }}
+                                            </h5>
+                                            <div class="text-center">
+                                                {{ card_usluga.photos[i].comments }}
+                                            </div>
                                         </div>
+
                                     </div>
+                                    {% endfor %}
 
                                 </div>
-
-                                {% for i in range(1, card_usluga.photos|length) %}
-                                <div class="carousel-item">
-                                    <img class="img d-none d-md-block w-100"
-                                         src="/static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link }}/{{ card_usluga.dir_photos }}/{{ card_usluga.photos[i].secure_name_photo }}"
-                                         alt="слайд {{ i }}">
-
-                                    <!--Текст на изображении - начало-->
-                                    <!--<div class="carousel-caption">-->
-                                    <!--<h1 class="text-center text-success">-->
-                                    <!--{{ card_usluga.photos[i].secure_name_photo }}-->
-                                    <!--</h1>-->
-                                    <!--<h5 class="text-center text-success">-->
-                                    <!--{{ card_usluga.photos[i].comments }}-->
-                                    <!--</h5>-->
-                                    <!--</div>-->
-                                    <!--Текст на изображении - конец-->
-                                    <div class="pt-2">
-                                        <h5 class="text-center base_color_1">
-                                            {{ card_usluga.photos[i].title }}
-                                        </h5>
-                                        <div class="text-center">
-                                            {{ card_usluga.photos[i].comments }}
-                                        </div>
-                                    </div>
-
-                                </div>
-                                {% endfor %}
-
+                                <!--Элементы управления - начало -->
+                                <a class="carousel-control-prev" href="#{{ card_usluga.id }}" role="button"
+                                   data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only text-success">Предыдущий</span>
+                                </a>
+                                <a class="carousel-control-next" href="#{{ card_usluga.id }}" role="button"
+                                   data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only text-success">Следующий</span>
+                                </a>
+                                <!--Элементы управления - конец -->
                             </div>
-                            <!--Элементы управления - начало -->
-                            <a class="carousel-control-prev" href="#{{ card_usluga.id }}" role="button"
-                               data-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="sr-only text-success">Предыдущий</span>
-                            </a>
-                            <a class="carousel-control-next" href="#{{ card_usluga.id }}" role="button"
-                               data-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="sr-only text-success">Следующий</span>
-                            </a>
-                            <!--Элементы управления - конец -->
+
+
+                            {% endif %}
                         </div>
+                        <!--Карусель карточки услуг- конец-->
 
-
-                        {% endif %}
-                    </div>
-                    <!--Карусель карточки услуг- конец-->
-
-                    <!--Прайсы карточки услуг (с ссылками редактирования прайсов) - начало-->
-                    <div class="col-8 container-fluid">
+                        <!--Прайсы карточки услуг (с ссылками редактирования прайсов) - начало-->
+                        <div class="col-8 container-fluid">
                         {% if card_usluga.comments %}
                         <div>
-                        {{ card_usluga.comments }}
+                            {{ card_usluga.comments }}
                         </div>
                         {% endif %}
 
@@ -404,114 +412,83 @@
                         <!-- https://docs-python.ru/packages/modul-jinja2-python/vstroennye-filtry-modulja-jinja2/-->
                         {% for price in card_usluga.prices|sort(attribute="arhive,name_price_table") %}
 
-                        <!--Имя прайса, id, архив - начало-->
-                        <div class="row pt-2">
-                            <div class="col-12">
-                                <nav class="navbar navbar-expand-md navbar-light pl-0 pb-0">
-                                    <ul class="navbar-nav mr-auto">
-                                        <li class="nav-item">
-                                            <h5> Имя прайса:
-                                                <b class="base_color_1">
-                                                    {{ price.name_price_table }}</b>
-                                            </h5>
-                                        </li>&nbsp;&nbsp;&nbsp;
-                                        <li class="nav-item">
-                                            id:
-                                            <b class="base_color_1">
-                                                {{ price.id }}
-                                            </b>
-                                        </li>
-                                    </ul>
-                                    <ul class="navbar-nav ml-auto">
-                                        <li class="nav-item pr-0">
-                                            {% if price.arhive %}
-                                            <span class="badge badge-pill badge-danger">
+                        <!--Имя прайса, id, архив, активен - начало-->
+                        <nav class="navbar navbar-expand-md navbar-light pl-0 pb-0">
+                            <!--Имя и id прайса - начало-->
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                    <h5> Имя прайса:
+                                        <b class="base_color_1">
+                                            {{ price.name_price_table }}</b>
+                                    </h5>
+                                </li>&nbsp;&nbsp;&nbsp;
+                                <li class="nav-item">
+                                    id:
+                                    <b class="base_color_1">
+                                        {{ price.id }}
+                                    </b>
+                                </li>
+                            </ul>
+                            <!--Имя и id прайса - конец-->
+
+                            <!--Прайс в архиве, ожидает активации или нет - начало-->
+                            <ul class="navbar-nav ml-auto">
+                                <!--Прайс в архиве или нет - начало-->
+                                <li class="nav-item pr-0 pb-2 pr-2">
+                                    {% if price.arhive %}
+
+                                    <span class="badge badge-pill badge-danger">
                                             Прайс в архиве
+                                    </span><br>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-success">
+                                                Прайс не в архиве
                                             </span>
-                                            {% endif %}
-                                        </li>
+                                    {% endif %}
+                                </li>
+                                <!--Прайс в архиве или нет - конец-->
 
-                                    </ul>
-                                </nav>
+                                <!--Прайс ожидает активации или активен - начало-->
+                                <li class="nav-item pr-0 pb-2">
+                                    {% if price.active %}
+                                    <span class="badge badge-pill badge-success">
+                                Прайс активен
+                                </span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-danger">
+                                Прайс ожидает активации
+                                </span>
+                                    {% endif %}
+                                </li>
+                                <!--Прайс ожидает активации или активен - конец-->
+                            </ul>
+                            <!--Прайс в архиве, ожидает активации или нет - конец-->
+                        </nav>
+                        <!--Имя прайса, id, архив, активен - конец-->
 
-                            </div>
-                        </div>
-                        <!--Имя прайса, id, архив - начало-->
+                            <!--Прайс не будет отображен - начало-->
+                            {% if price.arhive or not price.active%}
+                            <small class="text-danger">
+                                <div>
+                                    Внимание! Прайс не будет отображен на сайте,
+                                    т.к. находится в архиве или не активен.
+                                </div>
+                                {% if price.arhive %}
+                                <div>
+                                    Чтобы извлечь из архива зайдите в Управление прайсами.
+                                </div>
+                                {% endif %}
+                            </small>
+                            {% endif %}
+                            <!--Прайс не будет отображен - конец-->
 
-                        <!--Ссылки - Редактировать и удалить прайс - начало-->
-                        {% if price.arhive==False %}
+
+                        <!--Ссылки - Редактировать, удалить активировать прайс - начало-->
+
                         <div class="row py-2">
 
-                            <!--Ссылка - Редактировать прайс - начало-->
-                            <div class="col-4">
-
-                                <!--Триггер модального окна - редактировать прайс - начало-->
-                                <a type="button" data-toggle="modal"
-                                   data-target="#editPrice{{ price.id }}"
-                                   href="">
-                                    Редактировать прайс
-                                </a>
-                                <!--Триггер модального окна - редактировать прайс - конец-->
-
-
-                                <!--Модальное окно при ссылке Создать новый прайс  - начало-->
-                                <!--Его не видно пока не нажать ссылку  !!!!!!!-->
-                                <!--активируется после нажатия на триггер-->
-                                <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
-
-                                <div class="modal fade" id="editPrice{{ price.id }}" tabindex="-1" role="dialog"
-                                     aria-labelledby="createNewPriceLabel" aria-hidden="true">
-
-                                    <div class="modal-dialog" role="document">
-
-                                        <div class="modal-content">
-
-                                            <div class="modal-header">
-                                                <h5 class="modal-title base_color_1" id="editPrice{{ price.id }}Label">
-                                                    Вы уверены, что хотите изменить данные прайса?
-                                                </h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <!--&times; - это крестик для закрытия-->
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-
-                                            <div class="modal-body">
-                                                <h6 class="text-success">
-                                                    <b>Внимание!</b><br>
-                                                </h6>
-                                                <div>
-                                                    После редактирования прайса
-                                                    вернитесь в карточку услуги (ссылка
-                                                    <b class="base_color_1">Вернуться в карточку услуги</b>).
-                                                </div>
-
-                                                <br>
-
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">Отменить
-                                                </button>
-
-                                                <a class="btn btn-danger"
-                                                   href="{{ url_for('price_bp.edit_price', id=price.id) }}"
-                                                   role="button">
-                                                    Редактировать
-                                                </a>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <!--Модальное окно - конец-->
-                            </div>
-                            <!--Ссылка - Редактировать прайс - конец-->
-
-                            <div class="col-6">
+                            <!--Ссылка -Удалить прайс из карточки - начало-->
+                            <div class="col-4 text-center">
 
                                 <!--Передача данных в модальное окно Важно!!!  - начало -->
                                 <!--Для передачи данных (фото которое удаляем) в модальное окно нужно -->
@@ -527,7 +504,6 @@
                                     Удалить прайс из карточки
                                 </a>
                                 <!--Триггер модального окна - конец-->
-
 
                                 <!--Модальное окно  - начало-->
                                 <!--Его не видно пока не нажать ссылку Удалить2 !!!!!!!-->
@@ -608,10 +584,97 @@
                                 <!--Передача данных в модальное окно Важно!!!  - конец -->
 
                             </div>
+                            <!--Ссылка -Удалить прайс из карточки - конец-->
+
+
+                            {% if price.arhive==False %}
+                            <!--Ссылка - Редактировать прайс - начало-->
+                            <div class="col-4 text-left">
+
+                                <!--Триггер модального окна - редактировать прайс - начало-->
+                                <a type="button" data-toggle="modal"
+                                   data-target="#editPrice{{ price.id }}"
+                                   href="">
+                                    Редактировать прайс
+                                </a>
+                                <!--Триггер модального окна - редактировать прайс - конец-->
+
+
+                                <!--Модальное окно при ссылке Создать новый прайс  - начало-->
+                                <!--Его не видно пока не нажать ссылку  !!!!!!!-->
+                                <!--активируется после нажатия на триггер-->
+                                <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+
+                                <div class="modal fade" id="editPrice{{ price.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="createNewPriceLabel" aria-hidden="true">
+
+                                    <div class="modal-dialog" role="document">
+
+                                        <div class="modal-content">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title base_color_1" id="editPrice{{ price.id }}Label">
+                                                    Вы уверены, что хотите изменить данные прайса?
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <!--&times; - это крестик для закрытия-->
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <h6 class="text-success">
+                                                    <b>Внимание!</b><br>
+                                                </h6>
+                                                <div>
+                                                    После редактирования прайса
+                                                    вернитесь в карточку услуги (ссылка
+                                                    <b class="base_color_1">Вернуться в карточку услуги</b>).
+                                                </div>
+
+                                                <br>
+
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Отменить
+                                                </button>
+
+                                                <a class="btn btn-danger"
+                                                   href="{{ url_for('price_bp.edit_price', id=price.id) }}"
+                                                   role="button">
+                                                    Редактировать
+                                                </a>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!--Модальное окно - конец-->
+                            </div>
+                            <!--Ссылка - Редактировать прайс - конец-->
+
+                            <!--Ссылка -Активировать прайс - начало-->
+                            <div class="col-4 text-right">
+                                {% if price.active %}
+                                <a href="{{ url_for('card_usluga_bp.deactive_price_in_card_usluga', card_usluga_id=card_usluga.id, price_id=price.id) }}">
+                                    Деактивировать
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('card_usluga_bp.active_price_in_card_usluga', card_usluga_id=card_usluga.id, price_id=price.id) }}">
+                                    Активировать
+                                </a>
+                                {% endif %}
+                                </div>
+                            <!--Ссылка -Активировать прайс - конец-->
+                            {% endif %}
 
                         </div>
-                        {% endif %}
-                        <!--Ссылки - Редактировать и удалить прайс - начало-->
+
+                        <!--Ссылки - Редактировать, удалить активировать прайс - начало-->
 
                         <!--Таблица прайса - начало-->
                         <div class="pb-4">
@@ -662,12 +725,15 @@
 
                         {% endif %}
                     </div>
-                    <!--Прайсы карточки услуг (с ссылками редактирования прайсов) - конец-->
-                </div>
+                        <!--Прайсы карточки услуг (с ссылками редактирования прайсов) - конец-->
+                    </div>
+                    <!--Карусель и прайсы карточки услуг- конец-->
+                </span>
                 <!--Вид карточки услуги на сайте - конец-->
 
             </div>
-            <!--Ссылки редактирования карточки услуг - конец-->
+
+
 
 
             <!--<div class="card-header"></div>-->

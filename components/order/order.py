@@ -78,6 +78,7 @@ def order_request(card_usluga_id, price_id, i, j):
     order_request['count'] = session.get('count', 1)
     order_request['order_request_sum'] = order_request_sum
     session['order_request'] = order_request
+    print("session.get('order_request')=", session.get('order_request'))
 
     # if form.validate_on_submit():
     #     user_phone = form.user_phone.data
@@ -162,6 +163,7 @@ def order_request_add_to_cart():
                         cart_user['cart'].append(order_request)
 
     session['carts_users'] = carts_users
+    print('session.get("carts_users")=', session.get('carts_users'))
     session['order_request'] = {}
     return redirect(url_for('order_bp.order_request',
                             card_usluga_id=card_usluga_id,
@@ -189,6 +191,7 @@ def cart():
     orders_requests = []
     # Список корзин всех пользователей в рамках одной сессии
     carts_users = session.get('carts_users', [])
+    print('carts_users from cart 1=', carts_users)
 
     # Если пользователь авторизован (например его id=1), то в словаре сессии
     # автоматически появляется запись '_user_id': '1'. Если не авторизован - тогда такой записи нет
@@ -223,6 +226,7 @@ def cart():
             if cart_user['user_id']==user_id:
                 # если его корзина не пуста
                 if cart_user['cart'] !=[]:
+                    print('cart_user["cart"]=', cart_user['cart'])
                     # Создаем сессию корзины конкретного пользователя(анонимного или авторизованного)
                     # Используем ее для удаления заявки на заказ карточки услуги из корзины конкретного
                     # пользователя, (список словарей orders_requests мы не можем передать через сессию,
@@ -230,107 +234,113 @@ def cart():
                     session['cart']=cart_user['cart']
                     # Перебираем все заказы в корзине пользователя
                     for order_request in cart_user['cart']:
-                        card_usluga = CardUsluga.query.filter(CardUsluga.id==order_request['card_usluga_id']).first()
-                        print('card_usluga=', card_usluga)
-                        price_in_card_usluga = False
-                        # Проверяем не удален ли прайс из карточки услуги
-                        if card_usluga.prices:
-                            for price in card_usluga.prices:
-                                if price.id==order_request['price_id']:
-                                    price_in_card_usluga=True
 
-                        price = PriceTable.query.filter(PriceTable.id==order_request['price_id']).first()
-                        print('price='. price)
-                        dict_cart_user['price_in_card_usluga'] = price_in_card_usluga
-                        dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
-                        dict_cart_user['card_usluga_active'] = card_usluga.active
-                        dict_cart_user['price_arhive'] = price.arhive
-                        dict_cart_user['price_active'] = price.active
-                        dict_cart_user['card_usluga'] = card_usluga
-                        dict_cart_user['price'] = price
-                        dict_cart_user['i'] = order_request['i']
-                        dict_cart_user['j'] = order_request['j']
-                        # Проверяем выполнены ли одновременно 5 условий:
-                        # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
-                        # 4)прайс не в архиве 5) прайс активен
-                        actual_offer=False
-                        if price_in_card_usluga == True and card_usluga.arhive == False and \
-                                card_usluga.active == True and price.arhive == False and price.active == True:
-                            actual_offer = True
-                        dict_cart_user['actual_offer'] = actual_offer
-                        # print('order_request=', order_request)
-                        # print('order_request["order_request_sum"]=', order_request['order_request_sum'])
-                        # *** Этот перевод делаем потому, что при передаче через сессию (видимо?)
-                        # класс decimal превращается в строку и поэтому в корзине невозможно
-                        # провести сортировку по этому параметру
-                        if order_request['order_request_sum'] !=-1:
-                            try:
-                                # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
-                                # https://www.delftstack.com/howto/python/string-to-decimal-python/
-                                # order_request_sum = Decimal(order_request['order_request_sum'])
-                                value_i_j=Decimal(price.value_table[order_request['i']][order_request['j']])
-                                order_request_sum=value_i_j*order_request['count']
-                                dict_cart_user['order_request_sum'] = order_request_sum
-                                dict_cart_user['count'] = order_request['count']
-                                dict_cart_user['value_i_j'] = value_i_j
-                                # Сумму считаем только если actual_offer = True те выполнены 5 условий:
-                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
-                                # 4)прайс не в архиве 5) прайс активен
-                                if actual_offer:
-                                    sum_total = sum_total+order_request_sum
-                            except:
-                                order_request['order_request_sum'] = -1
-                                dict_cart_user['order_request_sum']=order_request['order_request_sum']
-                                order_request['count']=1
-                                dict_cart_user['count']=order_request['count']
-                                dict_cart_user['value_i_j'] = price.value_table[order_request['i']][order_request['j']]
-                                # В список добавляем только если actual_offer = True те выполнены 5 условий:
-                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
-                                # 4)прайс не в архиве 5) прайс активен
-                                if actual_offer:
-                                    list_total_without_sum_total.append(price.value_table[order_request['i']][order_request['j']])
-                        # ***
+                        card_usluga = CardUsluga.query.filter(CardUsluga.id == order_request['card_usluga_id']).first()
+                        price = PriceTable.query.filter(PriceTable.id == order_request['price_id']).first()
+                        # Если карта и прайс не удалены из базы данных включаем их в показ в корзине
+                        if card_usluga and price:
+
+                            price_in_card_usluga = False
+                            # Проверяем не удален ли прайс из карточки услуги
+                            # Если нет price_in_card_usluga=True
+                            if card_usluga.prices:
+                                for price in card_usluga.prices:
+                                    if price.id==order_request['price_id']:
+                                        price_in_card_usluga=True
+
+                            # Создаем словарь корзины юзера
+                            dict_cart_user['price_in_card_usluga'] = price_in_card_usluga
+                            dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
+                            dict_cart_user['card_usluga_active'] = card_usluga.active
+                            dict_cart_user['price_arhive'] = price.arhive
+                            dict_cart_user['price_active'] = price.active
+                            dict_cart_user['card_usluga'] = card_usluga
+                            dict_cart_user['price'] = price
+                            dict_cart_user['i'] = order_request['i']
+                            dict_cart_user['j'] = order_request['j']
+                            # Проверяем выполнены ли одновременно 5 условий:
+                            # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                            # 4)прайс не в архиве 5) прайс активен
+                            actual_offer=False
+                            if price_in_card_usluga == True and card_usluga.arhive == False and \
+                                    card_usluga.active == True and price.arhive == False and price.active == True:
+                                actual_offer = True
+                            dict_cart_user['actual_offer'] = actual_offer
+
+                            # *** Этот перевод делаем потому, что при передаче через сессию (видимо?)
+                            # класс decimal превращается в строку и поэтому в корзине невозможно
+                            # провести сортировку по этому параметру
+                            if order_request['order_request_sum'] !=-1:
+                                try:
+                                    # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                                    # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                                    # order_request_sum = Decimal(order_request['order_request_sum'])
+                                    value_i_j=Decimal(price.value_table[order_request['i']][order_request['j']])
+                                    order_request_sum=value_i_j*order_request['count']
+                                    dict_cart_user['order_request_sum'] = order_request_sum
+                                    dict_cart_user['count'] = order_request['count']
+                                    dict_cart_user['value_i_j'] = value_i_j
+                                    # Сумму считаем только если actual_offer = True те выполнены 5 условий:
+                                    # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                    # 4)прайс не в архиве 5) прайс активен
+                                    if actual_offer:
+                                        sum_total = sum_total+order_request_sum
+                                except:
+                                    order_request['order_request_sum'] = -1
+                                    dict_cart_user['order_request_sum']=order_request['order_request_sum']
+                                    order_request['count']=1
+                                    dict_cart_user['count']=order_request['count']
+                                    dict_cart_user['value_i_j'] = price.value_table[order_request['i']][order_request['j']]
+                                    # В список добавляем только если actual_offer = True те выполнены 5 условий:
+                                    # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                    # 4)прайс не в архиве 5) прайс активен
+                                    if actual_offer:
+                                        list_total_without_sum_total.append(price.value_table[order_request['i']][order_request['j']])
+                            # ***
+                            else:
+                                try:
+                                    # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
+                                    # https://www.delftstack.com/howto/python/string-to-decimal-python/
+                                    value_i_j = Decimal(price.value_table[order_request['i']][order_request['j']])
+                                    order_request['order_request_sum']=value_i_j
+                                    dict_cart_user['order_request_sum'] = order_request['order_request_sum']
+                                    order_request['count'] = 1
+                                    dict_cart_user['count'] = order_request['count']
+                                    dict_cart_user['value_i_j'] = value_i_j
+                                    # Сумму считаем только если actual_offer = True те выполнены 5 условий:
+                                    # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                    # 4)прайс не в архиве 5) прайс активен
+                                    if actual_offer:
+                                        sum_total = sum_total + value_i_j
+                                except:
+                                    dict_cart_user['count'] = order_request['count']
+                                    dict_cart_user['order_request_sum'] = order_request['order_request_sum']
+                                    dict_cart_user['value_i_j']=price.value_table[order_request['i']][order_request['j']]
+                                    # В список добавляем только если actual_offer = True те выполнены 5 условий:
+                                    # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
+                                    # 4)прайс не в архиве 5) прайс активен
+                                    if actual_offer:
+                                        list_total_without_sum_total.append(
+                                        price.value_table[order_request['i']][order_request['j']])
+
+                            orders_requests.append(dict_cart_user)
+                            dict_cart_user = {}
+                            session['cart'] = cart_user['cart']
+
+                        # Если карта или прайс удалены из базы данных исключаем их
+                        # из показа в корзине
                         else:
-                            try:
-                                # Переведем в десятичное число с помощью модуля from decimal import Decimal!!!
-                                # https://www.delftstack.com/howto/python/string-to-decimal-python/
-                                value_i_j = Decimal(price.value_table[order_request['i']][order_request['j']])
-                                order_request['order_request_sum']=value_i_j
-                                dict_cart_user['order_request_sum'] = order_request['order_request_sum']
-                                order_request['count'] = 1
-                                dict_cart_user['count'] = order_request['count']
-                                dict_cart_user['value_i_j'] = value_i_j
-                                # Сумму считаем только если actual_offer = True те выполнены 5 условий:
-                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
-                                # 4)прайс не в архиве 5) прайс активен
-                                if actual_offer:
-                                    sum_total = sum_total + value_i_j
-                            except:
-                                dict_cart_user['count'] = order_request['count']
-                                dict_cart_user['order_request_sum'] = order_request['order_request_sum']
-                                dict_cart_user['value_i_j']=price.value_table[order_request['i']][order_request['j']]
-                                # В список добавляем только если actual_offer = True те выполнены 5 условий:
-                                # 1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и
-                                # 4)прайс не в архиве 5) прайс активен
-                                if actual_offer:
-                                    list_total_without_sum_total.append(
-                                    price.value_table[order_request['i']][order_request['j']])
-
-                        orders_requests.append(dict_cart_user)
-                        dict_cart_user = {}
-                        session['cart'] = cart_user['cart']
-
+                            message='Карта или прайс были удалены. Заказ не возможен.'
+                            print('message=', message)
         session['carts_users']=carts_users
-    # print('orders_requests=', type(orders_requests), orders_requests)
-    # print('session.get(cart)=', session.get('cart'))
-    # print('session1=', session)
 
     # Сортировка в корзине по списку(те по порядку добавления в корзину)-так и оставить!
     # Попыталась сортировать по сумме максим - Не получилось ( и не надо)
     # Сортировка словаря по order_request_sum, при этом если цена была класс строка
     # то order_request_sum ==  -1
     # orders_requests=sorted(orders_requests, key= lambda x: x['order_request_sum'], reverse=True)
-
+    print('carts_users from cart 2=', carts_users)
+    print('orders_requests from cart 2=', orders_requests)
     return render_template('cart.html',
                            orders_requests=orders_requests,
                            sum_total=sum_total,

@@ -186,40 +186,13 @@
             <!--Ссылки для редактирования прайса - начало-->
             <div class="col-8 text-right">
                 {% if price.arhive==True %}
-                <a href="{{ url_for('price_bp.not_arhive_price', id=price.id) }}">
-                    Извлечь из архива &nbsp &nbsp
+                <a class="pr-2" href="{{ url_for('price_bp.not_arhive_price', id=price.id) }}">
+                    Извлечь из архива
                 </a>
-                <a href="{{ url_for('price_bp.copy_price', id=price.id) }}">
+                <a class="pr-2" href="{{ url_for('price_bp.copy_price', id=price.id) }}">
                     Скопировать
                 </a>
-                {% else %}
-
-                <a href="{{ url_for('price_bp.arhive_price', id=price.id) }}">
-                    Отправить в архив &nbsp &nbsp
-                </a>
-
-                {% if price.active %}
-                <a href="{{ url_for('price_bp.deactive_price', id=price.id) }}">
-                    Деактивировать
-                </a>
-                &nbsp
-                &nbsp
-                {% else %}
-                <a href="{{ url_for('price_bp.active_price', id=price.id) }}">
-                    Активировать &nbsp; &nbsp;
-                </a>
-                {% endif %}
-                <a href="{{ url_for('price_bp.edit_price', id=price.id) }}">
-                    Редактировать  &nbsp; &nbsp;
-                </a>
-
-                <a href="{{ url_for('price_bp.copy_price', id=price.id) }}">
-                    Скопировать
-                </a>
-
-                <!--&nbsp; Это пробел-->
-                &nbsp;
-
+                <!--Удалить - начало-->
                 <!-- Триггер модального окна (Варианты: ссылка или кнопка) - начало -->
                 <!--вариант - ссылка-->
                 <a href="" data-toggle="modal" data-target="#deletePrice{{ price.id }}">
@@ -230,6 +203,40 @@
                 <!--Удалить карусель-->
                 <!--</button>-->
                 <!-- Триггер модального окна (Варианты ссылка или кнопка) - конец -->
+                <!--Удалить - конец-->
+                {% else %}
+                <!--Отправить в архив - начало-->
+                <a href="{{ url_for('price_bp.arhive_price', id=price.id) }}">
+                    Отправить в архив &nbsp &nbsp
+                </a>
+                <!--Отправить в архив - конец-->
+
+                <!--Активировать, Деактивировать - начало-->
+                {% if price.active %}
+                <a href="{{ url_for('price_bp.deactive_price', id=price.id) }}">
+                    Деактивировать
+                </a>
+                &nbsp &nbsp
+                {% else %}
+                <a href="{{ url_for('price_bp.active_price', id=price.id) }}">
+                    Активировать &nbsp; &nbsp;
+                </a>
+                {% endif %}
+                <!--Активировать, Деактивировать - конец-->
+
+                <!--Редактировать - начало-->
+                <a href="{{ url_for('price_bp.edit_price', id=price.id) }}">
+                    Редактировать  &nbsp; &nbsp;
+                </a>
+                <!--Редактировать - конец-->
+
+                <!--Скопировать - начало-->
+                <a href="{{ url_for('price_bp.copy_price', id=price.id) }}">
+                    Скопировать
+                </a>
+                <!--Скопировать - конец-->
+
+                <!--&nbsp; Это пробел-->
                 {% endif %}&nbsp &nbsp
             </div>
             <!--Ссылки для редактирования прайса - начало-->

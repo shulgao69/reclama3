@@ -47,22 +47,23 @@
 
 
                     <div class="row p-2">
+                        <!--Проверяем выполнены ли одновременно 5 условий:-->
+                        <!--1)прайс не удален из данной карточки 2)карточка не в архиве 3)карточка активна и-->
+                        <!--4)прайс не в архиве 5) прайс активен-->
+                        <!--Если нет - Заказ не доступен.-->
+                        {% if not orders_requests[number]['actual_offer'] %}
                         <div class="col-12 pb-3">
-                            {% if orders_requests[number]['card_usluga'].arhive==True or
-                            orders_requests[number]['card_usluga'].active==False or
-                            orders_requests[number]['price_arhive']==True or
-                            orders_requests[number]['price_active']== False or
-                            orders_requests[number]['price_in_card_usluga']== False %}
                             <small>
                                 <div class="alert alert-success" role="alert">
                                     <strong class="alert-heading">Приносим свои извинения!</strong>
                                     <br>
                                     За время хранения в корзине предоставление данной услуги было приостановлено.
+                                    Заказ не доступен.
                                     <br>
                                 </div>
                             </small>
-                            {% endif %}
                         </div>
+                        {% endif %}
 
                         <!-- Ссылка на стр. карточки услуги по клику на фото- начало-->
                         <a href="{{ url_for('render_uslugi_link',
@@ -224,7 +225,8 @@
                                     <div class="col-5 base_color_1">
                                         <b>Карточка:</b>
                                         {% if orders_requests[number]['card_usluga_arhive']==True %}
-                                        <div class="inline text-danger"> (карточка в архиве)</div>
+                                        <div class="inline text-danger"> (в архиве-коммент
+                                            убрать)</div>
                                         {% endif %}
                                     </div>
                                     <div class="col-7">
@@ -238,7 +240,7 @@
                                     <div class="col-5 base_color_1">
                                         <b>Прайс:</b>
                                         {% if orders_requests[number]['price_arhive']==True %}
-                                        <div class="inline text-danger"> (прайс в архиве)</div>
+                                        <div class="inline text-danger"> (в архиве-коммент убрать)</div>
                                         {% endif %}
                                     </div>
                                     <div class="col-7">
@@ -295,7 +297,6 @@
                                     {% if orders_requests[number]['order_request_sum']!=-1 %}
 
                                     {% if orders_requests[number]['actual_offer'] %}
-
 
                                     <a href="{{ url_for('order_bp.cart_sum_minus',
                                                 number=number) }}">
@@ -386,7 +387,6 @@
                                 </div>
                             </div>
                             <!--Удалить из корзины-конец-->
-
 
 
                     </div>

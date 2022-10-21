@@ -295,7 +295,7 @@
             {% if menus_arhive|length==0 %}
             <h5 class="text-left base_color_1">Архив карточек пуст</h5>
             {% else %}
-            <h5 class="text-left base_color_1">Карточки услуг в архиве</h5>
+            <h5 class="text-left text-danger">Карточки услуг в архиве</h5>
             {% endif %}
 
             {% for menu in menus_arhive|sort(attribute="title") %}

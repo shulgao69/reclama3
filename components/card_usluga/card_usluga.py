@@ -58,6 +58,27 @@ from sqlalchemy.dialects.postgresql import JSON
 card_usluga_blueprint = Blueprint('card_usluga_bp', __name__, template_folder='templates/card_usluga/', static_folder='static')
 
 
+# Деактивировать прайс в карточке услуг
+@card_usluga_blueprint.route('/deactiveprice/<int:card_usluga_id>/<int:price_id>/', methods=['GET', 'POST'])
+def deactive_price_in_card_usluga(card_usluga_id, price_id):
+    price=PriceTable.query.filter_by(id=price_id).first()
+    price.active=False
+    db.session.commit()
+    return redirect (url_for('card_usluga_bp.edit_card_usluga',
+                             card_usluga_id=card_usluga_id))
+
+
+# Активировать прайс в карточке услуг
+@card_usluga_blueprint.route('/activeprice/<int:card_usluga_id>/<int:price_id>/', methods=['GET', 'POST'])
+def active_price_in_card_usluga(card_usluga_id, price_id):
+    price=PriceTable.query.filter_by(id=price_id).first()
+    price.active=True
+    db.session.commit()
+    return redirect (url_for('card_usluga_bp.edit_card_usluga',
+                             card_usluga_id=card_usluga_id))
+
+
+
 # *** Редактирование заголовка и сопроводительного текста карточки услуг - начало
 @card_usluga_blueprint.route('/edit_name_and_text_card/<int:card_usluga_id>/', methods=["GET", "POST"])
 def edit_name_and_text_card(card_usluga_id ):
@@ -120,11 +141,33 @@ def send_to_archive_card_usluga(card_usluga_id):
 # *** Отправить в архив карточку услу - конец
 
 
+# *** Активировать карточку услуг - начало
+@card_usluga_blueprint.route('/active_card_usluga/<int:card_usluga_id>/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def active_card_usluga(card_usluga_id):
+    card_usluga=CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
+    card_usluga.active=True
+    db.session.commit()
+    return redirect(url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id))
+# *** Активировать карточку услуг - конец
+
+
+# *** Деактивировать карточку услуг - начало
+@card_usluga_blueprint.route('/deactive_card_usluga/<int:card_usluga_id>/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def deactive_card_usluga(card_usluga_id):
+    card_usluga=CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
+    card_usluga.active=False
+    db.session.commit()
+    return redirect(url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id))
+# *** Деактивировать карточку услуг - конец
+
+
 # *** Удалить карточку услуг - начало
 # Фактическое удаление. Но впоследствии после написания модуля заказов с хранением в базе
 # нужно организовать проверку что карточка не находится в заказах
-# (и корзинах? в корзинах как проверить?),
-# Удаляется карточка и запись в базе,  фото из файловой системы и записи в базе фото
+# (и корзинах? в корзинах как проверить?), - никак - удалять
+# Удаляется карточка и запись в базе,  сами фото из файловой системы и записи в базе фото
 # прайс не удаляется остается в архиве
 @card_usluga_blueprint.route('/delete_card_usluga/<int:card_usluga_id>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
@@ -703,9 +746,10 @@ def upload_prices_in_card_usluga(card_usluga_id):
     menu=card_usluga.usluga.punkt_menu
     # desc() - сортировка по убыванию
     # prices=PriceTable.query.order_by(PriceTable.card_usluga_id.desc()).order_by('name_price_table').all()
-    prices = PriceTable.query.filter(PriceTable.active!= False, PriceTable.arhive!= True).order_by(
+    # prices = PriceTable.query.filter(PriceTable.active!= False, PriceTable.arhive!= True).order_by(
+    #     PriceTable.card_usluga_id.desc()).order_by('name_price_table').all()
+    prices = PriceTable.query.filter(PriceTable.arhive != True).order_by(
         PriceTable.card_usluga_id.desc()).order_by('name_price_table').all()
-
     return render_template('upload_prices_in_card_usluga.html',
                            card_usluga=card_usluga,
                            usluga=usluga,

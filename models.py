@@ -487,7 +487,7 @@ class PriceTable(db.Model):
 
 
     def __repr__(self):
-        return self.name_price_table
+        return self.name_price_table+'(id '+str(self.id)+')'
 # ***** Модель для записи данных в таблицы прайсов - конец
 
 

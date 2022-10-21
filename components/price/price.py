@@ -100,6 +100,7 @@ def not_arhive_price(id):
 def arhive_price(id):
     price=PriceTable.query.filter_by(id=id).first()
     price.arhive=True
+    price.active = False
     db.session.commit()
     return redirect(url_for('price_bp.choose_price'))
 
@@ -208,25 +209,17 @@ def copy_price(id):
 
 
 # удаление прайса
+# Фактическое удаление. Но впоследствии после написания модуля заказов с хранением в базе
+# нужно организовать проверку что прайс не находится в заказах
+# (и корзинах? в корзинах как проверить?), - никак - удалять
+# карточка, к которой привязан прайс не удаляется
 @price_blueprint.route('/deleteprice/<int:id>/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
 def delete_price(id):
+
     price = PriceTable.query.filter_by(id=id).first()
-    # print('price.card_usluga=', price.card_usluga)
-
-    # проверяем есть ли в корзине заявки на заказы с этим прайсом
-    # Если есть - отправляем прайс в архив (не удаляем). Если нет - удаляем
-    cart=session.get('cart', [])
-    price_in_cart = False
-    for order_reuest in cart:
-        if order_reuest['price_id']==id:
-            price_in_cart = True
-    if price_in_cart == True:
-        price.arhive=True
-    else:
-        db.session.delete(price)
+    db.session.delete(price)
     db.session.commit()
-
     return redirect(url_for('price_bp.choose_price'))
 
 
@@ -339,20 +332,6 @@ def choose_price():
     prices = PriceTable.query.order_by(PriceTable.arhive, PriceTable.name_price_table, ).all()
     # prices = PriceTable.query.order_by('arhive').all()
     # print('type prices=', type(prices))
-    # list_prices = []
-    #
-    # for price in prices:
-    #     dict_price = {}
-    #     dict_price['id']=price.id
-    #     dict_price['row_table']=price.row_table
-    #     dict_price['col_table']=price.col_table
-    #     dict_price['name_price_table']=price.name_price_table
-    #     # dict_price['value_table']=json.loads(price.value_table)
-    #     dict_price['value_table']=price.value_table
-    #     dict_price['card_uslugi_id']=price.card_uslugi_id
-    #     dict_price['arhive'] = price.arhive
-    #     list_prices.append(dict_price)
-    # list_prices=prices
     return render_template('choose_price.html',
                            prices=prices
                            )
