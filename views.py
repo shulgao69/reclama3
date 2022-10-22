@@ -470,7 +470,7 @@ def render_menu(punkt_menu):
 @app.route('/раздел-<punkt_menu>/услуга-<category>/')
 def render_uslugi_link(punkt_menu, category):
     session['order_request_add_to_cart'] = False
-    print('punkt_menu=', punkt_menu, 'category=', category)
+    # print('punkt_menu=', punkt_menu, 'category=', category)
 
     # кол-во в заказе на заказ услуги в def order_request в блюпринте @order_blueprint.route
     # иначе сохранится то кол-во которое было указано в def order_request ранее

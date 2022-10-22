@@ -42,6 +42,7 @@ def render_session_clear():
 @order_blueprint.route('/order_request/<int:card_usluga_id>/<int:price_id>/<int:i>/<int:j>/', methods=['GET', 'POST'])
 def order_request(card_usluga_id, price_id, i, j):
     session['order_request'] = {}
+    print('card_usluga_id=', card_usluga_id, 'price_id=', price_id)
     # print('session.get("count") from order_request=', session.get('count'))
 
     # Пока оставить для обнуления корзины(пока не напишу всю)
@@ -49,6 +50,7 @@ def order_request(card_usluga_id, price_id, i, j):
 
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
+    print('card_usluga=', card_usluga, 'price=', price)
     form = ApplicationForm()
 
     # Если строку прайса можно перевести в число (целое или десятичное число) сделаем это
@@ -62,13 +64,14 @@ def order_request(card_usluga_id, price_id, i, j):
         # type(y)= <class 'decimal.Decimal'>
         # https://www.delftstack.com/howto/python/string-to-decimal-python/
         value = Decimal(price.value_table[i][j])
-
+        print('value from try=', value)
         # Сосчитаем сумму заказа и округлим до 2 знаков после запятой
         order_request_sum = round(session.get('count', 1) * value, 2)
-        print('type(order_request_sum)=', type(order_request_sum))
+        print('order_request_sum from try=', order_request_sum)
 
     except:
         order_request_sum = -1
+        print('order_request_sum from except=', order_request_sum)
 
     order_request = {}
     order_request['card_usluga_id'] = card_usluga_id
@@ -78,8 +81,8 @@ def order_request(card_usluga_id, price_id, i, j):
     order_request['count'] = session.get('count', 1)
     order_request['order_request_sum'] = order_request_sum
     session['order_request'] = order_request
-    print("session.get('order_request')=", session.get('order_request'))
-
+    print("session.get('order_request') from order_request=", session.get('order_request'))
+    print("session from order_request=", session)
     # if form.validate_on_submit():
     #     user_phone = form.user_phone.data
 
@@ -101,6 +104,8 @@ def order_request_add_to_cart():
     # print('session before add=', session)
     session['order_request_add_to_cart'] = True
     order_request = session.get('order_request', {})
+    # print("session.get('order_request') from order_request_add_to_car=", session.get('order_request'))
+    print("session from order_request_add_to_cart-before-1=", session)
 
     card_usluga_id = order_request['card_usluga_id']
     price_id = order_request['price_id']
@@ -151,6 +156,7 @@ def order_request_add_to_cart():
                             # type(y)= <class 'decimal.Decimal'>
                             # https://www.delftstack.com/howto/python/string-to-decimal-python/
                             price = PriceTable.query.filter(PriceTable.id == element['price_id']).first()
+                            print('price=', price)
                             value = Decimal(price.value_table[element['i']][element['j']])
                             count = order_request['count'] + element['count']
 
@@ -163,7 +169,8 @@ def order_request_add_to_cart():
                         cart_user['cart'].append(order_request)
 
     session['carts_users'] = carts_users
-    print('session.get("carts_users")=', session.get('carts_users'))
+    # print('session.get("carts_users") from order_request_add_to_cart=', session.get('carts_users'))
+    print('session from order_request_add_to_cart-after-2=', session)
     session['order_request'] = {}
     return redirect(url_for('order_bp.order_request',
                             card_usluga_id=card_usluga_id,
@@ -191,7 +198,7 @@ def cart():
     orders_requests = []
     # Список корзин всех пользователей в рамках одной сессии
     carts_users = session.get('carts_users', [])
-    print('carts_users from cart 1=', carts_users)
+    print('session before-1=', session)
 
     # Если пользователь авторизован (например его id=1), то в словаре сессии
     # автоматически появляется запись '_user_id': '1'. Если не авторизован - тогда такой записи нет
@@ -204,6 +211,7 @@ def cart():
         user_id='anonymous'
     else:
         user_id=current_user.id
+    print('user_id=', user_id)
     # Временный словарь, который добавляется в список orders_requests
     dict_cart_user = {}
     # Общая сумма заказа (кроме тех карточек услуг, у которых:
@@ -220,8 +228,11 @@ def cart():
 
     # Если список корзин всех пользователей в рамках одной сессии не пуст
     if carts_users != []:
+        print('carts_users != []', "True")
+        print('carts_users =', carts_users)
         # Перебираем все корзины
         for cart_user in carts_users:
+            print('cart_user', cart_user)
             # Выбираем корзину авторизованного пользователя или анонимную
             if cart_user['user_id']==user_id:
                 # если его корзина не пуста
@@ -234,20 +245,25 @@ def cart():
                     session['cart']=cart_user['cart']
                     # Перебираем все заказы в корзине пользователя
                     for order_request in cart_user['cart']:
-
                         card_usluga = CardUsluga.query.filter(CardUsluga.id == order_request['card_usluga_id']).first()
                         price = PriceTable.query.filter(PriceTable.id == order_request['price_id']).first()
+                        print('order_request=', order_request)
+                        print('card_usluga=', card_usluga)
+                        print('price=', price)
                         # Если карта и прайс не удалены из базы данных включаем их в показ в корзине
                         if card_usluga and price:
-
                             price_in_card_usluga = False
                             # Проверяем не удален ли прайс из карточки услуги
                             # Если нет price_in_card_usluga=True
                             if card_usluga.prices:
-                                for price in card_usluga.prices:
-                                    if price.id==order_request['price_id']:
+                                # Если назвать не price_card_usluga  а price - то в
+                                # словарь записывался другой прайс и возникала ошибка при отображении в
+                                # корзине. Видимо пересечение имен запроса price из базы (выше) и перебора
+                                # данных(ниже) Не поняла почему!
+                                for price_card_usluga in card_usluga.prices:
+                                    if price_card_usluga.id==order_request['price_id']:
                                         price_in_card_usluga=True
-
+                            print('price_in_card_usluga=', price_in_card_usluga)
                             # Создаем словарь корзины юзера
                             dict_cart_user['price_in_card_usluga'] = price_in_card_usluga
                             dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
@@ -256,6 +272,7 @@ def cart():
                             dict_cart_user['price_active'] = price.active
                             dict_cart_user['card_usluga'] = card_usluga
                             dict_cart_user['price'] = price
+                            print('price=', price, 'dict_cart_user["price"]=', dict_cart_user['price'])
                             dict_cart_user['i'] = order_request['i']
                             dict_cart_user['j'] = order_request['j']
                             # Проверяем выполнены ли одновременно 5 условий:
@@ -266,6 +283,7 @@ def cart():
                                     card_usluga.active == True and price.arhive == False and price.active == True:
                                 actual_offer = True
                             dict_cart_user['actual_offer'] = actual_offer
+                            print('dict_cart_user=', dict_cart_user)
 
                             # *** Этот перевод делаем потому, что при передаче через сессию (видимо?)
                             # класс decimal превращается в строку и поэтому в корзине невозможно
@@ -339,7 +357,7 @@ def cart():
     # Сортировка словаря по order_request_sum, при этом если цена была класс строка
     # то order_request_sum ==  -1
     # orders_requests=sorted(orders_requests, key= lambda x: x['order_request_sum'], reverse=True)
-    print('carts_users from cart 2=', carts_users)
+    print('session from cart after-2=', session)
     print('orders_requests from cart 2=', orders_requests)
     return render_template('cart.html',
                            orders_requests=orders_requests,

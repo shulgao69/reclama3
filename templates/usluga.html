@@ -57,7 +57,7 @@
 
             <!--Имя карточки услуги - начало-->
             <div class="py-2 base_color_1">
-                {{ card_usluga.name_card_usluga }}
+                {{ card_usluga.name_card_usluga }} (id {{ card_usluga.id }})
             </div>
             <!--Имя карточки услуги - конец-->
 
@@ -196,7 +196,7 @@
                     {% for price in card_usluga.prices %}
                     {% if price.arhive == False and price.active==True %}
                     <h5 class="base_color_1">
-                        {{ price.name_price_table }}
+                        {{ price.name_price_table }} (id {{ price.id }})
                     </h5>
 
                     <!--class="table-responsive" - добавляет прокрутку-->
