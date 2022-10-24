@@ -152,7 +152,7 @@
         </div>
 
         <nav class="navbar navbar-expand-md navbar-light pt-0 pb-0">
-            <!--Формы, контрольные точки, очистить сессию - начало-->
+            <!--Формы, контрольные точки, очистить сесси, Логика сайта - начало-->
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('test_form_bp.test_form') }}"><br>Формы</a>
@@ -162,6 +162,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('order_bp.render_session_clear')}}"><br>Очистить сессию</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logika/"><br>Логика сайта</a>
                 </li>
             </ul>
             <!--Формы, контрольные точки, очистить сессию - конец-->
@@ -173,6 +176,7 @@
                 <!--аутентифицированы, активны и имеют любую!!! не пустую роль-->
                 {% if current_user.is_authenticated and current_user.is_active and
                 not current_user.roles == [] %}
+                <!--Управление - начало-->
                 <li class="nav-item">
                     <a class="nav-link text-center" href="/admin/">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0796a6"
@@ -184,6 +188,7 @@
                         Управление
                     </a>
                 </li>
+                <!--Управление - конец-->
                 {% endif %}
 
                 <!--Корзина - начало-->

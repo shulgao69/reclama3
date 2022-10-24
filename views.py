@@ -895,6 +895,17 @@ def render_navbar():
     return render_template("docs-navbar.html")
 
 
+# Пояснения к логике сайта
+@app.route('/logika/', methods=["GET", "POST"])
+@login_required
+def logika():
+    err = ""
+    links_menu = Link.query.all()
+    return render_template("logika.html",
+                           links_menu=links_menu,
+                           err=err)
+
+
 @app.route('/SHPORA/')
 def render_shpora():
     title = ['Доставка', 'Контакты']
