@@ -188,6 +188,8 @@ def cart():
     session['order_request_add_to_cart'] = False
     # Сбросим сессию order_request, содержащую сведения о заявке на заказ(со стр.карточки услуги с прайсом)
     session['order_request'] = {}
+
+    print('session.get("cart", []) before-1=', session.get('cart', []))
     # Создадим пустую сессию для корзины пользователя(анонимного или авторизованного)
     session['cart']=[]
     # В рамках одной сессии может быть несколько пользователей (например с одного ПК
@@ -211,7 +213,7 @@ def cart():
         user_id='anonymous'
     else:
         user_id=current_user.id
-    print('user_id=', user_id)
+    # print('user_id=', user_id)
     # Временный словарь, который добавляется в список orders_requests
     dict_cart_user = {}
     # Общая сумма заказа (кроме тех карточек услуг, у которых:
@@ -228,11 +230,11 @@ def cart():
 
     # Если список корзин всех пользователей в рамках одной сессии не пуст
     if carts_users != []:
-        print('carts_users != []', "True")
-        print('carts_users =', carts_users)
+        # print('carts_users != []', "True")
+        # print('carts_users =', carts_users)
         # Перебираем все корзины
         for cart_user in carts_users:
-            print('cart_user', cart_user)
+            # print('cart_user', cart_user)
             # Выбираем корзину авторизованного пользователя или анонимную
             if cart_user['user_id']==user_id:
                 # если его корзина не пуста
@@ -242,19 +244,23 @@ def cart():
                     # Используем ее для удаления заявки на заказ карточки услуги из корзины конкретного
                     # пользователя, (список словарей orders_requests мы не можем передать через сессию,
                     # тк там есть объекты запроса а не строки)
+                    print('session.get("cart", []) before-2=', session.get('cart', []))
                     session['cart']=cart_user['cart']
+                    print('session.get("cart", []) after-1=', session.get('cart', []))
                     # Перебираем все заказы в корзине пользователя
                     for order_request in cart_user['cart']:
                         card_usluga = CardUsluga.query.filter(CardUsluga.id == order_request['card_usluga_id']).first()
                         price = PriceTable.query.filter(PriceTable.id == order_request['price_id']).first()
-                        print('order_request=', order_request)
-                        print('card_usluga=', card_usluga)
-                        print('price=', price)
-                        # Если карта и прайс не удалены из базы данных включаем их в показ в корзине
+                        # Если карта и прайс не удалены из базы данных (или запрос не дает ошибку?)
+                        # за время хранения в корзине включаем их в показ в корзине
+                        # В принципе эту проверку можно удалить т.к. удаление из корзин пользователей
+                        # в случае удаления прайса или карточки услуг  реализованы в price.py и card_usluga.py
+                        # но оставим на случай ошибки при запросе из базы?
                         if card_usluga and price:
                             price_in_card_usluga = False
-                            # Проверяем не удален ли прайс из карточки услуги
-                            # Если нет price_in_card_usluga=True
+                            # Проверяем не удален (откреплен) ли прайс из карточки услуги
+                            # (Сам прайс при удалении из карточки услуги не удаляется, а открепляется)
+                            # Если нет price_in_card_usluga=True)
                             if card_usluga.prices:
                                 # Если назвать не price_card_usluga  а price - то в
                                 # словарь записывался другой прайс и возникала ошибка при отображении в
@@ -263,7 +269,7 @@ def cart():
                                 for price_card_usluga in card_usluga.prices:
                                     if price_card_usluga.id==order_request['price_id']:
                                         price_in_card_usluga=True
-                            print('price_in_card_usluga=', price_in_card_usluga)
+                            # print('price_in_card_usluga=', price_in_card_usluga)
                             # Создаем словарь корзины юзера
                             dict_cart_user['price_in_card_usluga'] = price_in_card_usluga
                             dict_cart_user['card_usluga_arhive'] = card_usluga.arhive
@@ -272,7 +278,7 @@ def cart():
                             dict_cart_user['price_active'] = price.active
                             dict_cart_user['card_usluga'] = card_usluga
                             dict_cart_user['price'] = price
-                            print('price=', price, 'dict_cart_user["price"]=', dict_cart_user['price'])
+                            # print('price=', price, 'dict_cart_user["price"]=', dict_cart_user['price'])
                             dict_cart_user['i'] = order_request['i']
                             dict_cart_user['j'] = order_request['j']
                             # Проверяем выполнены ли одновременно 5 условий:
@@ -283,7 +289,7 @@ def cart():
                                     card_usluga.active == True and price.arhive == False and price.active == True:
                                 actual_offer = True
                             dict_cart_user['actual_offer'] = actual_offer
-                            print('dict_cart_user=', dict_cart_user)
+                            # print('dict_cart_user=', dict_cart_user)
 
                             # *** Этот перевод делаем потому, что при передаче через сессию (видимо?)
                             # класс decimal превращается в строку и поэтому в корзине невозможно
@@ -344,12 +350,15 @@ def cart():
                             orders_requests.append(dict_cart_user)
                             dict_cart_user = {}
                             session['cart'] = cart_user['cart']
+                            print('session.get("cart", []) after-2=', session.get('cart', []))
 
                         # Если карта или прайс удалены из базы данных исключаем их
                         # из показа в корзине
-                        else:
-                            message='Карта или прайс были удалены. Заказ не возможен.'
-                            print('message=', message)
+                        # else:
+                        #     message='Карта или прайс были удалены. Заказ не возможен.'
+                        #     print('message=', message)
+                        #     # cart_user['cart'].remove(order_request)
+
         session['carts_users']=carts_users
 
     # Сортировка в корзине по списку(те по порядку добавления в корзину)-так и оставить!
@@ -358,7 +367,7 @@ def cart():
     # то order_request_sum ==  -1
     # orders_requests=sorted(orders_requests, key= lambda x: x['order_request_sum'], reverse=True)
     print('session from cart after-2=', session)
-    print('orders_requests from cart 2=', orders_requests)
+    # print('orders_requests from cart 2=', orders_requests)
     return render_template('cart.html',
                            orders_requests=orders_requests,
                            sum_total=sum_total,

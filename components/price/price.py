@@ -218,6 +218,36 @@ def copy_price(id):
 def delete_price(id):
 
     price = PriceTable.query.filter_by(id=id).first()
+
+    # удаляем заказы с этим прайсом из корзин пользователей
+    # Для этого формируем новый список корзин,
+    # в который не включены заказы с удаленным прайсом
+    carts_users = session.get('carts_users', [])
+    carts_users_new = []
+    # print('session.get("carts_users"), [])- 1 = ', session.get('carts_users', []))
+    # Перебираем список корзин разных пользователей
+    for cart_user in carts_users:
+        # Создадим новый словарь конкретного пользователя (включающий id и корзину cart - это список)
+        cart_user_new = {}
+        cart_user_new['user_id'] = cart_user['user_id']
+        cart_user_new['cart'] = []
+        # Перебираем корзину конкретного пользователя
+        for order_request in cart_user['cart']:
+            # Если в корзине есть заказ с удаляемым прайсом то не включаем его в
+            # список заказов пользователя (новую корзину)
+            # Если в заказе другой прайс (не тот который удаляем) - добавляем
+            # в новую корзину пользователя
+            if order_request['price_id']!=price.id:
+                cart_user_new['cart'].append(order_request)
+                # print('cart_user_new"= ', cart_user_new, '"carts_users"= ', carts_users)
+
+        if cart_user_new['cart'] != []:
+            carts_users_new.append(cart_user_new)
+
+    # print('"carts_users"= ', carts_users)
+    session['carts_users']=carts_users_new
+    # print('session.get("carts_users"), [])= - 2', session.get('carts_users', []))
+
     db.session.delete(price)
     db.session.commit()
     return redirect(url_for('price_bp.choose_price'))
