@@ -622,6 +622,8 @@ class Role(db.Model, RoleMixin):
     # users = db.relationship("User", back_populates='roles')
     # users = db.relationship("User")
     # users = db.relationship('User', secondary=roles_users,
+    #                         backref=db.backref('roles'))
+    # users = db.relationship('User', secondary=roles_users,
     #                         backref=db.backref('roles', lazy='dynamic'))
 
     # устанавливаем отношение между ролью и настройками

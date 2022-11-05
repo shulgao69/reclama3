@@ -1,6 +1,7 @@
-from flask import Blueprint, redirect, url_for
+from flask import Blueprint, redirect, url_for, jsonify
 from flask import render_template, session, current_app, request
 from flask_security import current_user
+from flask_security import login_required
 # from flask_wtf import FlaskForm
 # from wtforms import SubmitField, HiddenField, SelectField, BooleanField, StringField, IntegerField
 # from wtforms import PasswordField, IntegerField, validators, FieldList, FormField, TextAreaField
@@ -36,6 +37,18 @@ def render_session_clear():
 
     session.clear()
     return redirect(request.args.get("next") or url_for('render_main'))
+
+
+# Оформить (разместить) заказ из корзины
+@order_blueprint.route('/place_order/', methods=['GET', 'POST'])
+@login_required
+def place_order():
+    print('session=', session)
+    cart=session.get('cart', [])
+    print('type(cart)=', type(cart))
+    print('cart=', cart)
+    print('jsonify(cart)=', jsonify(cart), 'type(jsonify(cart))=', type(jsonify(cart)))
+    return render_template('place_order.html')
 
 
 # заявка на заказ по ссылке из прайса на странице услуги
@@ -189,7 +202,7 @@ def cart():
     # Сбросим сессию order_request, содержащую сведения о заявке на заказ(со стр.карточки услуги с прайсом)
     session['order_request'] = {}
 
-    print('session.get("cart", []) before-1=', session.get('cart', []))
+    # print('session.get("cart", []) before-1=', session.get('cart', []))
     # Создадим пустую сессию для корзины пользователя(анонимного или авторизованного)
     session['cart']=[]
     # В рамках одной сессии может быть несколько пользователей (например с одного ПК
@@ -200,7 +213,7 @@ def cart():
     orders_requests = []
     # Список корзин всех пользователей в рамках одной сессии
     carts_users = session.get('carts_users', [])
-    print('session before-1=', session)
+    # print('session before-1=', session)
 
     # Если пользователь авторизован (например его id=1), то в словаре сессии
     # автоматически появляется запись '_user_id': '1'. Если не авторизован - тогда такой записи нет
@@ -239,14 +252,14 @@ def cart():
             if cart_user['user_id']==user_id:
                 # если его корзина не пуста
                 if cart_user['cart'] !=[]:
-                    print('cart_user["cart"]=', cart_user['cart'])
+                    # print('cart_user["cart"]=', cart_user['cart'])
                     # Создаем сессию корзины конкретного пользователя(анонимного или авторизованного)
                     # Используем ее для удаления заявки на заказ карточки услуги из корзины конкретного
                     # пользователя, (список словарей orders_requests мы не можем передать через сессию,
                     # тк там есть объекты запроса а не строки)
-                    print('session.get("cart", []) before-2=', session.get('cart', []))
+                    # print('session.get("cart", []) before-2=', session.get('cart', []))
                     session['cart']=cart_user['cart']
-                    print('session.get("cart", []) after-1=', session.get('cart', []))
+                    # print('session.get("cart", []) after-1=', session.get('cart', []))
                     # Перебираем все заказы в корзине пользователя
                     for order_request in cart_user['cart']:
                         card_usluga = CardUsluga.query.filter(CardUsluga.id == order_request['card_usluga_id']).first()
@@ -350,7 +363,7 @@ def cart():
                             orders_requests.append(dict_cart_user)
                             dict_cart_user = {}
                             session['cart'] = cart_user['cart']
-                            print('session.get("cart", []) after-2=', session.get('cart', []))
+                            # print('session.get("cart", []) after-2=', session.get('cart', []))
 
                         # Если карта или прайс удалены из базы данных исключаем их
                         # из показа в корзине

@@ -897,7 +897,7 @@ class MyUploadFileMy(SpecificView):
             return True
     # *** def is_visible(self): -Делаем модель  видимой только для определенных ролей - конец
 
-class MyUser(SpecificView):
+class UserView(SpecificView):
 
     # ***** column_list - начало
     # Задает поля из базы, отображаемые в админ панели
@@ -1067,7 +1067,7 @@ class MyUser(SpecificView):
         return ()
 
     def scaffold_form(self):
-        form_class = super(MyUser, self).scaffold_form()
+        form_class = super(UserView, self).scaffold_form()
         form_class.password = PasswordField("Password")
         form_class.new_password = PasswordField('Новый пароль')
         form_class.confirm = PasswordField('Повторить новый пароль')
@@ -1167,11 +1167,11 @@ class MyUser(SpecificView):
 
     # *** def is_visible(self): -Делаем модель User видимой только для определенных ролей - конец
 
-class MyRole(SpecificView):
+class RoleView(SpecificView):
     # Задает поля из базы, отображаемые в админ панели
     # Столбцы будут расположены в порядке, указанном в списке!!!
     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
-    column_list = ['id', 'name', 'description', 'setting']
+    column_list = ['id', 'name', 'description', 'setting','users']
 
     # Удалить столбцы из списка.
     # Если задан column_list, где данный столбец не включен, то column_exclude_list
@@ -1222,7 +1222,7 @@ class MyRole(SpecificView):
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
     # column_sortable_list = ['id', 'name', 'description', ('setting', 'setting.name_setting')]
-    column_sortable_list = ['id', 'name', 'description']
+    column_sortable_list = ['id', 'name', 'description', ('users', 'users.email')]
 
     # Задает редактируемые поля.
     # Если не задать то по умолчанию доступны для редактирования все поля
@@ -3021,8 +3021,8 @@ with warnings.catch_warnings():
     # каждое из представлений добавляет в админ.панель данные из конкретной модели
     admin.add_view(MyLink(Link, db.session, name='Меню сайта(Link)', category="Меню и Услуги"))
     admin.add_view(MyUsluga(Usluga, db.session, name='Услуги(Usluga)', category="Меню и Услуги"))
-    admin.add_view(MyUser(User, db.session, name='Пользователи(User)', category="Пользователи и роли"))
-    admin.add_view(MyRole(Role, db.session, name='Роли(Role)', category="Пользователи и роли"))
+    admin.add_view(UserView(User, db.session, name='Пользователи(User)', category="Пользователи и роли"))
+    admin.add_view(RoleView(Role, db.session, name='Роли(Role)', category="Пользователи и роли"))
     admin.add_view(MyListModel(ListModel, db.session, name='Модели(ListModel)', category="Модели и настройки"))
     admin.add_view(MySettingAdmin(SettingAdmin, db.session, name='Настройки(SettingAdmin)', category="Модели и настройки"))
     admin.add_view(MyUploadFileMy(UploadFileMy, db.session, name='Фото услуг(UploadFileMy)', category="Фото услуг и прайсы"))
