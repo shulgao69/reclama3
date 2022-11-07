@@ -485,6 +485,9 @@ class PriceTable(db.Model):
     arhive = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=False)
 
+    # в каких заказах присутствует
+    order_items = db.relationship("OrderItem", back_populates='price')
+
 
     def __repr__(self):
         return self.name_price_table+'(id '+str(self.id)+')'
@@ -608,10 +611,33 @@ class User(db.Model, UserMixin):
     #  roles = db.relationship('Role', secondary=roles_users,
     #                         backref=db.backref('users', lazy='dynamic'))
 
-    orders = db.relationship('Order', back_populates='user')
+    # Заказы пользователя
+    # orders = db.relationship('Order', back_populates='user')
+    # orders = db.relationship('Order')
+
+    # За какие заказы отвечает (в каких заказах является главным менеджером)
+    # orders_manager = db.relationship('Order', back_populates='manager_person')
+    # orders_manager = db.relationship('Order')
+
+
+    # За какие элементы заказа отвечает (в данный момент?)
+    orders_items = db.relationship('OrderItem', back_populates='staff_actual_status_person')
+
+    payers = db.relationship('Payer', back_populates='user')
 
     def __repr__(self):
         return self.email
+
+    # Модель Роли
+
+# Модель плательщик
+class Payer(db.Model):
+    __tablename__ = 'payers'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates='payers')
+    payer_status = db.Column(db.String(80))
+    payer_info = db.Column(JSON)
 
 # Модель Роли
 class Role(db.Model, RoleMixin):
@@ -632,6 +658,7 @@ class Role(db.Model, RoleMixin):
 
     statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='role_responsible')
 
+    orders = db.relationship('Order', back_populates='manager_role')
 
     # Эта функция позволяет отразить в админке в частности не объект SQLalchemy (например <Role1>),
     # а имя (name)(например admin)
@@ -809,9 +836,12 @@ class CardUsluga(db.Model):
     photos = db.relationship("Photo", back_populates='card_usluga', cascade="all,delete")
     prices = db.relationship('PriceTable', back_populates="card_usluga")
     statuses_card_usluga = db.relationship("StatusCardUsluga", back_populates='card_usluga', cascade="all,delete")
-    orders = db.relationship("Order", back_populates='card_usluga')
+    # orders = db.relationship("Order", back_populates='card_usluga')
     arhive = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=False)
+
+    # в каких заказах присутствует
+    order_items = db.relationship("OrderItem", back_populates='card_usluga')
 
     def __repr__(self):
         return self.name_card_usluga + ' (id '+str(self.id)+')'
@@ -903,28 +933,55 @@ class Photo(db.Model):
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    order = db.Column(db.String, nullable=False)
+    # order = db.Column(db.String, nullable=False)
+    # номер заказа
+    number = db.Column(db.String, nullable=False)
+
 
     # Дата и время создания заказа
     # order_create = db.Column(db.DateTime(), default=datetime.now.replace(microsecond=0))
     # order_create = db.Column(db.DateTime(), default=str(datetime.now().date()) + '_' + str(datetime.now().time().replace(microsecond=0)))
     # order_create = db.Column(db.DateTime(microsecond=0), default=datetime.now )
-    order_create = db.Column(db.DateTime(), default=datetime.now )
+    date_create = db.Column(db.DateTime(), default=datetime.now )
 
+    # Дата и время полного выполнения заказа (всех позиций заказа)
+    date_end = db.Column(db.DateTime())
+
+    # Роль менеджера заказа (ответственный за весь заказ (назначает ответственных?))
+    manager_role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    manager_role = db.relationship("Role", back_populates='orders')
+
+    # Две связи в модели к одной таблице User без foreign_keys="[Order.manager_person_id]"
+    # дают ошибку!!! Разбираться тк в User если добавить 2 отношения к Order дает ошибку,
+    # а мне надо сделать это тк хочу получать по юзеру его заказы
+    # https: // docs.sqlalchemy.org / en / 14 / orm / join_conditions.html
+    # Непосредственный исполнитель(персона) из списка пользователей с ролью
+    # order_manager_role
+    manager_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    manager_person = db.relationship("User", foreign_keys="[Order.manager_person_id]")
+
+    # заказчик
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", back_populates='orders')
+    user = db.relationship("User",  foreign_keys="[Order.user_id]")
+
+    # Статусы заказа
+    # Простые статусы заказа из модели Status (например заказ принят, заказ выполнен, в работе и тп)
+    statuses_id = db.Column(db.Integer, db.ForeignKey('statuses.id'))
+    statuses = db.relationship("Status", back_populates='orders')
 
     # Прогресс выполнения заказа - это статусы заказа(из статусов карточки услуги)
     # с фактическим временем исполнения
-    order_progress = db.Column(JSON)
+    progress = db.Column(JSON)
+
+    order_items = db.relationship("OrderItem", back_populates='order')
 
     # данные заказа поступившие по ссылке в прайсе карточки услуги с сайта
     # прайсы и параметры карточки услуг могут меняться, поэтому в заказе нужно зафиксировать данные,
     # на момент когда пользователь подтверждает заказ на сайте
-    order_parameters = db.Column(JSON)
+    # order_parameters = db.Column(JSON)
 
-    card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'))
-    card_usluga = db.relationship("CardUsluga", back_populates='orders')
+    # card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'))
+    # card_usluga = db.relationship("CardUsluga", back_populates='orders')
 
     # - удалить позже (16.08.22) тк OrderStatus тоже удалить- начало
     # status_id = db.Column(db.Integer, db.ForeignKey('order_statuses.id'))
@@ -934,15 +991,59 @@ class Order(db.Model):
     def __repr__(self):
         return '№ заказа - ' + str(self.id) + ', Заказ: ' + self.order
 
+# Модель Элементы заказа
+# Содержит параметры по каждой заказанной услуге
+class OrderItem(db.Model):
+    __tablename__ = 'order_items'
+    id = db.Column(db.Integer, primary_key=True)
 
-# Модель Статусы (Возможные статусы) - один статус может использоваться в разных карточках услуг
+    # К какому заказу относится
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
+    order = db.relationship("Order", back_populates='order_items')
+
+    card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'))
+    card_usluga = db.relationship("CardUsluga", back_populates='order_items')
+
+    price_id = db.Column(db.Integer, db.ForeignKey('price_tables.id'))
+    price = db.relationship("PriceTable", back_populates='order_items')
+
+    рorizontal_position_price_i = db.Column(db.Integer)
+    vertical_position_price_j = db.Column(db.Integer)
+
+    # Если карточка услуг и прайс не в архиве и активны на момент заказа True
+    # (иначе нельзя заказать), после заказа если предложение стало не актуально
+    # (или архив или не активно) - False
+    actual_offer = db.Column(db.Boolean, default=True)
+
+    # Актуальный статус элемента заказа
+    actual_status_id = db.Column(db.Integer, db.ForeignKey('statuses_cards_uslugs.id'))
+    actual_status = db.relationship("StatusCardUsluga", back_populates='order_item')
+
+    date_create_actual_status = db.Column(db.DateTime())
+
+    staff_actual_status_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    staff_actual_status_person = db.relationship("User", back_populates='orders_items')
+
+    # Прогресс выполнения элемента заказа (статус, ответственный - роль,
+    # ответственный - персона, дата создания, дата окончания, отклонение от норматива)
+    progress = db.Column(JSON)
+
+
+
+# Модель Статусы (Возможные статусы) -
+# один статус может использоваться в разных карточках услуг
 class Status(db.Model):
     __tablename__ = 'statuses'
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.String, nullable=False, unique=True)
     number = db.Column(db.Integer, nullable=False, unique=True)
     comment = db.Column(db.String)
+
+    # Статусы карточек услуг
     statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='status')
+
+    # Заказы
+    orders = db.relationship("Order", back_populates='statuses')
 
     def __repr__(self):
         return str(self. number) + ' - ' + str(self.status)
@@ -978,6 +1079,9 @@ class StatusCardUsluga(db.Model):
     days_norma = db.Column(db.Integer, default=0)
     hours_norma = db.Column(db.Integer, default=0)
     minutes_norma = db.Column(db.Integer, default=0)
+
+
+    order_item = db.relationship("OrderItem", back_populates='actual_status')
 
 
     # Данные (@hybrid_property) в админке показывает но не могу задать сортировку
