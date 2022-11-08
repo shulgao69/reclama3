@@ -582,8 +582,7 @@ class User(db.Model, UserMixin):
     # Поэтому исключила created_on и updated_on из return в def form_edit_rules в class MyUser(SpecificView)
 
     # Дата и время создания user
-    # По гринвичу
-    # created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    # По гринвичу - created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     # Местное время
     created_on = db.Column(db.DateTime(), default=datetime.now)
 
@@ -612,7 +611,7 @@ class User(db.Model, UserMixin):
     #                         backref=db.backref('users', lazy='dynamic'))
 
     # Заказы пользователя
-    # orders = db.relationship('Order', back_populates='user')
+    orders = db.relationship('Order', back_populates='user')
     # orders = db.relationship('Order')
 
     # За какие заказы отвечает (в каких заказах является главным менеджером)
@@ -621,16 +620,15 @@ class User(db.Model, UserMixin):
 
 
     # За какие элементы заказа отвечает (в данный момент?)
-    orders_items = db.relationship('OrderItem', back_populates='staff_actual_status_person')
+    # orders_items = db.relationship('OrderItem', back_populates='staff_actual_status_person')
 
     payers = db.relationship('Payer', back_populates='user')
 
     def __repr__(self):
         return self.email
 
-    # Модель Роли
 
-# Модель плательщик
+# Модель плательщик - 08.11.22 - дорабатывать - сделана пока для пробы
 class Payer(db.Model):
     __tablename__ = 'payers'
     id = db.Column(db.Integer, primary_key=True)
@@ -638,6 +636,9 @@ class Payer(db.Model):
     user = db.relationship("User", back_populates='payers')
     payer_status = db.Column(db.String(80))
     payer_info = db.Column(JSON)
+    name = db.Column(db.String(), nullable=False)
+    def __repr__(self):
+        return self.name
 
 # Модель Роли
 class Role(db.Model, RoleMixin):
@@ -836,7 +837,6 @@ class CardUsluga(db.Model):
     photos = db.relationship("Photo", back_populates='card_usluga', cascade="all,delete")
     prices = db.relationship('PriceTable', back_populates="card_usluga")
     statuses_card_usluga = db.relationship("StatusCardUsluga", back_populates='card_usluga', cascade="all,delete")
-    # orders = db.relationship("Order", back_populates='card_usluga')
     arhive = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=False)
 
@@ -889,54 +889,13 @@ class CardUsluga(db.Model):
         return self.usluga.punkt_menu
 
 
-# Модель Фото
-class Photo(db.Model):
-    __tablename__ = 'photos'
-    id = db.Column(db.Integer, primary_key=True)
-
-    card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'))
-    card_usluga = db.relationship("CardUsluga", back_populates='photos')
-
-    # Полная Директория для загрузки (общая директория загрузки + дир. раздела + дир услуги)
-    dir_uploads = db.Column(db.String(255), nullable=False, default='/static/images/cards_uslugs/')
-
-    # Исходное имя загружаемого файла
-    origin_name_photo = db.Column(db.String(255), nullable=False)
-
-    # Безопасное имя загружаемого файла
-    secure_name_photo = db.Column(db.String(255), nullable=False)
-
-    # Расширение файла
-    file_ext = db.Column(db.String(255), nullable=False)
-
-    # Размер файла
-    file_size = db.Column(db.Integer)
-
-    # Заголовок фото
-    title = db.Column(db.String(255))
-
-    # Сопроводительный текст к фото
-    comments = db.Column(db.Text)
-
-    arhive = db.Column(db.Boolean, default=False)
-
-    @hybrid_property
-    def photo_card_usluga_usluga(self):
-        return self.card_usluga.usluga
-
-    @hybrid_property
-    def photo_card_usluga_usluga_punkt_menu(self):
-        return self.card_usluga.usluga.punkt_menu
-
-
 # Модель Заказы
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
     # order = db.Column(db.String, nullable=False)
     # номер заказа
-    number = db.Column(db.String, nullable=False)
-
+    number = db.Column(db.String, nullable=False, unique=True)
 
     # Дата и время создания заказа
     # order_create = db.Column(db.DateTime(), default=datetime.now.replace(microsecond=0))
@@ -957,8 +916,8 @@ class Order(db.Model):
     # https: // docs.sqlalchemy.org / en / 14 / orm / join_conditions.html
     # Непосредственный исполнитель(персона) из списка пользователей с ролью
     # order_manager_role
-    manager_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    manager_person = db.relationship("User", foreign_keys="[Order.manager_person_id]")
+    # manager_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # manager_person = db.relationship("User", foreign_keys="[Order.manager_person_id]")
 
     # заказчик
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -966,8 +925,8 @@ class Order(db.Model):
 
     # Статусы заказа
     # Простые статусы заказа из модели Status (например заказ принят, заказ выполнен, в работе и тп)
-    statuses_id = db.Column(db.Integer, db.ForeignKey('statuses.id'))
-    statuses = db.relationship("Status", back_populates='orders')
+    # statuses_id = db.Column(db.Integer, db.ForeignKey('statuses.id'))
+    # statuses = db.relationship("Status", back_populates='orders')
 
     # Прогресс выполнения заказа - это статусы заказа(из статусов карточки услуги)
     # с фактическим временем исполнения
@@ -980,16 +939,13 @@ class Order(db.Model):
     # на момент когда пользователь подтверждает заказ на сайте
     # order_parameters = db.Column(JSON)
 
-    # card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'))
-    # card_usluga = db.relationship("CardUsluga", back_populates='orders')
-
     # - удалить позже (16.08.22) тк OrderStatus тоже удалить- начало
     # status_id = db.Column(db.Integer, db.ForeignKey('order_statuses.id'))
     # status = db.relationship("OrderStatus", back_populates='orders')
     # - удалить позже (16.08.22) - конец
 
     def __repr__(self):
-        return '№ заказа - ' + str(self.id) + ', Заказ: ' + self.order
+        return '№ заказа - ' + self.number
 
 # Модель Элементы заказа
 # Содержит параметры по каждой заказанной услуге
@@ -1021,13 +977,12 @@ class OrderItem(db.Model):
 
     date_create_actual_status = db.Column(db.DateTime())
 
-    staff_actual_status_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    staff_actual_status_person = db.relationship("User", back_populates='orders_items')
+    # staff_actual_status_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # staff_actual_status_person = db.relationship("User", back_populates='orders_items')
 
     # Прогресс выполнения элемента заказа (статус, ответственный - роль,
     # ответственный - персона, дата создания, дата окончания, отклонение от норматива)
     progress = db.Column(JSON)
-
 
 
 # Модель Статусы (Возможные статусы) -
@@ -1043,7 +998,7 @@ class Status(db.Model):
     statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='status')
 
     # Заказы
-    orders = db.relationship("Order", back_populates='statuses')
+    # orders = db.relationship("Order", back_populates='statuses')
 
     def __repr__(self):
         return str(self. number) + ' - ' + str(self.status)
@@ -1119,6 +1074,46 @@ class StatusCardUsluga(db.Model):
 #         return 'Статус заказа - ' + str(self.status)+' (вес статуса '+ str(self. number)+')'
 
 
+# Модель Фото
+class Photo(db.Model):
+    __tablename__ = 'photos'
+    id = db.Column(db.Integer, primary_key=True)
+
+    card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'))
+    card_usluga = db.relationship("CardUsluga", back_populates='photos')
+
+    # Полная Директория для загрузки (общая директория загрузки + дир. раздела + дир услуги)
+    dir_uploads = db.Column(db.String(255), nullable=False, default='/static/images/cards_uslugs/')
+
+    # Исходное имя загружаемого файла
+    origin_name_photo = db.Column(db.String(255), nullable=False)
+
+    # Безопасное имя загружаемого файла
+    secure_name_photo = db.Column(db.String(255), nullable=False)
+
+    # Расширение файла
+    file_ext = db.Column(db.String(255), nullable=False)
+
+    # Размер файла
+    file_size = db.Column(db.Integer)
+
+    # Заголовок фото
+    title = db.Column(db.String(255))
+
+    # Сопроводительный текст к фото
+    comments = db.Column(db.Text)
+
+    arhive = db.Column(db.Boolean, default=False)
+
+    @hybrid_property
+    def photo_card_usluga_usluga(self):
+        return self.card_usluga.usluga
+
+    @hybrid_property
+    def photo_card_usluga_usluga_punkt_menu(self):
+        return self.card_usluga.usluga.punkt_menu
+
+
 # Модель Телефоны пользователей (User)
 # у 1 пользователя может быть несколько телефонов
 # у телефона только один пользователь
@@ -1131,8 +1126,6 @@ class Phone(db.Model):
 
     def __repr__(self):
         return str(self.phone)
-
-
 
 
 

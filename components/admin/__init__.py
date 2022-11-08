@@ -3,7 +3,6 @@ from flask import has_app_context, flash, current_app, abort, url_for
 
 from flask_admin import BaseView, Admin, AdminIndexView
 from flask_admin import  helpers, expose
-
 from flask_admin import form
 from flask_admin.form import rules, Select2Widget
 
@@ -24,12 +23,10 @@ from wtforms.validators import NumberRange
 # https://question-it.com/questions/6537146/flask-sqlalchemy-filtr-po-kolichestvu-obektov-otnoshenij
 from sqlalchemy.sql.expression import func
 
-
 # from wtforms.fields import StringField
 
 # Модуль для загрузки файлов, создания директорий в Flask-admin
 # from flask_admin.contrib.fileadmin import FileAdmin
-
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -54,11 +51,9 @@ from os.path import join, dirname, realpath, getsize
  # см https://pythonist.ru/udalenie-fajla-poshagovoe-rukovodstvo/
 import shutil
 
-
 from pathlib import Path
 import re
 from transliterate import translit
-
 
 # Импорт, необходимый для создания уникального имени загружаемого файла по времени загрузки
 import datetime
@@ -88,16 +83,21 @@ from werkzeug.urls import url_parse
 
 # from flask_principal import Principal
 
-from RECL.models import UploadFileMy, Usluga, Link, Order, User, Role, roles_users, ListModel, \
-    SettingAdmin, UploadFileMy, PriceTable, Carousel, PlaceElement, PlaceModelElement, \
-    PlaceCarousel, BaseLocationElement, BasePositionElement, \
-    HorizontalPositionElement, VerticalPositionElement, PositionElement, ContainerElement, \
-    ColumnElement, PriorityElement, Phone, Photo, CardUsluga
-   
+from RECL.models import ListModel, SettingAdmin
+from RECL.models import User, Role, roles_users, Phone, Payer
+from RECL.models import Link, Usluga
+from RECL.models import CardUsluga, Photo, PriceTable
 from RECL.models import StatusCardUsluga, Status
 # from RECL.models import OrderStatus
+from RECL.models import Order, OrderItem
+from RECL.models import Carousel, PlaceCarousel
+from RECL.models import PlaceElement, PlaceModelElement, BaseLocationElement, \
+    BasePositionElement, HorizontalPositionElement, VerticalPositionElement, \
+    PositionElement, ContainerElement, ColumnElement, PriorityElement
 from RECL.models import WidthElement, HeightElement
+from RECL.models import UploadFileMy
 # from RECL.models import roles_models
+
 from RECL.models import db
 
 # from RECL.forms import PhotoFormAdmin, PhotoForm, FormChoice2, FormChoice1
@@ -120,8 +120,6 @@ from RECL.__init__ import app
 
 # from RECL.components.login import login_manager
 # from RECL import app
-
-
 
 
 # Длину пароля нужно брать из файла конфигурации, но не получалось почему-то.
@@ -151,7 +149,6 @@ from RECL.__init__ import app
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
-
 
 
 # Класс входа в админ панель дополняем  @app.before_request (выполняется перед
@@ -329,7 +326,6 @@ class MyAdminChangeView(BaseView):
 # app.config['UPLOAD_PATH'] = UPLOAD_PATH
 # *****UPLOAD_PATH - конец
 # ** Конфигурации, используемые для загрузки файлов - конец
-
 
 
 class UploadPhotoAdmin(BaseView):
@@ -927,15 +923,17 @@ class UserView(SpecificView):
     def column_list(self):
         if has_app_context() and current_user.has_role('superadmin'):
             # superadmin_column_list = ['id', 'roles', 'email', 'active', 'confirmed_at', 'created_on', 'updated_on', 'orders', 'phones', 'password']
-            superadmin_column_list = ['id', 'roles', 'email', 'user_first_name', 'active', 'confirmed_at', 'created_on', 'updated_on', 'phones']
+            superadmin_column_list = ['id', 'active', 'email', 'roles', 'orders',
+                                      'user_first_name', 'user_middle_name', 'user_last_name',
+                                        'created_on', 'updated_on', 'confirmed_at', 'phones', 'payers']
             return superadmin_column_list
         if has_app_context() and current_user.has_role('admin'):
-            admin_column_list = ['id', 'roles', 'email', 'active', 'created_on']
+            admin_column_list = ['id', 'active', 'email', 'roles', 'created_on']
             return admin_column_list
         if has_app_context() and current_user.has_role('manager'):
-            manager_column_list = ['id', 'email', 'active']
+            manager_column_list = ['id', 'active', 'email']
             return manager_column_list
-        user_column_list = ['email', 'active']
+        user_column_list = ['active', 'email']
         return user_column_list
 
     @property
@@ -958,7 +956,18 @@ class UserView(SpecificView):
 
     # *** column_labels - Присвоить столбцам из модели заголовки - начало
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения. , orders='Заказы'
-    column_labels = dict(user_first_name='Имя', email='Логин(e-mail)', confirmed_at='Подтвержден', created_on='Создан', updated_on='Обновлен', active='Активен', roles='Роли', phones='Тел.')
+    column_labels = dict(user_first_name='Имя',
+                         user_middle_name='Отчество',
+                         user_last_name='Фамилия',
+                         email='Логин(e-mail)',
+                         orders ='Заказы',
+                         confirmed_at='Подтвержден',
+                         created_on='Создан',
+                         updated_on='Обновлен',
+                         active='Активен',
+                         roles='Роли',
+                         phones='Тел.',
+                         payers='Плательщики')
    # *** column_labels - Присвоить столбцам из модели заголовки - конец
 
     # **** column_display_all_relations- Добавляет столбцы-отношения - начало
@@ -971,7 +980,11 @@ class UserView(SpecificView):
     # не roles а roles.name, не 'orders' а 'orders.order'
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView  'orders.order',
-    column_searchable_list = ['id', 'user_first_name', 'roles.name', 'email', 'active', 'confirmed_at', 'created_on', 'updated_on', 'phones.phone']
+    column_searchable_list = ['id', 'orders.number',
+                              'user_first_name', 'user_middle_name', 'user_last_name',
+                              'roles.name', 'email', 'active',
+                              'confirmed_at', 'created_on', 'updated_on',
+                              'phones.phone', 'payers.id']
     # *** column_searchable_list- Задает поля, в которых возможен поиск по словам - конец
 
     # *** column_filters - Задает поля, в которых возможна булева фильтрация - начало
@@ -986,10 +999,10 @@ class UserView(SpecificView):
     # увидим и все поля модели Role(например name, description и тп)
     # и следовательно можно искать те роли в которых например name содержит сочетание ad и тп)
     # column_filters = ['id', 'user_first_name', 'email', 'active', 'password', 'confirmed_at', 'created_on', 'updated_on', 'roles', 'orders', 'phones']
-    column_filters = ['id', 'user_first_name', 'email',
+    column_filters = ['id', 'user_first_name', 'user_middle_name', 'user_last_name', 'email',
                       BooleanEqualFilter(column=User.active, name='active'),
                       'password', 'confirmed_at', 'created_on',
-                      'updated_on', 'roles', 'phones']
+                      'updated_on', 'roles', 'phones', 'payers']
     # *** column_filters - Задает поля, в которых возможна фильтрация - конец
 
     # *** column_sortable_list- Задает поля, в которых возможна сортировка - начало
@@ -1000,7 +1013,9 @@ class UserView(SpecificView):
     # не понятно как сортировать???
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView ('orders', 'orders.order'),
-    column_sortable_list = ['id', 'user_first_name', ('roles', 'roles.name'),
+    column_sortable_list = ['id', ('orders', 'orders.number'), 'user_first_name', 'user_middle_name',
+                            'user_last_name',
+                            ('roles', 'roles.name'),
                             ('phones', 'phones.phone'), 'email', 'active', 'confirmed_at', 'created_on', 'updated_on' ]
     # *** column_sortable_list- Задает поля, в которых возможна сортировка - конец
 
@@ -1059,7 +1074,8 @@ class UserView(SpecificView):
             # то возникала ошибка при входе в редактирование юзера в админке - серый экран
             # из-за default=datetime.utcnow (см модель юзера). Почему - не знаю. Исключила - работает.
             # 'orders',
-            return ('roles', 'user_first_name', 'phones', 'email', 'active',
+            return ('roles', 'orders', 'user_first_name', 'user_middle_name', 'user_last_name',
+                    'phones', 'email', 'active',
                        rules.Header('Сбросить пароль'), 'new_password', 'confirm')
         # В этом выводе тоже самое - см выше ошибка из-за 'created_on'
         # return ('roles', 'email', 'active', 'created_on') - не работает
@@ -1266,6 +1282,18 @@ class RoleView(SpecificView):
     # Мы оставим is_visible()
     # def is_accessible(self):
     #     return (current_user.has_role('manager'))
+
+class PayerView(SpecificView):
+    column_list = ['id', 'name', 'user', 'payer_status', 'payer_info']
+    column_labels = dict(user='Пользователь',
+                         name='Имя плательщика',
+                         payer_status='Статус плательщика(юр или физ)',
+                         payer_info='Инфо о плательщике')
+    column_searchable_list = ['id', 'name', 'user.email', 'payer_status', 'payer_info']
+    column_sortable_list = ['id', 'name', ('user', 'user.email'), 'payer_status']
+    def is_visible(self):
+        if current_user.has_role('superadmin') or current_user.has_role('admin'):
+            return True
 
 class MyListModel(SpecificView):
     # Задает поля из базы, отображаемые в админ панели
@@ -2389,8 +2417,10 @@ class MyOrder(SpecificView):
     # Задает поля из базы, отображаемые в админ панели
     # Столбцы будут расположены в порядке, указанном в списке!!!
     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
-    column_list = ['id', 'number', 'user', 'manager_person', 'manager_role',
-                   'date_create', 'date_end', 'statuses',
+    column_list = ['id', 'number', 'user',
+                   # 'manager_person',
+                   'manager_role',
+                   'date_create', 'date_end',
                    'progress', 'order_items']
 
     # Удалить столбцы из списка.
@@ -2402,11 +2432,11 @@ class MyOrder(SpecificView):
     # Присвоить столбцам из модели заголовки
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
     column_labels = dict(number='Номер заказа', user='Заказчик',
-                         manager_person='Менеджер заказа',
-                         manager_role='Роль менеджера',
+                         # manager_person='Менеджер заказа',
+                         manager_role='Должность ответственного',
                          date_create='Дата создания',
                          date_end='Дата закрытия',
-                         statuses='Статусы заказа',
+                         # statuses='Статусы заказа',
                          progress='Прогресс',
                          order_items='Элементы заказа',
                          )
@@ -2419,8 +2449,11 @@ class MyOrder(SpecificView):
     # не roles а roles.name, не 'orders' а 'orders.order'
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
-    column_searchable_list = ['id', 'number', 'user.email', 'manager_person.email', 'date_create',
-                              'date_end', 'statuses.status',
+    column_searchable_list = ['id', 'number', 'user.email',
+                              # 'manager_person.email',
+                              'date_create',
+                              'date_end',
+                              # 'statuses.status',
                               'progress', 'order_items.id'
                               ]
 
@@ -2433,8 +2466,12 @@ class MyOrder(SpecificView):
     # то в выпадающем списке AddFilter кроме имени, роли, описания, id
     # увидим и все поля модели Role(например name, description и тп)
     # и следовательно можно искать те роли в которых например name содержит сочетание ad и тп)
-    column_filters = ['id', 'number', 'user.email', 'manager_person.email', 'date_create',
-                              'date_end', 'statuses.status', 'manager_role.name',
+    column_filters = ['id', 'number', 'user.email',
+                      # 'manager_person.email',
+                      'date_create',
+                              'date_end',
+                      # 'statuses.status',
+                      'manager_role.name',
                               'order_items.id']
 
     # Задает поля, в которых возможна сортировка (по алфавиту например)
@@ -2446,9 +2483,10 @@ class MyOrder(SpecificView):
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
     column_sortable_list = ['id', 'number', ('user', 'user.email'), 'date_create',
-                            ('manager_person', 'manager_person.email'),
+                            # ('manager_person', 'manager_person.email'),
                             ('manager_role', 'manager_role.name'),
-                            'date_end', ('statuses', 'statuses.status'),
+                            'date_end',
+                            # ('statuses', 'statuses.status'),
                             ('order_items', 'order_items.id')
                             ]
 
@@ -2662,7 +2700,6 @@ class MyStatusCardUsluga(SpecificView):
                             ('card_usluga', 'card_usluga.name_card_usluga'),
                             ('role_responsible', 'role_responsible.name')]
 
-
     def is_visible(self):
         if current_user.has_role('superadmin'):
             return True
@@ -2746,7 +2783,6 @@ class MyStatusCardUsluga(SpecificView):
 #     def is_visible(self):
 #         if current_user.has_role('superadmin') or current_user.has_role('admin'):
 #             return True
-
 
 
 class PriceTableView(SpecificView):
@@ -3042,6 +3078,7 @@ with warnings.catch_warnings():
     admin.add_view(MyUsluga(Usluga, db.session, name='Услуги(Usluga)', category="Меню и Услуги"))
     admin.add_view(UserView(User, db.session, name='Пользователи(User)', category="Пользователи и роли"))
     admin.add_view(RoleView(Role, db.session, name='Роли(Role)', category="Пользователи и роли"))
+    admin.add_view(PayerView(Payer, db.session, name='Плательщики(Payer)'))
     admin.add_view(MyListModel(ListModel, db.session, name='Модели(ListModel)', category="Модели и настройки"))
     admin.add_view(MySettingAdmin(SettingAdmin, db.session, name='Настройки(SettingAdmin)', category="Модели и настройки"))
     admin.add_view(MyUploadFileMy(UploadFileMy, db.session, name='Фото услуг(UploadFileMy)', category="Фото услуг и прайсы"))
