@@ -559,10 +559,13 @@ roles_users = db.Table('roles_users',
 # имеет метод is_anonymous (), кот. возвращает True, если текущий пользователь является анонимным.
 # имеет метод get_id (), кот., учитывая экземпляр пользователя, возвращает уникальный идентификатор для этого объекта
 # Класс UserMixin обеспечивает реализацию этих свойств.
-# Это причина, по которой вы можете вызвать, например, is_authenticated,
-# чтобы проверить правильность предоставленных учетных данных, вместо того,
-# чтобы писать метод, чтобы сделать это самостоятельно.
-# Модель Пользователь (связан с моделью Роль(Role) и моделью Заказы(Order))
+# Это причина, по кот. вы можете вызвать, например, is_authenticated, чтобы проверить
+# правильность предоставленных учетных данных, вместо того, чтобы писать метод, чтобы сделать это самостоятельно.
+
+# Модель Пользователь
+# В этой модели храняться все пользователи (и покупатели услуг и персонал)
+# Покупателем (заказчиком услуг) может быть пользователь с ролью и без
+# Сотрудник - только пользователь с ролью. В зависимости от роли - разные доступы и возможности
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)    # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html#
@@ -572,9 +575,8 @@ class User(db.Model, UserMixin):
 
     password = db.Column(db.String(255), nullable=False)    # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html#
 
-    # Нужен для блокировки пользователя при необходимости
-    # (например если сотрудник уволен и ему нужно отключить доступ
-    # (эта возможность должна быть доступна только суперадмину например)
+    # Нужен для блокировки пользователя при необходимости (например если сотрудник уволен
+    # и ему нужно отключить доступ (эта возможность должна быть доступна только суперадмину например)
     active = db.Column(db.Boolean)    # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html#
 
     # С данными времени нужно разобраться - как правильно (часовые пояса например и тп)
@@ -597,8 +599,10 @@ class User(db.Model, UserMixin):
     user_middle_name = db.Column(db.String()) # Отчество
     user_last_name = db.Column(db.String()) # Фамилия
 
+    # телефоны пользователя
     phones = db.relationship('Phone', back_populates='user')
 
+    # роли пользователя (может быть несколько)
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users'))
 
@@ -607,21 +611,26 @@ class User(db.Model, UserMixin):
     # Этот режим указывает не выполнять запрос, пока явно об этом не попросили. Разбираться!!!
     # https://stackoverflow.com/questions/29874142/backref-lazy-dynamic-does-not-support-object-population-eager-loading-cann
     # # https://habr.com/ru/post/230643/
-    #  roles = db.relationship('Role', secondary=roles_users,
-    #                         backref=db.backref('users', lazy='dynamic'))
+    #  roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
 
-    # Заказы пользователя
-    orders = db.relationship('Order', back_populates='user')
-    # orders = db.relationship('Order')
+    # Заказы пользователя (как потребителя услуг)(собственные заказы)
+    # 2 связи в модели к одной таблице Order без foreign_keys="[Order.user_id]" дают ошибку!!!
+    # https: // docs.sqlalchemy.org / en / 14 / orm / join_conditions.html
+    # https: //translated.turbopages.org/proxy_u/en-ru.ru.b9952bcd-636b3a4a-a31a33bd-74722d776562/https/stackoverflow.com/questions/7548033/how-to-define-two-relationships-to-the-same-table-in-sqlalchemy
 
-    # За какие заказы отвечает (в каких заказах является главным менеджером)
+    # orders = db.relationship('Order', back_populates='user')
+    # orders = db.relationship('Order', foreign_keys="Order.user_id")
+    orders = db.relationship('Order', foreign_keys="Order.user_id", back_populates='user')
+
+    # За какие заказы отвечает как сотрудник(в каких заказах является главным менеджером)
     # orders_manager = db.relationship('Order', back_populates='manager_person')
-    # orders_manager = db.relationship('Order')
-
+    # orders_manager = db.relationship('Order', foreign_keys="Order.manager_person_id")
+    orders_manager = db.relationship('Order', foreign_keys="Order.manager_person_id", back_populates='manager_person')
 
     # За какие элементы заказа отвечает (в данный момент?)
-    # orders_items = db.relationship('OrderItem', back_populates='staff_actual_status_person')
+    orders_items = db.relationship('OrderItem', back_populates='staff_actual_status_person')
 
+    # Плательщики пользователя (например организация, физ лицо - может быть несколько)
     payers = db.relationship('Payer', back_populates='user')
 
     def __repr__(self):
@@ -629,6 +638,9 @@ class User(db.Model, UserMixin):
 
 
 # Модель плательщик - 08.11.22 - дорабатывать - сделана пока для пробы
+# В Payer хранить связь с юзером и общую инфо (какую? наименование? ИНН?) для юриков и физиков(ИП?)
+# Специфичную инфо в отдельных таблицах для физиков и юриковю
+# Отдельные таблицы для адресов сделать - думать как
 class Payer(db.Model):
     __tablename__ = 'payers'
     id = db.Column(db.Integer, primary_key=True)
@@ -645,13 +657,10 @@ class Role(db.Model, RoleMixin):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True) # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html видео https://youtu.be/wDBiMtKIBs0#
     name = db.Column(db.String(80), unique = True, nullable=False) # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html  видео https://youtu.be/wDBiMtKIBs0#
-    description = db.Column(db.String(255)) # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html   видео https://youtu.be/wDBiMtKIBs0#
+    description = db.Column(db.String(255))
     # users = db.relationship("User", back_populates='roles')
-    # users = db.relationship("User")
-    # users = db.relationship('User', secondary=roles_users,
-    #                         backref=db.backref('roles'))
-    # users = db.relationship('User', secondary=roles_users,
-    #                         backref=db.backref('roles', lazy='dynamic'))
+    # users = db.relationship('User', secondary=roles_users, backref=db.backref('roles'))
+    # users = db.relationship('User', secondary=roles_users, backref=db.backref('roles', lazy='dynamic'))
 
     # устанавливаем отношение между ролью и настройками
     # это отношение один ко многим - одна модель и у нее несколько настроек (для разных ролей)
@@ -893,7 +902,6 @@ class CardUsluga(db.Model):
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    # order = db.Column(db.String, nullable=False)
     # номер заказа
     number = db.Column(db.String, nullable=False, unique=True)
 
@@ -910,16 +918,16 @@ class Order(db.Model):
     manager_role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     manager_role = db.relationship("Role", back_populates='orders')
 
-    # Две связи в модели к одной таблице User без foreign_keys="[Order.manager_person_id]"
-    # дают ошибку!!! Разбираться тк в User если добавить 2 отношения к Order дает ошибку,
-    # а мне надо сделать это тк хочу получать по юзеру его заказы
+    # 2 связи в модели к одной таблице User без foreign_keys="[Order.manager_person_id]" и [Order.user_id] дают ошибку!!!
     # https: // docs.sqlalchemy.org / en / 14 / orm / join_conditions.html
-    # Непосредственный исполнитель(персона) из списка пользователей с ролью
-    # order_manager_role
-    # manager_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    # manager_person = db.relationship("User", foreign_keys="[Order.manager_person_id]")
+    # https: //translated.turbopages.org/proxy_u/en-ru.ru.b9952bcd-636b3a4a-a31a33bd-74722d776562/https/stackoverflow.com/questions/7548033/how-to-define-two-relationships-to-the-same-table-in-sqlalchemy
 
-    # заказчик
+    # Ответственный за заказ (персона)
+    # Персону планируем выбирать из списка юзеров с ролью manager_role, которую определяем ранее
+    manager_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    manager_person = db.relationship("User", foreign_keys="[Order.manager_person_id]")
+
+    # заказчик услуг (покупатель)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User",  foreign_keys="[Order.user_id]")
 
@@ -945,7 +953,7 @@ class Order(db.Model):
     # - удалить позже (16.08.22) - конец
 
     def __repr__(self):
-        return '№ заказа - ' + self.number
+        return '№ ' + self.number
 
 # Модель Элементы заказа
 # Содержит параметры по каждой заказанной услуге
@@ -963,7 +971,7 @@ class OrderItem(db.Model):
     price_id = db.Column(db.Integer, db.ForeignKey('price_tables.id'))
     price = db.relationship("PriceTable", back_populates='order_items')
 
-    рorizontal_position_price_i = db.Column(db.Integer)
+    gorizontal_position_price_i = db.Column(db.Integer)
     vertical_position_price_j = db.Column(db.Integer)
 
     # Если карточка услуг и прайс не в архиве и активны на момент заказа True
@@ -977,12 +985,15 @@ class OrderItem(db.Model):
 
     date_create_actual_status = db.Column(db.DateTime())
 
-    # staff_actual_status_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    # staff_actual_status_person = db.relationship("User", back_populates='orders_items')
+    # Ответственный за актуальнй статус
+    staff_actual_status_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    staff_actual_status_person = db.relationship("User", back_populates='orders_items')
 
     # Прогресс выполнения элемента заказа (статус, ответственный - роль,
     # ответственный - персона, дата создания, дата окончания, отклонение от норматива)
     progress = db.Column(JSON)
+    def __repr__(self):
+        return 'id '+str(self.id)
 
 
 # Модель Статусы (Возможные статусы) -
