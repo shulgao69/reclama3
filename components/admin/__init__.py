@@ -91,10 +91,13 @@ from RECL.models import Link, Usluga
 from RECL.models import CardUsluga, Photo, PriceTable
 from RECL.models import TypeProduction
 
-from RECL.models import StatusCard, StatusIntermediate
+from RECL.models import StatusCard, StatusIntermediate, StatusOrder
+from RECL.models import SpecificationStatusCard, SpecificationStatusIntermediate
+from RECL.models import StaffAction, GoalAction, ResultAction, MethodAction, ActionOrder
 # from RECL.models import StatusCardUsluga, Status
 # from RECL.models import OrderStatus
 from RECL.models import Order, OrderItem
+
 from RECL.models import Carousel, PlaceCarousel
 from RECL.models import PlaceElement, PlaceModelElement, BaseLocationElement, \
     BasePositionElement, HorizontalPositionElement, VerticalPositionElement, \
@@ -3168,6 +3171,194 @@ class StatusCardView(SpecificView):
 class StatusIntermediateView(SpecificView):
     column_list = ['id', 'type_production', 'status_card', 'name', 'weight', 'description']
 
+class StatusOrderView(SpecificView):
+    column_list = ['id', 'name', 'weight', 'description']
+
+
+class SpecificationStatusCardView(SpecificView):
+
+    # Добавим валидатор NumberRange (задаем интервалы)
+    # для кол-ва дней, часов или минут на выполнение работ.
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.c1b086fc-62f24a67-9453ffe5-74722d776562/https/stackoverflow.com/questions/45458767/change-the-order-or-disable-the-unique-validator-in-flask-admin-with-sqlalchemy
+    form_args = {
+        'days_norma': {
+            'validators': [NumberRange(min=0, max=366)]
+        },
+        'hours_norma': {
+            'validators': [NumberRange(min=0, max=23)]
+        },
+        'minutes_norma': {
+            'validators': [NumberRange(min=0, max=59)]
+        }
+    }
+
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.6a4e954e-62f0e5b5-67f2c0ff-74722d776562/https/stackoverflow.com/questions/57794198/flask-admin-not-including-some-columns-in-create-edit-but-are-included-in-the
+    # Без этой строки norma_interval не отображался в форме создания и редактироания
+    # form_extra_fields = {'norma_interval': DateTimeField('norma_interval')}
+    # Но это поле работает не так как я планировала (те тип ИНтервал) а именно дата,
+    # Поэтому я решила вводить и хранить просто целые числа (день, час, минута) а потом в роуте преобразовывать в
+    # timedelta
+
+    # Создадим normativ2 - начало!
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.a8edd97f-62d92535-0d2a131f-74722d776562/https/stackoverflow.com/questions/39895123/custom-and-sortable-column-in-flask-admin
+    # В ссылке указаны 2 способа (один в модели(ответ), второй  в админке - оба работают!!!)
+    # для них нужны импорты
+    # from sqlalchemy.ext.hybrid import hybrid_property
+    # from sqlalchemy import select, func
+
+    def _normativ2_formatter(view, context, model, name):
+        # return len(model.uslugs)
+        return str(model.days_norma)+' дн. '+ str(model.hours_norma)+' ч. '+str(model.minutes_norma) + ' мин.'
+
+    column_formatters = {
+        'normativ2': _normativ2_formatter
+    }
+    # Создадим normativ2 - конец!
+
+    column_list = ['id', 'card_usluga', 'status_card',  'role_responsible', 'normativ', 'normativ2']
+    column_labels = dict(card_usluga='Карточка услуги',
+                         role_responsible='Ответственный (роль)',
+                         status_card='Статус карт(StatusCard)',
+                         normativ2='Норматив (из админки)',
+                         normativ='Норматив (из '
+                                                                                                  'модели)')
+    column_filters = ['id', 'status_card', 'card_usluga', 'role_responsible']
+    column_searchable_list = ['id', 'status_card.name', 'card_usluga.name_card_usluga', 'role_responsible.name']
+    # column_sortable_list = ['id', ('status', 'status.number'),
+    #                         ('card_usluga', 'card_usluga.name_card_usluga'),
+    #                         ('role_responsible', 'role_responsible.name'),
+    #                         ('standard', 'days_norma', 'hours_norma', 'minutes_norma')]
+    # column_default_sort = 'status_card.name'
+    column_sortable_list = ['id', ('status_card', 'status_card.name'),
+                            ('card_usluga', 'card_usluga.name_card_usluga'),
+                            ('role_responsible', 'role_responsible.name'),
+                            ]
+
+    def is_visible(self):
+        if current_user.has_role('superadmin'):
+            return True
+
+
+class SpecificationStatusIntermediateView(SpecificView):
+
+    # Добавим валидатор NumberRange (задаем интервалы)
+    # для кол-ва дней, часов или минут на выполнение работ.
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.c1b086fc-62f24a67-9453ffe5-74722d776562/https/stackoverflow.com/questions/45458767/change-the-order-or-disable-the-unique-validator-in-flask-admin-with-sqlalchemy
+    form_args = {
+        'days_norma': {
+            'validators': [NumberRange(min=0, max=366)]
+        },
+        'hours_norma': {
+            'validators': [NumberRange(min=0, max=23)]
+        },
+        'minutes_norma': {
+            'validators': [NumberRange(min=0, max=59)]
+        }
+    }
+
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.6a4e954e-62f0e5b5-67f2c0ff-74722d776562/https/stackoverflow.com/questions/57794198/flask-admin-not-including-some-columns-in-create-edit-but-are-included-in-the
+    # Без этой строки norma_interval не отображался в форме создания и редактироания
+    # form_extra_fields = {'norma_interval': DateTimeField('norma_interval')}
+    # Но это поле работает не так как я планировала (те тип ИНтервал) а именно дата,
+    # Поэтому я решила вводить и хранить просто целые числа (день, час, минута) а потом в роуте преобразовывать в
+    # timedelta
+
+    # Создадим normativ2 - начало!
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.a8edd97f-62d92535-0d2a131f-74722d776562/https/stackoverflow.com/questions/39895123/custom-and-sortable-column-in-flask-admin
+    # В ссылке указаны 2 способа (один в модели(ответ), второй  в админке - оба работают!!!)
+    # для них нужны импорты
+    # from sqlalchemy.ext.hybrid import hybrid_property
+    # from sqlalchemy import select, func
+
+    def _normativ2_formatter(view, context, model, name):
+        # return len(model.uslugs)
+        return str(model.days_norma)+' дн. '+ str(model.hours_norma)+' ч. '+str(model.minutes_norma) + ' мин.'
+
+    column_formatters = {
+        'normativ2': _normativ2_formatter
+    }
+    # Создадим normativ2 - конец!
+
+    column_list = ['id', 'card_usluga', 'status_intermediate.status_card', 'status_intermediate',  'role_responsible',
+                   'normativ', 'normativ2']
+
+    column_labels = dict(card_usluga='Карточка услуги',
+                         role_responsible='Ответственный (роль)',
+                         status_intermediate='Статус промежуточный',
+                         normativ2='Норматив (из админки)',
+                         normativ='Норматив (из модели)'
+                         )
+    column_filters = ['id', 'status_intermediate', 'card_usluga', 'role_responsible']
+    column_searchable_list = ['id', 'status_intermediate.name', 'card_usluga.name_card_usluga', 'role_responsible.name']
+    # column_sortable_list = ['id', ('status', 'status.number'),
+    #                         ('card_usluga', 'card_usluga.name_card_usluga'),
+    #                         ('role_responsible', 'role_responsible.name'),
+    #                         ('standard', 'days_norma', 'hours_norma', 'minutes_norma')]
+    # column_default_sort = 'status_card.name'
+    column_sortable_list = ['id', ('status_intermediate', 'status_intermediate.name'),
+                            ('card_usluga', 'card_usluga.name_card_usluga'),
+                            ('role_responsible', 'role_responsible.name'),
+                            ]
+
+    def is_visible(self):
+        if current_user.has_role('superadmin'):
+            return True
+
+
+
+class StaffActionView(SpecificView):
+    column_list = ['id', 'name']
+    column_labels = dict(name='Наименование')
+    column_filters = ['id', 'name']
+    column_searchable_list = ['id', 'name']
+
+
+class GoalActionView(SpecificView):
+    column_list = ['id', 'name']
+    column_labels = dict(name='Наименование')
+    column_filters = ['id', 'name']
+    column_searchable_list = ['id', 'name']
+
+
+class MethodActionView(SpecificView):
+    column_list = ['id', 'name']
+    column_labels = dict(name='Наименование')
+    column_filters = ['id', 'name']
+    column_searchable_list = ['id', 'name']
+
+
+class ResultActionView(SpecificView):
+    column_list = ['id', 'name']
+    column_labels = dict(name='Наименование')
+    column_filters = ['id', 'name']
+    column_searchable_list = ['id', 'name']
+
+class ActionOrderView(SpecificView):
+    column_list = ['id', 'order', 'order.staff_actual_status_person', 'status_order', 'date_create', 'staff_action',
+                   'goal_action', 'method_action', 'result_action']
+    column_labels = dict(order='Заказ',
+                         status_order='Статус заказа',
+                         date_create='Дата действия',
+                         staff_action='Действие',
+                         goal_action='Цель действия',
+                         method_action='Метод действия',
+                         result_action='Результат действия',
+                         )
+    column_sortable_list = ['id',
+                            ('order', 'order.number'),
+                            ('status_order', 'status_order.name'),
+                            'date_create',
+                            ('staff_action', 'staff_action.name'),
+                            ('goal_action', 'goal_action.name'),
+                            ('method_action', 'method_action.name'),
+                            ('result_action', 'result_action.name'),
+                            ]
+    column_filters = ['id', 'order', 'status_order', 'date_create', 'staff_action',
+                   'goal_action', 'method_action', 'result_action']
+    column_searchable_list = ['id', 'order.number', 'status_order.name', 'date_create',
+                            'staff_action.name', 'goal_action.name',
+                            'method_action.name', 'result_action.name',
+                            ]
 
 # Создание административной панели
 admin = Admin(app, 'Имя', url='/admin/', index_view=HomeAdminView(name='Гл'), template_mode='bootstrap4')
@@ -3211,6 +3402,18 @@ with warnings.catch_warnings():
     # Статусы
     admin.add_view(StatusCardView(StatusCard, db.session, name='Статусы карт'))
     admin.add_view(StatusIntermediateView(StatusIntermediate, db.session, name='Промежуточные статусы карт'))
+    admin.add_view(StatusOrderView(StatusOrder, db.session, name='Статусы заказов'))
+    admin.add_view(SpecificationStatusCardView(SpecificationStatusCard, db.session, name='Специфика статусов карт'))
+    admin.add_view(SpecificationStatusIntermediateView(SpecificationStatusIntermediate, db.session,
+                                                       name='Специфика промежут. статусов'))
+
+    # Действия
+    admin.add_view(StaffActionView(StaffAction, db.session, name='Действия персонала', category="Действия"))
+    admin.add_view(GoalActionView(GoalAction, db.session, name='Цели действия', category="Действия"))
+    admin.add_view(MethodActionView(MethodAction, db.session, name='Методы действия', category="Действия"))
+    admin.add_view(ResultActionView(ResultAction, db.session, name='Результаты действия', category="Действия"))
+    admin.add_view(ActionOrderView(ActionOrder, db.session, name='Действия по заказу'))
+
     # admin.add_view(MyStatus(Status, db.session, name='Возможные статусы', category="Статусы"))
     # admin.add_view(MyStatusCardUsluga(StatusCardUsluga, db.session, name='Статусы карточек', category="Статусы"))
     # admin.add_view(MyOrderStatus(OrderStatus, db.session, name='Статусы заказов'))
@@ -3298,12 +3501,10 @@ admin.add_view(MyView(name='Выйти'))
     # admin.add_view(DeleteFoto(name='Del и Edit фото из миниатюр(DeleteFoto)'))
     # *****перенесла в fotomanager.py -  конец
 
-
     # admin.add_view(Ed(name='Ред фото из миниатюр(DeleteFoto)'))
 
     # admin.add_view(Choice1(name='Choice1'))
     # admin.add_view(UploadPhotoAdmin(name='фото(UploadPhotoAdmin)'))
-
 
 
 
@@ -3392,9 +3593,6 @@ def security_context_processor():
 
 # admin.add_view(MyVV(name='VV'))
 # # *******
-
-
-
 
 
 
@@ -3792,8 +3990,6 @@ class MyFileAdmin(FileAdmin):
                         # # print('2-name_setting=', self.name_setting, 'self.mod=', self.mod, 'role=', self.role)
                         #     print('2-name_setting=', self.name_setting, 'role=', self.role)
                         #     print('2-can_create =', self.can_create, 'can_edit =', self.can_edit, 'can_delete =', self.can_delete, 'can_export', self.can_export)
-
-
 
 
 
