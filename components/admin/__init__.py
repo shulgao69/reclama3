@@ -1,3 +1,5 @@
+# см также https://stepik.org/lesson/300655/step/10
+
 from flask import Blueprint, jsonify, redirect, session, request, render_template
 from flask import has_app_context, flash, current_app, abort, url_for
 
@@ -87,7 +89,10 @@ from RECL.models import ListModel, SettingAdmin
 from RECL.models import User, Role, roles_users, Phone, Payer
 from RECL.models import Link, Usluga
 from RECL.models import CardUsluga, Photo, PriceTable
-from RECL.models import StatusCardUsluga, Status
+from RECL.models import TypeProduction
+
+from RECL.models import StatusCard, StatusIntermediate
+# from RECL.models import StatusCardUsluga, Status
 # from RECL.models import OrderStatus
 from RECL.models import Order, OrderItem
 from RECL.models import Carousel, PlaceCarousel
@@ -1312,7 +1317,8 @@ class MyListModel(SpecificView):
 
     # Присвоить столбцам из модели заголовки
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
-    column_labels = dict(name_model='Модель(name_model)', setting='Список настроек с моделью(setting)')
+    column_labels = dict(name_model='Модель(name_model)',
+                         setting='Список настроек с моделью(setting)')
 
     # Добавляет столбцы-отношения - задаем в SettingAdminForAllRoles
     # column_display_all_relations = True
@@ -2080,22 +2086,32 @@ class CardUslugaView(SpecificView):
     # которое позволяет в данном случае задать и псевдоним  column_labels и сортировку column_sortable_list
     # column_list = ['id', 'name_card_usluga', 'punkt_menu_card_usluga', 'usluga.punkt_menu', 'usluga', 'dir_photos', 'comments', 'count_photos_in_card_usluga', 'photos', 'count_prices_in_card_usluga', 'prices']
     column_list = ['id', 'name_card_usluga', 'punkt_menu_card_usluga', 'usluga',
+                   'type_production',
+                   # 'type_production.statuses_intermediate' потом убрать из админки, он не информативен
+                   'type_production.statuses_intermediate',
                    'dir_photos', 'comments', 'count_photos_in_card_usluga',
                    'photos', 'count_prices_in_card_usluga', 'prices',
-                   'statuses_card_usluga', 'arhive', 'active']
+                    'arhive', 'active']
 
     # Если включаю 'count_photos_in_card_usluga' для возможности сортировки - выдает ошибку поэтому исключила
     # Нужно разбираться с гибридными св-вами модели ('count_photos_in_card_usluga' оттуда)
     # column_sortable_list =['id', ('punkt_menu_card_usluga', 'usluga.punkt_menu.title'), ('usluga.punkt_menu', 'usluga.punkt_menu.title'), ('usluga', 'usluga.title'), 'name_card_usluga', 'dir_photos', 'comments']
     column_sortable_list =['id', 'arhive', 'active', 'name_card_usluga', ('punkt_menu_card_usluga',
                                                                          'usluga.punkt_menu.title'),
-                           ('usluga', 'usluga.title'), 'dir_photos', 'comments', ('statuses_card_usluga', 'statuses_card_usluga.status.number')]
+                           ('usluga', 'usluga.title'), 'dir_photos', 'comments',
+                           ('type_production', 'type_production.name'),
+                           # ('statuses_card_usluga', 'statuses_card_usluga.status.number')
+                           ]
 
     column_searchable_list = ['id', 'arhive', 'active', 'name_card_usluga', 'usluga.punkt_menu.title', 'usluga.title',
-                              'dir_photos', 'comments', 'statuses_card_usluga.status.status']
+                              'dir_photos', 'comments',
+                              'type_production.name',
+                              # 'statuses_card_usluga.status.status'
+                              ]
     # Присвоить столбцам из модели заголовки
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
     column_labels = dict (usluga='Относится к услуге (usluga)',
+                          type_production='Тип производства',
                           arhive='Архив',
                           active='Активна',
                           punkt_menu_card_usluga='Относится к разделу',
@@ -2105,10 +2121,10 @@ class CardUslugaView(SpecificView):
                           count_photos_in_card_usluga='кол-во фото',
                           count_prices_in_card_usluga= 'кол-во прайсов')
 
-    form_create_rules = ['usluga', 'name_card_usluga', 'comments']
+    form_create_rules = ['usluga', 'type_production', 'name_card_usluga', 'comments']
 
-    column_editable_list = ['name_card_usluga', 'arhive', 'active', 'comments']
-    form_edit_rules = ['name_card_usluga', 'arhive', 'active', 'comments']
+    column_editable_list = ['name_card_usluga', 'type_production', 'arhive', 'active', 'comments']
+    form_edit_rules = ['name_card_usluga', 'type_production', 'arhive', 'active', 'comments']
     edit_modal = True
     # can_view_details = True
 
@@ -2543,12 +2559,13 @@ class OrderView(SpecificView):
         if current_user.has_role('superadmin') or current_user.has_role('admin') or current_user.has_role('manager'):
             return True
 
-
 class OrderItemView(SpecificView):
     column_list = ['id', 'order', 'card_usluga', 'price',
                    'gorizontal_position_price_i', 'vertical_position_price_j',
-                   'actual_offer', 'actual_status',
-                   'date_create_actual_status', 'progress']
+                   'actual_offer',
+                   # 'actual_status',
+                   'date_create_actual_status',
+                   'progress']
 
     column_labels = dict(order='Номер заказа',
                          card_usluga='Карточка услуги',
@@ -2556,7 +2573,7 @@ class OrderItemView(SpecificView):
                          gorizontal_position_price_i='Горизонт. позиция прайса',
                          vertical_position_price_j='Вертик. позиция прайса',
                          actual_offer='Актуальность предложения',
-                         actual_status='Актуальный статус',
+                         # actual_status='Актуальный статус',
                          date_create_actual_status='Дата начала актуального статуса',
                          progress='Прогресс',
                          )
@@ -2572,7 +2589,7 @@ class OrderItemView(SpecificView):
                               'gorizontal_position_price_i',
                               'vertical_position_price_j',
                               'actual_offer',
-                              'actual_status.status.status',
+                              # 'actual_status.status.status',
                               'date_create_actual_status',
                               'progress'
                               ]
@@ -2590,7 +2607,7 @@ class OrderItemView(SpecificView):
                               'gorizontal_position_price_i',
                               'vertical_position_price_j',
                               'actual_offer',
-                            ('actual_status', 'actual_status.status.status'),
+                            # ('actual_status', 'actual_status.status.status'),
                               'date_create_actual_status'
                             ]
     # Задает поля, в которых возможна фильтрация (выбирается столбец в кот.
@@ -2606,89 +2623,10 @@ class OrderItemView(SpecificView):
                       'gorizontal_position_price_i',
                       'vertical_position_price_j',
                       'actual_offer',
-                      'actual_status.status.status',
+                      # 'actual_status.status.status',
                       'date_create_actual_status'
                       ]
 
-
-class MyStatus(SpecificView):
-
-    def on_model_change(self, form, model, is_created):
-
-        # Сделаем первую заглавную букву в статусе
-        model.status=model.status[0].capitalize() + model.status[1:]
-
-
-    # ***** column_list - начало
-    # Задает поля из базы, отображаемые в админ панели
-    # Столбцы будут расположены в порядке, указанном в списке!!!
-    # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
-    column_list = ['id', 'number', 'status', 'comment']
-
-    # Удалить столбцы из списка.
-    # Если задан column_list, где данный столбец не включен, то column_exclude_list
-    # не нужен. Разница в том, что порядок столбцов будет произвольным, а при задании
-    # column_list будет тот, что указан в списке!!! Поэтому зададим column_list!!!
-    # column_exclude_list = ['password']
-
-    # Присвоить столбцам из модели заголовки
-    # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
-    column_labels = dict(status='Статус', number='Вес статуса', comment='Комментарий')
-
-    # Добавляет столбцы-отношения - задаем в SettingAdminForAllRoles
-    # column_display_all_relations = True
-
-    # Задает поля, в которых возможен поиск по словам
-    # Поля - отношения в поиск ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
-    # не roles а roles.name, не 'orders' а 'orders.order'
-    # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
-    # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
-    column_searchable_list = ['id', 'status', 'number']
-
-    # Задает поля, в которых возможна булева фильтрация
-    # column_filters = (BooleanEqualFilter(column=User.active, name='active'),)
-
-    # Задает поля, в которых возможна фильтрация (выбирается столбец
-    # в котором осyществляется поиск (по ключевому слову например или по булеву значению))
-    # Если включить отношение к Role ('roles'),
-    # то в выпадающем списке AddFilter кроме имени, роли, описания, id
-    # увидим и все поля модели Role(например name, description и тп)
-    # и следовательно можно искать те роли в которых например name содержит сочетание ad и тп)
-    column_filters = ['id', 'status', 'number', 'comment']
-
-    # Задает поля, в которых возможна сортировка (по алфавиту например)
-    # Поля - отношения в сортировку ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
-    # ('roles', 'roles.name')
-    # так как при включении просто roles или orders при попытке сортировки выдаст ошибку
-    # поскольку, видимо, ролей и заказов может быть несколько и, следовательно,
-    # не понятно как сортировать???
-    # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
-    # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
-    column_sortable_list = ['id', 'status', 'number', 'comment']
-
-    # Задает поля, в кот. возможно быстрое редактирование(то есть при нажатии на это поле)
-    # id не включать!!!
-    # column_editable_list = ['active']
-
-    # Задает редактируемые поля.
-    # id не включать!!!  Если 'id' включен, то редактирование дает ошибку
-    # Если не задать то по умолчанию доступны для редактирования все поля
-    # если в этом списке не все поля - то выдает предупреждение в терминале
-    # об отсутствующих в списке полях модели, например:
-    # Fields missing from ruleset: password,created_on
-    # warnings.warn(text)
-    # Для подавления этих сообщений используем функцию with warnings.catch_warnings()
-    # при создании представлений (admin.add_view...) конкретных моделей см. ниже
-    # https://fooobar.com/questions/998148/how-can-i-avoid-flask-admin-21-warning-userwarning-fields-missing-from-ruleset
-    # https://docs-python.ru/standart-library/modul-warnings-python/funktsija-warn-modulja-warnings/
-    form_edit_rules = {'status', 'number', 'comment'}
-
-    # Задает поля при создании записи.
-    form_create_rules = ['status', 'number', 'comment']
-
-    def is_visible(self):
-        if current_user.has_role('superadmin'):
-            return True
 
 # Попытка отформатировать форму ввода данных даты на временной интервал (timedelta) - начало!
 # Работает, но форматирует вид введенных данных а не форму ввода
@@ -2718,149 +2656,6 @@ class MyStatus(SpecificView):
 #     # это внутрь модели админки - конец
 
 # Попытка отформатировать форму ввода данных даты на временной интервал (timedelta) - конец!
-
-
-class MyStatusCardUsluga(SpecificView):
-
-    # Добавим валидатор NumberRange (задаем интервалы)
-    # для кол-ва дней часов или минут на выполнение работ.
-    # https://translated.turbopages.org/proxy_u/en-ru.ru.c1b086fc-62f24a67-9453ffe5-74722d776562/https/stackoverflow.com/questions/45458767/change-the-order-or-disable-the-unique-validator-in-flask-admin-with-sqlalchemy
-    form_args = {
-        'days_norma': {
-            'validators': [NumberRange(min=0, max=366)]
-        },
-        'hours_norma': {
-            'validators': [NumberRange(min=0, max=23)]
-        },
-        'minutes_norma': {
-            'validators': [NumberRange(min=0, max=59)]
-        }
-    }
-
-
-    # https://translated.turbopages.org/proxy_u/en-ru.ru.6a4e954e-62f0e5b5-67f2c0ff-74722d776562/https/stackoverflow.com/questions/57794198/flask-admin-not-including-some-columns-in-create-edit-but-are-included-in-the
-    # Без этой строки norma_interval не отображался в форме создания и редактироания
-    # form_extra_fields = {
-    #     'norma_interval': DateTimeField('norma_interval')
-    # }
-    # Но это поле работает не так как я планировала (те тип ИНтервал) а именно дата,
-    # Поэтому я решила вводить и хранить просто целые числа (день, час, минута) а потом в роуте преобразовывать в
-    # timedelta
-
-
-
-    # Создадим normativ2 - начало!
-    # https://translated.turbopages.org/proxy_u/en-ru.ru.a8edd97f-62d92535-0d2a131f-74722d776562/https/stackoverflow.com/questions/39895123/custom-and-sortable-column-in-flask-admin
-    # В ссылке указаны 2 способа (один в модели(ответ), второй  в админке - оба работают!!!)
-    # для них нужны импорты
-    # from sqlalchemy.ext.hybrid import hybrid_property
-    # from sqlalchemy import select, func
-
-    def _normativ2_formatter(view, context, model, name):
-        # return len(model.uslugs)
-        return str(model.days_norma)+' дн. '+ str(model.hours_norma)+' ч. '+str(model.minutes_norma) + ' мин.'
-
-    column_formatters = {
-        'normativ2': _normativ2_formatter
-    }
-    # Создадим normativ2 - конец!
-
-    column_list = ['id', 'status', 'card_usluga', 'role_responsible', 'normativ', 'normativ2']
-    column_labels = dict(normativ2='Норматив (из админки)', normativ='Норматив (из модели)')
-    column_filters = ['id', 'status', 'card_usluga', 'role_responsible']
-    column_searchable_list = ['id', 'status.status', 'card_usluga.name_card_usluga', 'role_responsible.name']
-    # column_sortable_list = ['id', ('status', 'status.number'),
-    #                         ('card_usluga', 'card_usluga.name_card_usluga'),
-    #                         ('role_responsible', 'role_responsible.name'),
-    #                         ('standard', 'days_norma', 'hours_norma', 'minutes_norma')]
-    # column_default_sort = 'status.number'
-    column_sortable_list = ['id', ('status', 'status.number'),
-                            ('card_usluga', 'card_usluga.name_card_usluga'),
-                            ('role_responsible', 'role_responsible.name')]
-
-    def is_visible(self):
-        if current_user.has_role('superadmin'):
-            return True
-
-
-# class MyOrderStatus(SpecificView):
-#
-#     def on_model_change(self, form, model, is_created):
-#
-#         # Сделаем первую заглавную букву в статусе
-#         model.status=model.status[0].capitalize() + model.status[1:]
-#
-#
-#     # ***** column_list - начало
-#     # Задает поля из базы, отображаемые в админ панели
-#     # Столбцы будут расположены в порядке, указанном в списке!!!
-#     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
-#     column_list = ['id', 'status', 'number']
-#
-#     # Удалить столбцы из списка.
-#     # Если задан column_list, где данный столбец не включен, то column_exclude_list
-#     # не нужен. Разница в том, что порядок столбцов будет произвольным, а при задании
-#     # column_list будет тот, что указан в списке!!! Поэтому зададим column_list!!!
-#     # column_exclude_list = ['password']
-#
-#     # Присвоить столбцам из модели заголовки
-#     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
-#     column_labels = dict(status='Статус', number='Вес статуса')
-#
-#     # Добавляет столбцы-отношения - задаем в SettingAdminForAllRoles
-#     # column_display_all_relations = True
-#
-#     # Задает поля, в которых возможен поиск по словам
-#     # Поля - отношения в поиск ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
-#     # не roles а roles.name, не 'orders' а 'orders.order'
-#     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
-#     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
-#     column_searchable_list = ['id', 'status', 'number']
-#
-#     # Задает поля, в которых возможна булева фильтрация
-#     # column_filters = (BooleanEqualFilter(column=User.active, name='active'),)
-#
-#     # Задает поля, в которых возможна фильтрация (выбирается столбец
-#     # в котором осyществляется поиск (по ключевому слову например или по булеву значению))
-#     # Если включить отношение к Role ('roles'),
-#     # то в выпадающем списке AddFilter кроме имени, роли, описания, id
-#     # увидим и все поля модели Role(например name, description и тп)
-#     # и следовательно можно искать те роли в которых например name содержит сочетание ad и тп)
-#     column_filters = ['id', 'status', 'number']
-#
-#     # Задает поля, в которых возможна сортировка (по алфавиту например)
-#     # Поля - отношения в сортировку ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
-#     # ('roles', 'roles.name')
-#     # так как при включении просто roles или orders при попытке сортировки выдаст ошибку
-#     # поскольку, видимо, ролей и заказов может быть несколько и, следовательно,
-#     # не понятно как сортировать???
-#     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
-#     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
-#     column_sortable_list = ['id', 'status', 'number']
-#
-#     # Задает поля, в кот. возможно быстрое редактирование(то есть при нажатии на это поле)
-#     # id не включать!!!
-#     # column_editable_list = ['active']
-#
-#     # Задает редактируемые поля.
-#     # id не включать!!!  Если 'id' включен, то редактирование дает ошибку
-#     # Если не задать то по умолчанию доступны для редактирования все поля
-#     # если в этом списке не все поля - то выдает предупреждение в терминале
-#     # об отсутствующих в списке полях модели, например:
-#     # Fields missing from ruleset: password,created_on
-#     # warnings.warn(text)
-#     # Для подавления этих сообщений используем функцию with warnings.catch_warnings()
-#     # при создании представлений (admin.add_view...) конкретных моделей см. ниже
-#     # https://fooobar.com/questions/998148/how-can-i-avoid-flask-admin-21-warning-userwarning-fields-missing-from-ruleset
-#     # https://docs-python.ru/standart-library/modul-warnings-python/funktsija-warn-modulja-warnings/
-#     form_edit_rules = {'status', 'number'}
-#
-#     # Задает поля при создании записи.
-#     form_create_rules = ['status', 'number']
-#
-#     def is_visible(self):
-#         if current_user.has_role('superadmin') or current_user.has_role('admin'):
-#             return True
 
 
 class PriceTableView(SpecificView):
@@ -3129,8 +2924,253 @@ class PlaceView(BaseView):
         return self.render('place.html')
 # Добавили ссылку на стр из админ панели - конец
 
+# Рассылка писем - проба (можно сделать например)
+# https://stepik.org/lesson/300655/step/4
+class MailerView(BaseView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/mailer/index.html')
+
+
+
+# *** СТАТУСЫ!!!
+
+# class MyStatus(SpecificView):
+#
+#     def on_model_change(self, form, model, is_created):
+#
+#         # Сделаем первую заглавную букву в статусе
+#         model.status=model.status[0].capitalize() + model.status[1:]
+#
+#
+#     # ***** column_list - начало
+#     # Задает поля из базы, отображаемые в админ панели
+#     # Столбцы будут расположены в порядке, указанном в списке!!!
+#     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
+#     column_list = ['id', 'number', 'status', 'comment']
+#
+#     # Удалить столбцы из списка.
+#     # Если задан column_list, где данный столбец не включен, то column_exclude_list
+#     # не нужен. Разница в том, что порядок столбцов будет произвольным, а при задании
+#     # column_list будет тот, что указан в списке!!! Поэтому зададим column_list!!!
+#     # column_exclude_list = ['password']
+#
+#     # Присвоить столбцам из модели заголовки
+#     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
+#     column_labels = dict(status='Статус', number='Вес статуса', comment='Комментарий')
+#
+#     # Добавляет столбцы-отношения - задаем в SettingAdminForAllRoles
+#     # column_display_all_relations = True
+#
+#     # Задает поля, в которых возможен поиск по словам
+#     # Поля - отношения в поиск ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
+#     # не roles а roles.name, не 'orders' а 'orders.order'
+#     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
+#     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
+#     column_searchable_list = ['id', 'status', 'number']
+#
+#     # Задает поля, в которых возможна булева фильтрация
+#     # column_filters = (BooleanEqualFilter(column=User.active, name='active'),)
+#
+#     # Задает поля, в которых возможна фильтрация (выбирается столбец
+#     # в котором осyществляется поиск (по ключевому слову например или по булеву значению))
+#     # Если включить отношение к Role ('roles'),
+#     # то в выпадающем списке AddFilter кроме имени, роли, описания, id
+#     # увидим и все поля модели Role(например name, description и тп)
+#     # и следовательно можно искать те роли в которых например name содержит сочетание ad и тп)
+#     column_filters = ['id', 'status', 'number', 'comment']
+#
+#     # Задает поля, в которых возможна сортировка (по алфавиту например)
+#     # Поля - отношения в сортировку ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
+#     # ('roles', 'roles.name')
+#     # так как при включении просто roles или orders при попытке сортировки выдаст ошибку
+#     # поскольку, видимо, ролей и заказов может быть несколько и, следовательно,
+#     # не понятно как сортировать???
+#     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
+#     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
+#     column_sortable_list = ['id', 'status', 'number', 'comment']
+#
+#     # Задает поля, в кот. возможно быстрое редактирование(то есть при нажатии на это поле)
+#     # id не включать!!!
+#     # column_editable_list = ['active']
+#
+#     # Задает редактируемые поля.
+#     # id не включать!!!  Если 'id' включен, то редактирование дает ошибку
+#     # Если не задать то по умолчанию доступны для редактирования все поля
+#     # если в этом списке не все поля - то выдает предупреждение в терминале
+#     # об отсутствующих в списке полях модели, например:
+#     # Fields missing from ruleset: password,created_on
+#     # warnings.warn(text)
+#     # Для подавления этих сообщений используем функцию with warnings.catch_warnings()
+#     # при создании представлений (admin.add_view...) конкретных моделей см. ниже
+#     # https://fooobar.com/questions/998148/how-can-i-avoid-flask-admin-21-warning-userwarning-fields-missing-from-ruleset
+#     # https://docs-python.ru/standart-library/modul-warnings-python/funktsija-warn-modulja-warnings/
+#     form_edit_rules = {'status', 'number', 'comment'}
+#
+#     # Задает поля при создании записи.
+#     form_create_rules = ['status', 'number', 'comment']
+#
+#     def is_visible(self):
+#         if current_user.has_role('superadmin'):
+#             return True
+
+# class MyStatusCardUsluga(SpecificView):
+#
+#     # Добавим валидатор NumberRange (задаем интервалы)
+#     # для кол-ва дней часов или минут на выполнение работ.
+#     # https://translated.turbopages.org/proxy_u/en-ru.ru.c1b086fc-62f24a67-9453ffe5-74722d776562/https/stackoverflow.com/questions/45458767/change-the-order-or-disable-the-unique-validator-in-flask-admin-with-sqlalchemy
+#     form_args = {
+#         'days_norma': {
+#             'validators': [NumberRange(min=0, max=366)]
+#         },
+#         'hours_norma': {
+#             'validators': [NumberRange(min=0, max=23)]
+#         },
+#         'minutes_norma': {
+#             'validators': [NumberRange(min=0, max=59)]
+#         }
+#     }
+#
+#
+#     # https://translated.turbopages.org/proxy_u/en-ru.ru.6a4e954e-62f0e5b5-67f2c0ff-74722d776562/https/stackoverflow.com/questions/57794198/flask-admin-not-including-some-columns-in-create-edit-but-are-included-in-the
+#     # Без этой строки norma_interval не отображался в форме создания и редактироания
+#     # form_extra_fields = {
+#     #     'norma_interval': DateTimeField('norma_interval')
+#     # }
+#     # Но это поле работает не так как я планировала (те тип ИНтервал) а именно дата,
+#     # Поэтому я решила вводить и хранить просто целые числа (день, час, минута) а потом в роуте преобразовывать в
+#     # timedelta
+#
+#
+#
+#     # Создадим normativ2 - начало!
+#     # https://translated.turbopages.org/proxy_u/en-ru.ru.a8edd97f-62d92535-0d2a131f-74722d776562/https/stackoverflow.com/questions/39895123/custom-and-sortable-column-in-flask-admin
+#     # В ссылке указаны 2 способа (один в модели(ответ), второй  в админке - оба работают!!!)
+#     # для них нужны импорты
+#     # from sqlalchemy.ext.hybrid import hybrid_property
+#     # from sqlalchemy import select, func
+#
+#     def _normativ2_formatter(view, context, model, name):
+#         # return len(model.uslugs)
+#         return str(model.days_norma)+' дн. '+ str(model.hours_norma)+' ч. '+str(model.minutes_norma) + ' мин.'
+#
+#     column_formatters = {
+#         'normativ2': _normativ2_formatter
+#     }
+#     # Создадим normativ2 - конец!
+#
+#     column_list = ['id', 'status', 'card_usluga', 'role_responsible', 'normativ', 'normativ2']
+#     column_labels = dict(normativ2='Норматив (из админки)', normativ='Норматив (из модели)')
+#     column_filters = ['id', 'status', 'card_usluga', 'role_responsible']
+#     column_searchable_list = ['id', 'status.status', 'card_usluga.name_card_usluga', 'role_responsible.name']
+#     # column_sortable_list = ['id', ('status', 'status.number'),
+#     #                         ('card_usluga', 'card_usluga.name_card_usluga'),
+#     #                         ('role_responsible', 'role_responsible.name'),
+#     #                         ('standard', 'days_norma', 'hours_norma', 'minutes_norma')]
+#     # column_default_sort = 'status.number'
+#     column_sortable_list = ['id', ('status', 'status.number'),
+#                             ('card_usluga', 'card_usluga.name_card_usluga'),
+#                             ('role_responsible', 'role_responsible.name')]
+#
+#     def is_visible(self):
+#         if current_user.has_role('superadmin'):
+#             return True
+
+
+# class MyOrderStatus(SpecificView):
+#
+#     def on_model_change(self, form, model, is_created):
+#
+#         # Сделаем первую заглавную букву в статусе
+#         model.status=model.status[0].capitalize() + model.status[1:]
+#
+#
+#     # ***** column_list - начало
+#     # Задает поля из базы, отображаемые в админ панели
+#     # Столбцы будут расположены в порядке, указанном в списке!!!
+#     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
+#     column_list = ['id', 'status', 'number']
+#
+#     # Удалить столбцы из списка.
+#     # Если задан column_list, где данный столбец не включен, то column_exclude_list
+#     # не нужен. Разница в том, что порядок столбцов будет произвольным, а при задании
+#     # column_list будет тот, что указан в списке!!! Поэтому зададим column_list!!!
+#     # column_exclude_list = ['password']
+#
+#     # Присвоить столбцам из модели заголовки
+#     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
+#     column_labels = dict(status='Статус', number='Вес статуса')
+#
+#     # Добавляет столбцы-отношения - задаем в SettingAdminForAllRoles
+#     # column_display_all_relations = True
+#
+#     # Задает поля, в которых возможен поиск по словам
+#     # Поля - отношения в поиск ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
+#     # не roles а roles.name, не 'orders' а 'orders.order'
+#     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
+#     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
+#     column_searchable_list = ['id', 'status', 'number']
+#
+#     # Задает поля, в которых возможна булева фильтрация
+#     # column_filters = (BooleanEqualFilter(column=User.active, name='active'),)
+#
+#     # Задает поля, в которых возможна фильтрация (выбирается столбец
+#     # в котором осyществляется поиск (по ключевому слову например или по булеву значению))
+#     # Если включить отношение к Role ('roles'),
+#     # то в выпадающем списке AddFilter кроме имени, роли, описания, id
+#     # увидим и все поля модели Role(например name, description и тп)
+#     # и следовательно можно искать те роли в которых например name содержит сочетание ad и тп)
+#     column_filters = ['id', 'status', 'number']
+#
+#     # Задает поля, в которых возможна сортировка (по алфавиту например)
+#     # Поля - отношения в сортировку ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
+#     # ('roles', 'roles.name')
+#     # так как при включении просто roles или orders при попытке сортировки выдаст ошибку
+#     # поскольку, видимо, ролей и заказов может быть несколько и, следовательно,
+#     # не понятно как сортировать???
+#     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
+#     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
+#     column_sortable_list = ['id', 'status', 'number']
+#
+#     # Задает поля, в кот. возможно быстрое редактирование(то есть при нажатии на это поле)
+#     # id не включать!!!
+#     # column_editable_list = ['active']
+#
+#     # Задает редактируемые поля.
+#     # id не включать!!!  Если 'id' включен, то редактирование дает ошибку
+#     # Если не задать то по умолчанию доступны для редактирования все поля
+#     # если в этом списке не все поля - то выдает предупреждение в терминале
+#     # об отсутствующих в списке полях модели, например:
+#     # Fields missing from ruleset: password,created_on
+#     # warnings.warn(text)
+#     # Для подавления этих сообщений используем функцию with warnings.catch_warnings()
+#     # при создании представлений (admin.add_view...) конкретных моделей см. ниже
+#     # https://fooobar.com/questions/998148/how-can-i-avoid-flask-admin-21-warning-userwarning-fields-missing-from-ruleset
+#     # https://docs-python.ru/standart-library/modul-warnings-python/funktsija-warn-modulja-warnings/
+#     form_edit_rules = {'status', 'number'}
+#
+#     # Задает поля при создании записи.
+#     form_create_rules = ['status', 'number']
+#
+#     def is_visible(self):
+#         if current_user.has_role('superadmin') or current_user.has_role('admin'):
+#             return True
+
+class TypeProductionView(SpecificView):
+    # Задает поля из базы, отображаемые в админ панели
+    # Столбцы будут расположены в порядке, указанном в списке!!!
+    # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
+    column_list = ['id', 'name', 'cards_uslugs', 'statuses_intermediate']
+
+class StatusCardView(SpecificView):
+    column_list = ['id', 'name', 'weight', 'description', 'statuses_intermediate']
+
+class StatusIntermediateView(SpecificView):
+    column_list = ['id', 'type_production', 'status_card', 'name', 'weight', 'description']
+
+
 # Создание административной панели
-admin = Admin(app, 'ИМЯ', url='/admin/', index_view=HomeAdminView(name='Главная панель'), template_mode='bootstrap4')
+admin = Admin(app, 'Имя', url='/admin/', index_view=HomeAdminView(name='Гл'), template_mode='bootstrap4')
 
 
 # ******** warnings.catch_warnings() - начало
@@ -3152,46 +3192,59 @@ with warnings.catch_warnings():
     warnings.filterwarnings('ignore', 'Fields missing from ruleset', UserWarning)
    # Объявление представлений админ. панели с помощью встроенной функции add_view из Flask-Admin
     # каждое из представлений добавляет в админ.панель данные из конкретной модели
-    admin.add_view(MyLink(Link, db.session, name='Меню сайта(Link)', category="Меню и Услуги"))
-    admin.add_view(MyUsluga(Usluga, db.session, name='Услуги(Usluga)', category="Меню и Услуги"))
-    admin.add_view(UserView(User, db.session, name='Пользователи(User)', category="Пользователи и роли"))
-    admin.add_view(RoleView(Role, db.session, name='Роли(Role)', category="Пользователи и роли"))
-    admin.add_view(PayerView(Payer, db.session, name='Плательщики(Payer)'))
-    admin.add_view(MyListModel(ListModel, db.session, name='Модели(ListModel)', category="Модели и настройки"))
-    admin.add_view(MySettingAdmin(SettingAdmin, db.session, name='Настройки(SettingAdmin)', category="Модели и настройки"))
-    admin.add_view(MyUploadFileMy(UploadFileMy, db.session, name='Фото услуг(UploadFileMy)', category="Фото услуг и прайсы"))
-    admin.add_view(PriceTableView(PriceTable, db.session, name='Прайсы(PriceTable)', category="Фото услуг и прайсы"))
-    # Заказы и статусы - начало
-    admin.add_view(CardUslugaView(CardUsluga, db.session, name=' Карточка услуги(CardUsluga)'))
-    admin.add_view(MyStatus(Status, db.session, name='Возможные статусы'))
-    admin.add_view(MyStatusCardUsluga(StatusCardUsluga, db.session, name='Статусы карточек'))
-    # admin.add_view(MyOrderStatus(OrderStatus, db.session, name='Статусы заказов'))
-    admin.add_view(OrderView(Order, db.session, name='Заказы'))
-    admin.add_view(OrderItemView(OrderItem, db.session, name='Элементы заказы'))
-    # Заказы и статусы - конец
 
-    admin.add_view(MyPhoto(Photo, db.session, name=' Фото(Photo)'))
+    # Меню, Услуги
+    admin.add_view(MyLink(Link, db.session, name='Меню сайта(Link)', category="Меню,Услуги"))
+    admin.add_view(MyUsluga(Usluga, db.session, name='Услуги(Usluga)', category="Меню,Услуги"))
+
+    # Пользователи, Роли
+    admin.add_view(UserView(User, db.session, name='Пользователи(User)', category="Пользователи,Роли"))
+    admin.add_view(RoleView(Role, db.session, name='Роли(Role)', category="Пользователи,Роли"))
+
+
+    admin.add_view(CardUslugaView(CardUsluga, db.session, name=' Карточки услуг', category="Карточки"))
+    admin.add_view(PriceTableView(PriceTable, db.session, name='Прайсы', category="Карточки"))
+    admin.add_view(MyPhoto(Photo, db.session, name=' Фото(Photo)', category="Карточки"))
+
+    admin.add_view(TypeProductionView(TypeProduction, db.session, name='Тип производства'))
+
+    # Статусы
+    admin.add_view(StatusCardView(StatusCard, db.session, name='Статусы карт'))
+    admin.add_view(StatusIntermediateView(StatusIntermediate, db.session, name='Промежуточные статусы карт'))
+    # admin.add_view(MyStatus(Status, db.session, name='Возможные статусы', category="Статусы"))
+    # admin.add_view(MyStatusCardUsluga(StatusCardUsluga, db.session, name='Статусы карточек', category="Статусы"))
+    # admin.add_view(MyOrderStatus(OrderStatus, db.session, name='Статусы заказов'))
+
+    # Заказы
+    admin.add_view(OrderView(Order, db.session, name='Заказы', category="Заказы"))
+    admin.add_view(OrderItemView(OrderItem, db.session, name='Элементы заказов', category="Заказы"))
+
+
+
     admin.add_view(MyPhone(Phone, db.session, name='Телефоны(Phone)'))
+    admin.add_view(PayerView(Payer, db.session, name='Плательщики(Payer)'))
+
+    # Карусели
     admin.add_view(MyCarousel(Carousel, db.session, name='Карусели'))
+
+    # Размещение каруселей
     admin.add_view(MyPlaceCarousel(PlaceCarousel, db.session, name='Place Carousel'))
 
-    # Ссылка на стр из админ панели (наглядно места размещени из фотошопа) - начало
+    # Ссылка на стр из админ панели (наглядно места размещения из фотошопа)
     # admin.add_view(PlaceView(name='Места', endpoint='place'))
-    # Ссылка на стр из админ панели (наглядно места размещени из фотошопа) - конец
 
-    # Категория "Места моделей и размеры" - начало
+    # Категория "Места моделей и размеры"
     # с 2 подкатегориями: 1) 'Размеры элемента'
     # (кот. является категорией для подкатегорий 'Ширина элемента' и 'Высота элемента')
     # 2) PlaceModel Element'
-    admin.add_view(MyPlaceModelElement(PlaceModelElement, db.session, name='PlaceModelElement', category="Места моделей и размеры"))
-    admin.add_sub_category(name='Размеры элемента', parent_name="Места моделей и размеры")
+    admin.add_view(MyPlaceModelElement(PlaceModelElement, db.session,
+                                       name='PlaceModelElement',
+                                       category="Места моделей,Размеры"))
+    admin.add_sub_category(name='Размеры элемента', parent_name="Места моделей,Размеры")
     # admin.add_view(MySizeElement(SizeElement, db.session, name='Размеры элементов', category="Размер элемента"))
     admin.add_view(MyWidthElement(WidthElement, db.session, name='Ширина элемента', category="Размеры элемента"))
     admin.add_view(MyHeightElement(HeightElement, db.session, name='Высота элемента', category="Размеры элемента"))
-    # Категория "Места моделей и размеры" - конец
-
     admin.add_view(MyPlaceElement(PlaceElement, db.session, name='Размещение элемента'))
-
     admin.add_view(MyBaseLocationElement(BaseLocationElement, db.session, name='Базовая локация', category="Параметры размещ.элем."))
     admin.add_view(MyBasePositionElement(BasePositionElement, db.session, name='Базовая позиция', category="Параметры размещ.элем."))
 
@@ -3218,16 +3271,21 @@ with warnings.catch_warnings():
     # Сделано для примера - не используется в проекте
     # admin.add_sub_category(name='Имя ссылки', parent_name="Параметры размещ.элем.")
     # admin.add_link(MenuLink(name='Название какое-то', url='/адрес ссылки', category='Имя ссылки'))
-    # Создание подкатегории и ссылки в ней - конец
 
+    # Приоритет элемента
+    # admin.add_view(MyPriorityElement(PriorityElement, db.session, name='Приоритет элемента', category="Приоритет элем."))
 
+    # Модели, Настройки
+    admin.add_view(MyListModel(ListModel, db.session, name='Модели(ListModel)', category="Модели,Настройки"))
+    admin.add_view(MySettingAdmin(SettingAdmin, db.session, name='Настройки(SettingAdmin)', category="Модели,Настройки"))
 
-    admin.add_view(MyPriorityElement(PriorityElement, db.session, name='Приоритет элемента', category="Приоритет элем."))
-
-
-
+    admin.add_view(MyUploadFileMy(UploadFileMy, db.session, name='Фото услуг(UploadFileMy)'))
 
 admin.add_view(MyView(name='Выйти'))
+
+# Рассылка писем - проба
+# https://stepik.org/lesson/300655/step/4
+# admin.add_view(MailerView(name='Рассылки', endpoint='mailer', category='Models'))
 
 
     # *****перенесла в fotomanager.py - начало - не удалять!!!

@@ -666,7 +666,7 @@ class Role(db.Model, RoleMixin):
     # это отношение один ко многим - одна модель и у нее несколько настроек (для разных ролей)
     setting = db.relationship("SettingAdmin", back_populates="role")
 
-    statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='role_responsible')
+    # statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='role_responsible')
 
     orders = db.relationship('Order', back_populates='manager_role')
 
@@ -674,6 +674,7 @@ class Role(db.Model, RoleMixin):
     # а имя (name)(например admin)
     def __repr__(self):
         return self.name
+
 
 # Модель Список таблиц(моделей)
 class ListModel(db.Model):
@@ -685,10 +686,13 @@ class ListModel(db.Model):
     # это отношение один ко многим - одна модель и у нее несколько настроек (для разных ролей)
     setting = db.relationship("SettingAdmin", back_populates="model")
 
+    # statuses = db.relationship("Status", back_populates="model_name")
+
     # Эта функция позволяет отразить в админке в частности не объект SQLalchemy (например <Role1>),
     # а имя (name_model)(например User)
     def __repr__(self):
         return self.name_model
+
 
 # Модель Настройки CRUD админ. панели
 class SettingAdmin(db.Model):
@@ -833,6 +837,59 @@ class Usluga(db.Model):
     def __repr__(self):
         return self.title
 
+# Модель тип производства
+class TypeProduction(db.Model):
+    __tablename__ = 'types_productions'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
+    cards_uslugs = db.relationship("CardUsluga", back_populates='type_production')
+    statuses_intermediate = db.relationship("StatusIntermediate", back_populates='type_production')
+    def __repr__(self):
+        return self.name
+
+# Модель Статусы карточек
+# стандартные набор статусов, общий для всех карточек услуг
+# вес задавать так - 0, 1000, 2000 (Пока так)
+# Нужно для того, чтобы потом сортировать в соответствии с основными статусами?
+# Складывать вес основного статуса и промежуточного для сортировки?
+class StatusCard(db.Model):
+    __tablename__ = 'statuses_card'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
+    # вес статуса
+    weight = db.Column(db.Integer, nullable=False)
+    # описание статуса
+    description = db.Column(db.String(), nullable=False)
+    statuses_intermediate = db.relationship("StatusIntermediate", back_populates='status_card')
+    def __repr__(self):
+        return self.name
+
+
+# Модель Промежуточные статусы
+# зависят от основного статуса и типа производства
+# вес задавать так - 1-999 (Пока так)
+# Нужно для того, чтобы потом сортировать в соответствии с основными статусами?
+# Складывать вес основного статуса и промежуточного для сортировки?
+class StatusIntermediate(db.Model):
+    __tablename__ = 'statuses_intermediate'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
+    # вес статуса
+    weight = db.Column(db.Integer, nullable=False)
+    # описание статуса
+    description = db.Column(db.String(), nullable=False)
+
+    # основной статус карточки
+    status_card_id = db.Column(db.Integer, db.ForeignKey('statuses_card.id'))
+    status_card = db.relationship("StatusCard", back_populates='statuses_intermediate')
+
+    # тип производства
+    type_production_id = db.Column(db.Integer, db.ForeignKey('types_productions.id'))
+    type_production = db.relationship('TypeProduction', back_populates="statuses_intermediate")
+
+    def __repr__(self):
+        return self.name
+
 
 # Модель Карточка услуги
 class CardUsluga(db.Model):
@@ -845,12 +902,16 @@ class CardUsluga(db.Model):
     usluga = db.relationship("Usluga", back_populates='cards_usluga')
     photos = db.relationship("Photo", back_populates='card_usluga', cascade="all,delete")
     prices = db.relationship('PriceTable', back_populates="card_usluga")
-    statuses_card_usluga = db.relationship("StatusCardUsluga", back_populates='card_usluga', cascade="all,delete")
+    # statuses_card_usluga = db.relationship("StatusCardUsluga", back_populates='card_usluga', cascade="all,delete")
     arhive = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=False)
 
     # в каких заказах присутствует
     order_items = db.relationship("OrderItem", back_populates='card_usluga')
+
+    # тип производства (для последующего определения промежуточных статусов)
+    type_production_id=db.Column(db.Integer, db.ForeignKey('types_productions.id'))
+    type_production=db.relationship('TypeProduction', back_populates="cards_uslugs")
 
     def __repr__(self):
         return self.name_card_usluga + ' (id '+str(self.id)+')'
@@ -897,6 +958,60 @@ class CardUsluga(db.Model):
     def punkt_menu_card_usluga(self):
         return self.usluga.punkt_menu
 
+# Модель Статусы карточек услуг - писать!!!! 15.11.22
+# Набор карточка услуги с индивидуальным нормативом на выполнение этапа
+# (основного статуса) и назначением роли ответственного за каждый этап
+# class StatusCardUsluga(db.Model):
+#     __tablename__ = 'statuses_cards_uslugs'
+#     id = db.Column(db.Integer, primary_key=True)
+#
+#     status_id = db.Column(db.Integer, db.ForeignKey('statuses.id'), nullable=False)
+#     status = db.relationship("Status", back_populates='statuses_cards_uslugs')
+#
+#     card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'), nullable=False)
+#     card_usluga = db.relationship("CardUsluga", back_populates='statuses_card_usluga')
+#
+#     # Конструкция __table_args__ задает дополнительные свойства класса
+#     # В данном случае с помощью db.UniqueConstraint мы указываем, что в классе StatusCardUsluga
+#     # одной карточке услуги и одному статусу соответствует единственная строка.
+#     # При этом остальные параметры могут совпадать
+#
+#     __table_args__ = (db.UniqueConstraint('status_id', 'card_usluga_id', name='_card_usluga_status'),
+#                      )
+#
+#     # роль, ответственная (responsible) за этап работы (статус)
+#     role_responsible_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+#     role_responsible = db.relationship("Role", back_populates='statuses_cards_uslugs')
+#
+#     # Норматив времени на статус
+#     days_norma = db.Column(db.Integer, default=0)
+#     hours_norma = db.Column(db.Integer, default=0)
+#     minutes_norma = db.Column(db.Integer, default=0)
+#
+#     order_item = db.relationship("OrderItem", back_populates='actual_status')
+#
+#     # Данные (@hybrid_property) в админке показывает но не могу задать сортировку
+#     # column_sortable_list - дает ошибку, поэтому в админке этот столбец в сортирвку не включила
+#     # https://stackoverflow.com/questions/39895123/custom-and-sortable-column-in-flask-admin
+#     # В ссылке указаны 2 способа (один в модели(см. ответ), второй  в админке - оба работают!!!)
+#     # https://docs.sqlalchemy.org/en/13/orm/extensions/hybrid.html#correlated-subquery-relationship-hybrid
+#
+#     # Пыталась добавить к @hybrid_property def standard(self): (после)  @standard.expression
+#     # чтобы добиться возможности сортировки в flask-admin но ничего не получилось.
+#     # Разбираться!!
+#     # @normativ.expression
+#     # def normativ(cls):
+#     #     return func.str(cls.days_norma)+' дн. '+ str(cls.hours_norma)+' ч. '+str(cls.minutes_norma) + ' мин.'
+#
+#     @hybrid_property
+#     def normativ(self):
+#         return str(self.days_norma)+' дн. '+ str(self.hours_norma)+' ч. '+str(self.minutes_norma) + ' мин.'
+#
+#     def __repr__(self):
+#         # return 'Статус - ' + str(self.status)+' (карточка услуги '+ str(self. card_usluga)+')'
+#         return str(self.status)
+
+
 
 # Модель Заказы
 class Order(db.Model):
@@ -938,8 +1053,10 @@ class Order(db.Model):
 
     # Прогресс выполнения заказа - это статусы заказа(из статусов карточки услуги)
     # с фактическим временем исполнения
+    # Сделать отдельную таблицу!
     progress = db.Column(JSON)
 
+    # Элементы заказа
     order_items = db.relationship("OrderItem", back_populates='order')
 
     # данные заказа поступившие по ссылке в прайсе карточки услуги с сайта
@@ -980,8 +1097,8 @@ class OrderItem(db.Model):
     actual_offer = db.Column(db.Boolean, default=True)
 
     # Актуальный статус элемента заказа
-    actual_status_id = db.Column(db.Integer, db.ForeignKey('statuses_cards_uslugs.id'))
-    actual_status = db.relationship("StatusCardUsluga", back_populates='order_item')
+    # actual_status_id = db.Column(db.Integer, db.ForeignKey('statuses_cards_uslugs.id'))
+    # actual_status = db.relationship("StatusCardUsluga", back_populates='order_item')
 
     date_create_actual_status = db.Column(db.DateTime())
 
@@ -997,83 +1114,41 @@ class OrderItem(db.Model):
 
 
 # Модель Статусы (Возможные статусы) -
+# Пока изменения кот. ниже в базу не вносила (миграцию не делала)!!! 12.11.22
 # один статус может использоваться в разных карточках услуг
-class Status(db.Model):
-    __tablename__ = 'statuses'
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String, nullable=False, unique=True)
-    number = db.Column(db.Integer, nullable=False, unique=True)
-    comment = db.Column(db.String)
-
-    # Статусы карточек услуг
-    statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='status')
-
-    # Заказы
-    # orders = db.relationship("Order", back_populates='statuses')
-
-    def __repr__(self):
-        return str(self. number) + ' - ' + str(self.status)
-
-
-# Модель Статусы карточек услуг
-# У каждой карточки услуг определенный набор статусов,
-# у каждого набора 'статус - карточка услуг' индивидуальный ответственный и
-# индивидуальный временной норматив на выполнение этапа
-class StatusCardUsluga(db.Model):
-    __tablename__ = 'statuses_cards_uslugs'
-    id = db.Column(db.Integer, primary_key=True)
-
-    status_id = db.Column(db.Integer, db.ForeignKey('statuses.id'), nullable=False)
-    status = db.relationship("Status", back_populates='statuses_cards_uslugs')
-
-    card_usluga_id = db.Column(db.Integer, db.ForeignKey('cards_uslugs.id'), nullable=False)
-    card_usluga = db.relationship("CardUsluga", back_populates='statuses_card_usluga')
-
-    # Конструкция __table_args__ задает дополнительные свойства класса
-    # В данном случае с помощью db.UniqueConstraint мы указываем, что в классе StatusCardUsluga
-    # одной карточке услуги и одному статусу соответствует единственная строка.
-    # При этом остальные параметры могут совпадать
-
-    __table_args__ = (db.UniqueConstraint('status_id', 'card_usluga_id', name='_card_usluga_status'),
-                     )
-
-    # роль, ответственная (responsible) за этап работы (статус)
-    role_responsible_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    role_responsible = db.relationship("Role", back_populates='statuses_cards_uslugs')
-
-    # Норматив времени на статус
-    days_norma = db.Column(db.Integer, default=0)
-    hours_norma = db.Column(db.Integer, default=0)
-    minutes_norma = db.Column(db.Integer, default=0)
+# class Status(db.Model):
+#     __tablename__ = 'statuses'
+#     id = db.Column(db.Integer, primary_key=True)
+#     status = db.Column(db.String, nullable=False, unique=True)
+#     number = db.Column(db.Integer, nullable=False, unique=True)
+#     comment = db.Column(db.String)
+#
+#     # имя статуса
+#     name = db.Column(db.String, nullable=False, unique=True)
+#
+#     # описание статуса
+#     description = db.Column(db.String)
+#
+#     # вес статуса
+#     weight = db.Column(db.Integer, nullable=False, unique=True)
+#
+#     # для какой модели (например Карточка услуг, Заказ, Оплата)
+#     model_name_id = db.Column(db.Integer, db.ForeignKey('list_models.id'))
+#     model_name = db.relationship("ListModel", back_populates='statuses')
+#
+#     # Статусы карточек услуг
+#     statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='status')
+#
+#     # Заказы
+#     # orders = db.relationship("Order", back_populates='statuses')
+#
+#     def __repr__(self):
+#         return str(self. number) + ' - ' + str(self.status)
 
 
-    order_item = db.relationship("OrderItem", back_populates='actual_status')
 
 
-    # Данные (@hybrid_property) в админке показывает но не могу задать сортировку
-    # column_sortable_list - дает ошибку, поэтому в админке этот столбец в сортирвку не включила
-    # https://stackoverflow.com/questions/39895123/custom-and-sortable-column-in-flask-admin
-    # В ссылке указаны 2 способа (один в модели(см. ответ), второй  в админке - оба работают!!!)
-    # https://docs.sqlalchemy.org/en/13/orm/extensions/hybrid.html#correlated-subquery-relationship-hybrid
-
-    # Пыталась добавить к @hybrid_property def standard(self): (после)  @standard.expression
-    # чтобы добиться возможности сортировки в flask-admin но ничего не получилось.
-    # Разбираться!!
-    # @normativ.expression
-    # def normativ(cls):
-    #     return func.str(cls.days_norma)+' дн. '+ str(cls.hours_norma)+' ч. '+str(cls.minutes_norma) + ' мин.'
-
-    @hybrid_property
-    def normativ(self):
-        return str(self.days_norma)+' дн. '+ str(self.hours_norma)+' ч. '+str(self.minutes_norma) + ' мин.'
-
-
-    def __repr__(self):
-        # return 'Статус - ' + str(self.status)+' (карточка услуги '+ str(self. card_usluga)+')'
-        return str(self.status)
-
-
-# # Модель Статус заказа - удалить позже (16.08.22)
+# # Модель Статус заказа - удалить позже? (16.08.22)
 # class OrderStatus(db.Model):
 #     __tablename__ = 'order_statuses'
 #     id = db.Column(db.Integer, primary_key=True)
