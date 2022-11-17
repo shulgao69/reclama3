@@ -1075,25 +1075,32 @@ class StaffAction(db.Model):
     __tablename__ = 'staff_actions'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
+    def __repr__(self):
+        return str(self.name)
 
 # Модель Цель действия (например согласовать макет, уточнить данные)
 class GoalAction(db.Model):
     __tablename__ = 'goals_actions'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
-
+    def __repr__(self):
+        return str(self.name)
 
 # Модель Метод действия (например письмо, встреча, звонок)
 class MethodAction(db.Model):
     __tablename__ = 'methods_actions'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
+    def __repr__(self):
+        return str(self.name)
 
 # Модель Результат действия (например макет согласован, данные уточнены)
 class ResultAction(db.Model):
     __tablename__ = 'results_actions'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
+    def __repr__(self):
+        return str(self.name)
 
 
 # Модель Заказы
@@ -1137,7 +1144,9 @@ class Order(db.Model):
     # Прогресс выполнения заказа - это статусы заказа(из статусов карточки услуги)
     # с фактическим временем исполнения
     # Сделать отдельную таблицу!
-    progress = db.Column(JSON)
+    # progress = db.Column(JSON)
+
+    progresses = db.relationship("ProgressOrder", back_populates='order')
 
     # Элементы заказа
     order_items = db.relationship("OrderItem", back_populates='order')
@@ -1146,11 +1155,6 @@ class Order(db.Model):
     # прайсы и параметры карточки услуг могут меняться, поэтому в заказе нужно зафиксировать данные,
     # на момент когда пользователь подтверждает заказ на сайте
     # order_parameters = db.Column(JSON)
-
-    # - удалить позже (16.08.22) тк OrderStatus тоже удалить- начало
-    # status_id = db.Column(db.Integer, db.ForeignKey('order_statuses.id'))
-    # status = db.relationship("OrderStatus", back_populates='orders')
-    # - удалить позже (16.08.22) - конец
 
     def __repr__(self):
         return '№ ' + self.number
@@ -1210,6 +1214,25 @@ class StatusOrder(db.Model):
         return str(self.name)
 
 
+# Модель Прогресс Заказа
+class ProgressOrder(db.Model):
+    __tablename__ = 'progresses_orders'
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Заказ
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
+    order = db.relationship("Order", back_populates='progresses')
+
+    # Статус заказа (на каком этапе заказа совершены действия)
+    status_order_id = db.Column(db.Integer, db.ForeignKey('statuses_orders.id'))
+    status_order = db.relationship("StatusOrder")
+
+    # Дата и время создания перехода на другой статус
+    date_create = db.Column(db.DateTime(), default=datetime.now)
+
+    # Дата и время окончания статуса
+    date_end = db.Column(db.DateTime())
+
 # Модель Действия персонала по заказу
 class ActionOrder(db.Model):
     __tablename__ = 'actions_orders'
@@ -1223,6 +1246,40 @@ class ActionOrder(db.Model):
     # Статус заказа (на каком этапе заказа совершены действия)
     status_order_id = db.Column(db.Integer, db.ForeignKey('statuses_orders.id'))
     status_order = db.relationship("StatusOrder")
+    # Дата и время создания действия
+    date_create = db.Column(db.DateTime(), default=datetime.now)
+
+    # Действие
+    staff_action_id = db.Column(db.Integer, db.ForeignKey('staff_actions.id'))
+    staff_action = db.relationship("StaffAction")
+
+    # Цель действия
+    goal_action_id = db.Column(db.Integer, db.ForeignKey('goals_actions.id'))
+    goal_action = db.relationship("GoalAction")
+
+    # Метод действия
+    method_action_id = db.Column(db.Integer, db.ForeignKey('methods_actions.id'))
+    method_action = db.relationship("MethodAction")
+
+    # Результат действия
+    result_action_id = db.Column(db.Integer, db.ForeignKey('results_actions.id'))
+    result_action = db.relationship("ResultAction")
+
+
+# Модель Действия персонала по элементу заказа
+class ActionOrderItem(db.Model):
+    __tablename__ = 'actions_orders_items'
+    id = db.Column(db.Integer, primary_key=True)
+    # name = db.Column(db.String, nullable=False, unique=True)
+
+    # Элемент заказа
+    order_item_id = db.Column(db.Integer, db.ForeignKey('order_items.id'))
+    order_item = db.relationship("OrderItem")
+
+    # Статус карты (на каком этапе совершены действия)
+    status_card_id = db.Column(db.Integer, db.ForeignKey('statuses_card.id'))
+    status_card = db.relationship("StatusCard")
+
     # Дата и время создания действия
     date_create = db.Column(db.DateTime(), default=datetime.now)
 

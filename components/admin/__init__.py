@@ -94,9 +94,10 @@ from RECL.models import TypeProduction
 from RECL.models import StatusCard, StatusIntermediate, StatusOrder
 from RECL.models import SpecificationStatusCard, SpecificationStatusIntermediate
 from RECL.models import StaffAction, GoalAction, ResultAction, MethodAction, ActionOrder
+from RECL.models import ActionOrder, ActionOrderItem
 # from RECL.models import StatusCardUsluga, Status
 # from RECL.models import OrderStatus
-from RECL.models import Order, OrderItem
+from RECL.models import Order, OrderItem, ProgressOrder
 
 from RECL.models import Carousel, PlaceCarousel
 from RECL.models import PlaceElement, PlaceModelElement, BaseLocationElement, \
@@ -1949,13 +1950,10 @@ class MyUsluga(SpecificView):
         # и ==False - если изменяется.
 
         if is_created:
-
             # re.search(r'[^a-zA-Z]', model.link) возвращает объект, если есть несовпадения
             # Если текст полностью соответствует шаблону (у нас латинские буквы) - то выдает None
-
             # Преобразуем русские буквы в латиницу и переведем в нижний регистр
             model.link=translit(model.title, language_code='ru', reversed=True).lower()
-
 
             # **** Проверка на символы типа #$&$^%*&|/ - начало
             # Если символы в строке model.link, заданных юзером не a-zA-Z0-9\s- (регулярка),
@@ -1974,7 +1972,6 @@ class MyUsluga(SpecificView):
 
             # заменим пробелы идущие подряд на 1 '-'
             new_model_link = "-".join(new_model_link.split())
-
 
             if len(new_model_link)>=1:
                 model.link=new_model_link
@@ -2113,16 +2110,31 @@ class CardUslugaView(SpecificView):
                               ]
     # Присвоить столбцам из модели заголовки
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
-    column_labels = dict (usluga='Относится к услуге (usluga)',
-                          type_production='Тип производства',
-                          arhive='Архив',
-                          active='Активна',
-                          punkt_menu_card_usluga='Относится к разделу',
-                          dir_photos='Директория загрузки фото (dir_photos)',
-                          name_card_usluga='Имя карточки (name_card_usluga)',
-                          comments='Комментарии',
-                          count_photos_in_card_usluga='кол-во фото',
-                          count_prices_in_card_usluga= 'кол-во прайсов')
+    # Если задавала column_labels как dict(...), а не как {"card_usluga": 'Карточка услуги',....}
+    # то невозможно задать лейбл для поля двойного отношения (отношения отношений)
+    # (например 'status_intermediate.status_card')
+    # Если задаю как column_labels = {"card_usluga": 'Ка......}, то лейблы для
+    # поля двойного отношения (отношения отношений) задаются!!!
+    # column_labels = dict (usluga='Относится к услуге (usluga)',
+    #                       type_production='Тип производства',
+    #                       arhive='Архив', active='Активна',
+    #                       punkt_menu_card_usluga='Относится к разделу',
+    #                       dir_photos='Директория загрузки фото (dir_photos)',
+    #                       name_card_usluga='Имя карточки (name_card_usluga)',
+    #                       comments='Комментарии',
+    #                       count_photos_in_card_usluga='кол-во фото',
+    #                       count_prices_in_card_usluga= 'кол-во прайсов')
+    column_labels = {"usluga": 'Относится к услуге (usluga)',
+                         "type_production": 'Тип производства',
+                         "type_production.statuses_intermediate": 'Промежуточные статусы(зависят от типа пр-ва)',
+                         "arhive": 'Архив',
+                         "active": 'Активна',
+                         "punkt_menu_card_usluga": 'Относится к разделу',
+                         "dir_photos": 'Директория загрузки фото (dir_photos)',
+                         "name_card_usluga": 'Имя карточки (name_card_usluga)',
+                         "comments": 'Комментарии',
+                         "count_photos_in_card_usluga": 'кол-во фото',
+                         "count_prices_in_card_usluga": 'кол-во прайсов'}
 
     form_create_rules = ['usluga', 'type_production', 'name_card_usluga', 'comments']
 
@@ -2164,7 +2176,6 @@ class CardUslugaView(SpecificView):
         # print('len(model.photos)=', len(model.photos))
         # self.kk=len(model.photos)
         self.kk=2
-
 
         # *** Сформируем путь меню из имени - начало
 
@@ -2447,7 +2458,8 @@ class OrderView(SpecificView):
                   'manager_person.user_middle_name',
                    'manager_role',
                    'date_create', 'date_end',
-                   'progress', 'order_items']
+                   'progresses',
+                   'order_items']
 
     # Удалить столбцы из списка.
     # Если задан column_list, где данный столбец не включен, то column_exclude_list
@@ -2468,7 +2480,7 @@ class OrderView(SpecificView):
                          date_create='Дата создания',
                          date_end='Дата закрытия',
                          # statuses='Статусы заказа',
-                         progress='Прогресс',
+                         progresses='Прогресс',
                          order_items='Элементы заказа'
                          )
 
@@ -2485,7 +2497,8 @@ class OrderView(SpecificView):
                               'date_create',
                               'date_end',
                               # 'statuses.status',
-                              'progress', 'order_items.id'
+                              # 'progresses',
+                              'order_items.id'
                               ]
 
     # Задает поля, в которых возможна булева фильтрация
@@ -3282,12 +3295,24 @@ class SpecificationStatusIntermediateView(SpecificView):
     column_list = ['id', 'card_usluga', 'status_intermediate.status_card', 'status_intermediate',  'role_responsible',
                    'normativ', 'normativ2']
 
-    column_labels = dict(card_usluga='Карточка услуги',
-                         role_responsible='Ответственный (роль)',
-                         status_intermediate='Статус промежуточный',
-                         normativ2='Норматив (из админки)',
-                         normativ='Норматив (из модели)'
-                         )
+    # Если задавала column_labels как dict(...), а не как {"card_usluga": 'Карточка услуги',....}
+    # то невозможно задать лейбл для поля двойного отношения (отношения отношений)
+    # (например 'status_intermediate.status_card')
+    # Если задаю как column_labels = {"card_usluga": 'Ка......}, то лейблы для
+    # поля двойного отношения (отношения отношений) задаются!!!
+    # column_labels = dict(card_usluga='Карточка услуги',
+    #                      role_responsible='Ответственный (роль)',
+    #                      status_intermediate='Статус промежуточный',
+    #                      normativ2='Норматив (из админки)',
+    #                      normativ='Норматив (из модели)'
+    #                      )
+    column_labels = {"card_usluga": 'Карточка услуги',
+                         "role_responsible": 'Ответственный (роль)',
+                         "status_intermediate": 'Статус промежуточный',
+                     "status_intermediate.status_card": 'Статус основной',
+                         "normativ2": 'Норматив (из админки)',
+                         "normativ": 'Норматив (из модели)'}
+
     column_filters = ['id', 'status_intermediate', 'card_usluga', 'role_responsible']
     column_searchable_list = ['id', 'status_intermediate.name', 'card_usluga.name_card_usluga', 'role_responsible.name']
     # column_sortable_list = ['id', ('status', 'status.number'),
@@ -3334,18 +3359,42 @@ class ResultActionView(SpecificView):
     column_searchable_list = ['id', 'name']
 
 class ActionOrderView(SpecificView):
-    column_list = ['id', 'order', 'order.staff_actual_status_person', 'status_order', 'date_create', 'staff_action',
+
+    column_list = ['id', 'order',
+                   'order.manager_person.email',
+                   'order.manager_person.user_last_name',
+                   'order.manager_person.user_first_name',
+                   'order.manager_person.user_middle_name',
+                   'status_order', 'date_create', 'staff_action',
                    'goal_action', 'method_action', 'result_action']
-    column_labels = dict(order='Заказ',
-                         status_order='Статус заказа',
-                         date_create='Дата действия',
-                         staff_action='Действие',
-                         goal_action='Цель действия',
-                         method_action='Метод действия',
-                         result_action='Результат действия',
-                         )
+    # column_labels = dict(order='Заказ',
+    #                      status_order='Статус заказа',
+    #                      date_create='Дата действия',
+    #                      "order.staff_actual_status_person"='order.staff_actual_status_person',
+    #                      staff_action='Действие',
+    #                      goal_action='Цель действия',
+    #                      method_action='Метод действия',
+    #                      result_action='Результат действия',
+    #                      )
+    column_labels = {"order": 'Заказ',
+                     "status_order": 'Статус заказа',
+                     "date_create": 'Дата действия',
+                     "order.manager_person.email": 'Ответственный',
+                     "order.manager_person.user_last_name": 'Фамилия',
+                     "order.manager_person.user_first_name": 'Имя',
+                     "order.manager_person.user_middle_name": 'Отчество',
+                     "staff_action": 'Действие персонала',
+                     "goal_action": 'Цель действия',
+                     "method_action": 'Метод действия',
+                     "result_action": 'Результат действия'
+    }
+
     column_sortable_list = ['id',
                             ('order', 'order.number'),
+                            ('order.manager_person.email'),
+                            ('order.manager_person.user_last_name'),
+                            ('order.manager_person.user_first_name'),
+                            ('order.manager_person.user_middle_name'),
                             ('status_order', 'status_order.name'),
                             'date_create',
                             ('staff_action', 'staff_action.name'),
@@ -3353,12 +3402,68 @@ class ActionOrderView(SpecificView):
                             ('method_action', 'method_action.name'),
                             ('result_action', 'result_action.name'),
                             ]
-    column_filters = ['id', 'order', 'status_order', 'date_create', 'staff_action',
-                   'goal_action', 'method_action', 'result_action']
+    column_filters = ['id', 'order', 'status_order', 'date_create',
+                      'staff_action','goal_action',
+                      'method_action', 'result_action',
+                      'order.manager_person.email',
+                      'order.manager_person.user_last_name',
+                      'order.manager_person.user_first_name',
+                       'order.manager_person.user_middle_name']
     column_searchable_list = ['id', 'order.number', 'status_order.name', 'date_create',
                             'staff_action.name', 'goal_action.name',
                             'method_action.name', 'result_action.name',
+                              'order.manager_person.email',
+                              'order.manager_person.user_last_name',
+                              'order.manager_person.user_first_name',
+                              'order.manager_person.user_middle_name'
                             ]
+
+class ActionOrderItemView(SpecificView):
+    column_list = ['id', 'order_item', 'order_item.staff_actual_status_person',
+                   'status_card', 'date_create', 'staff_action',
+                   'goal_action', 'method_action', 'result_action']
+
+    column_labels = {"order_item": 'Элемент заказа',
+                     "order_item.staff_actual_status_person": 'Ответственный',
+                     "status_card": 'Статус карты',
+                     "date_create": 'date_create',
+                     "staff_action": 'Действие персонала',
+                    "goal_action": 'Цель действия',
+                    "method_action": 'Метод действия',
+                    "result_action": 'Результат действия'
+                     }
+
+    column_sortable_list = ['id',
+                            ('order_item', 'order_item.id'),
+                            ('status_card', 'status_card.name'),
+                            'date_create',
+                            ('staff_action', 'staff_action.name'),
+                            ('goal_action', 'goal_action.name'),
+                            ('method_action', 'method_action.name'),
+                            ('result_action', 'result_action.name'),
+                            ]
+    column_filters = ['id', 'order_item', 'status_card', 'date_create', 'staff_action',
+                      'goal_action', 'method_action', 'result_action']
+    column_searchable_list = ['id', 'order_item.order.number',
+                              'status_card.name',
+                              'date_create',
+                              'staff_action.name',
+                              'goal_action.name',
+                              'method_action.name',
+                              'result_action.name',
+                              ]
+
+
+class ProgressOrderView(SpecificView):
+    column_list = ['id', 'order',
+                   'status_order',
+                   'date_create',
+                   'date_end']
+    column_labels = {"order": 'Заказ',
+                     "status_order": 'Статус заказа',
+                     "date_create": 'Дата создания',
+                     "date_end": 'Дата окончания',
+                     }
 
 # Создание административной панели
 admin = Admin(app, 'Имя', url='/admin/', index_view=HomeAdminView(name='Гл'), template_mode='bootstrap4')
@@ -3400,19 +3505,24 @@ with warnings.catch_warnings():
     admin.add_view(TypeProductionView(TypeProduction, db.session, name='Тип производства'))
 
     # Статусы
-    admin.add_view(StatusCardView(StatusCard, db.session, name='Статусы карт'))
-    admin.add_view(StatusIntermediateView(StatusIntermediate, db.session, name='Промежуточные статусы карт'))
-    admin.add_view(StatusOrderView(StatusOrder, db.session, name='Статусы заказов'))
-    admin.add_view(SpecificationStatusCardView(SpecificationStatusCard, db.session, name='Специфика статусов карт'))
+    admin.add_view(StatusOrderView(StatusOrder, db.session, name='Статусы заказов', category="Статусы(справочники)"))
+    admin.add_view(StatusCardView(StatusCard, db.session, name='Статусы карт', category="Статусы(справочники)"))
+    admin.add_view(StatusIntermediateView(StatusIntermediate, db.session, name='Промежуточные статусы карт', category="Статусы(справочники)"))
+
+    admin.add_view(SpecificationStatusCardView(SpecificationStatusCard, db.session,
+                                               name='Спецификация статусов карт', category="Спецификации статусов"))
     admin.add_view(SpecificationStatusIntermediateView(SpecificationStatusIntermediate, db.session,
-                                                       name='Специфика промежут. статусов'))
+                                                name='Спецификация промежут. статусов', category="Спецификации статусов"))
 
     # Действия
-    admin.add_view(StaffActionView(StaffAction, db.session, name='Действия персонала', category="Действия"))
-    admin.add_view(GoalActionView(GoalAction, db.session, name='Цели действия', category="Действия"))
-    admin.add_view(MethodActionView(MethodAction, db.session, name='Методы действия', category="Действия"))
-    admin.add_view(ResultActionView(ResultAction, db.session, name='Результаты действия', category="Действия"))
-    admin.add_view(ActionOrderView(ActionOrder, db.session, name='Действия по заказу'))
+    admin.add_view(StaffActionView(StaffAction, db.session,
+                                   name='Действия персонала',
+                                   category="Действия(справочники)"))
+    admin.add_view(GoalActionView(GoalAction, db.session, name='Цели действия', category="Действия(справочники)"))
+    admin.add_view(MethodActionView(MethodAction, db.session, name='Методы действия', category="Действия(справочники)"))
+    admin.add_view(ResultActionView(ResultAction, db.session, name='Результаты действия', category="Действия(справочники)"))
+    admin.add_view(ActionOrderView(ActionOrder, db.session, name='Действия по заказу', category="Действия"))
+    admin.add_view(ActionOrderItemView(ActionOrderItem, db.session, name='Действия по элем. заказа', category="Действия"))
 
     # admin.add_view(MyStatus(Status, db.session, name='Возможные статусы', category="Статусы"))
     # admin.add_view(MyStatusCardUsluga(StatusCardUsluga, db.session, name='Статусы карточек', category="Статусы"))
@@ -3421,7 +3531,7 @@ with warnings.catch_warnings():
     # Заказы
     admin.add_view(OrderView(Order, db.session, name='Заказы', category="Заказы"))
     admin.add_view(OrderItemView(OrderItem, db.session, name='Элементы заказов', category="Заказы"))
-
+    admin.add_view(ProgressOrderView(ProgressOrder, db.session, name='Прогресс заказов'))
 
 
     admin.add_view(MyPhone(Phone, db.session, name='Телефоны(Phone)'))
