@@ -97,7 +97,7 @@ from RECL.models import StaffAction, GoalAction, ResultAction, MethodAction, Act
 from RECL.models import ActionOrder, ActionOrderItem
 # from RECL.models import StatusCardUsluga, Status
 # from RECL.models import OrderStatus
-from RECL.models import Order, OrderItem, ProgressOrder
+from RECL.models import Order, OrderItem, ProgressOrder, ProgressOrderItem, ProgressOrderItemIntermediate
 
 from RECL.models import Carousel, PlaceCarousel
 from RECL.models import PlaceElement, PlaceModelElement, BaseLocationElement, \
@@ -2459,6 +2459,7 @@ class OrderView(SpecificView):
                    'manager_role',
                    'date_create', 'date_end',
                    'progresses',
+                   'order_actions',
                    'order_items']
 
     # Удалить столбцы из списка.
@@ -2470,19 +2471,20 @@ class OrderView(SpecificView):
     # Присвоить столбцам из модели заголовки
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
 
-    column_labels = dict(number='Номер заказа', user='Заказчик',
-                         manager_person='Менеджер заказа',
-                         # в полях с отношением не могу задать псевдоним - ошибка!!
-                         # manager_person.user_last_name= 'Фамилия',
-                         # manager_person.user_first_name='Имя',
-                         # manager_person.user_middle_name='Отчество',
-                         manager_role='Должность ответственного',
-                         date_create='Дата создания',
-                         date_end='Дата закрытия',
+    column_labels = {"number": 'Номер заказа',
+                     "user": 'Заказчик',
+                         "manager_person": 'Менеджер заказа',
+                         "manager_person.user_last_name":  'Фамилия',
+                         "manager_person.user_first_name": 'Имя',
+                         "manager_person.user_middle_name": 'Отчество',
+                         "manager_role": 'Роль ответственного',
+                         "date_create": 'Дата создания',
+                         "date_end": 'Дата закрытия',
                          # statuses='Статусы заказа',
-                         progresses='Прогресс',
-                         order_items='Элементы заказа'
-                         )
+                         "progresses": 'Прогресс',
+                         "order_actions": 'Действия по заказу',
+                         "order_items": 'Элементы заказа'
+                     }
 
     # Добавляет столбцы-отношения - задаем в SettingAdminForAllRoles для всех моделей
     # column_display_all_relations = True
@@ -2581,7 +2583,7 @@ class OrderItemView(SpecificView):
                    'actual_offer',
                    # 'actual_status',
                    'date_create_actual_status',
-                   'progress']
+                   'progresses']
 
     column_labels = dict(order='Номер заказа',
                          card_usluga='Карточка услуги',
@@ -2591,7 +2593,7 @@ class OrderItemView(SpecificView):
                          actual_offer='Актуальность предложения',
                          # actual_status='Актуальный статус',
                          date_create_actual_status='Дата начала актуального статуса',
-                         progress='Прогресс',
+                         progresses='Прогресс',
                          )
     # Задает поля, в которых возможен поиск по словам
     # Поля - отношения в поиск ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
@@ -2607,7 +2609,7 @@ class OrderItemView(SpecificView):
                               'actual_offer',
                               # 'actual_status.status.status',
                               'date_create_actual_status',
-                              'progress'
+                              # 'progresses'
                               ]
 
     # Задает поля, в которых возможна сортировка (по алфавиту например)
@@ -3330,7 +3332,6 @@ class SpecificationStatusIntermediateView(SpecificView):
             return True
 
 
-
 class StaffActionView(SpecificView):
     column_list = ['id', 'name']
     column_labels = dict(name='Наименование')
@@ -3465,6 +3466,30 @@ class ProgressOrderView(SpecificView):
                      "date_end": 'Дата окончания',
                      }
 
+class ProgressOrderItemView(SpecificView):
+    column_list = ['id', 'order_item', 'order_item.order',
+                   'status_card',
+                   'date_create',
+                   'date_end']
+    column_labels = {"order_item": 'Элемент заказа',
+                     "status_card": 'Статус карты',
+                     "date_create": 'Дата создания',
+                     "date_end": 'Дата окончания',
+                     }
+
+
+class ProgressOrderItemIntermediateView(SpecificView):
+    column_list = ['id', 'progress',
+                   'status_intermediate',
+                   'date_create',
+                   'date_end']
+    column_labels = {"progress": 'Прогресс по карте',
+                     "status_intermediate": 'Статус промежуточный',
+                     "date_create": 'Дата создания',
+                     "date_end": 'Дата окончания',
+                     }
+
+
 # Создание административной панели
 admin = Admin(app, 'Имя', url='/admin/', index_view=HomeAdminView(name='Гл'), template_mode='bootstrap4')
 
@@ -3531,7 +3556,11 @@ with warnings.catch_warnings():
     # Заказы
     admin.add_view(OrderView(Order, db.session, name='Заказы', category="Заказы"))
     admin.add_view(OrderItemView(OrderItem, db.session, name='Элементы заказов', category="Заказы"))
-    admin.add_view(ProgressOrderView(ProgressOrder, db.session, name='Прогресс заказов'))
+    admin.add_view(ProgressOrderView(ProgressOrder, db.session, name='Прогресс заказов', category="Прогресс"))
+    admin.add_view(ProgressOrderItemView(ProgressOrderItem, db.session, name='Прогресс элементов заказа', category="Прогресс"))
+    admin.add_view(ProgressOrderItemIntermediateView(ProgressOrderItemIntermediate, db.session,
+                                                     name='Промежуточный прогресс элементов заказа',
+                                                     category="Прогресс"))
 
 
     admin.add_view(MyPhone(Phone, db.session, name='Телефоны(Phone)'))

@@ -838,6 +838,11 @@ class Usluga(db.Model):
         return self.title
 
 # Модель тип производства
+# От типа производства будут зависеть промежуточные статусы карт.
+# У разного типа производства они могут быть разные
+# можно задать тип например Стандарт
+# (и задать набор промежуточных статусов карт с этим типом производства)
+# А в карточке услуг задать этот тип производства по умолчанию например.
 class TypeProduction(db.Model):
     __tablename__ = 'types_productions'
     id = db.Column(db.Integer, primary_key=True)
@@ -916,10 +921,10 @@ class CardUsluga(db.Model):
     type_production=db.relationship('TypeProduction', back_populates="cards_uslugs")
 
     # роли и нормативы времени в зависимости от карты услуг и статуса карт
-    specification = db.relationship("SpecificationStatusCard", back_populates='card_usluga')
+    specification = db.relationship("SpecificationStatusCard", back_populates='card_usluga', cascade="all, delete")
 
     # роли и нормативы времени в зависимости от карты услуг и промежуточного статуса карт
-    specification_intermediate = db.relationship("SpecificationStatusIntermediate", back_populates='card_usluga')
+    specification_intermediate = db.relationship("SpecificationStatusIntermediate", back_populates='card_usluga', cascade="all, delete")
 
     def __repr__(self):
         return self.name_card_usluga + ' (id '+str(self.id)+')'
@@ -1136,20 +1141,18 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User",  foreign_keys="[Order.user_id]")
 
-    # Статусы заказа
-    # Простые статусы заказа из модели Status (например заказ принят, заказ выполнен, в работе и тп)
-    # statuses_id = db.Column(db.Integer, db.ForeignKey('statuses.id'))
-    # statuses = db.relationship("Status", back_populates='orders')
-
     # Прогресс выполнения заказа - это статусы заказа(из статусов карточки услуги)
     # с фактическим временем исполнения
     # Сделать отдельную таблицу!
     # progress = db.Column(JSON)
 
-    progresses = db.relationship("ProgressOrder", back_populates='order')
+    progresses = db.relationship("ProgressOrder", back_populates='order', cascade="all, delete")
+
+    order_actions = db.relationship("ActionOrder", back_populates='order', cascade="all, delete")
 
     # Элементы заказа
-    order_items = db.relationship("OrderItem", back_populates='order')
+    # order_items = db.relationship("OrderItem", back_populates='order', cascade="all,delete")
+    order_items = db.relationship("OrderItem", back_populates='order', cascade="all, delete")
 
     # данные заказа поступившие по ссылке в прайсе карточки услуги с сайта
     # прайсы и параметры карточки услуг могут меняться, поэтому в заказе нужно зафиксировать данные,
@@ -1196,7 +1199,13 @@ class OrderItem(db.Model):
 
     # Прогресс выполнения элемента заказа (статус, ответственный - роль,
     # ответственный - персона, дата создания, дата окончания, отклонение от норматива)
-    progress = db.Column(JSON)
+    # progress = db.Column(JSON)
+
+    # Прогресс выполнения элемента заказа - это статусы карт из элементов заказа(из статусов карт)
+    # с фактическим временем исполнения
+
+    progresses = db.relationship("ProgressOrderItem", back_populates='order_item')
+
     def __repr__(self):
         return 'id '+str(self.id)
 
@@ -1233,6 +1242,58 @@ class ProgressOrder(db.Model):
     # Дата и время окончания статуса
     date_end = db.Column(db.DateTime())
 
+    def __repr__(self):
+        return str(self.date_create)+' - ' +str(self.status_order)
+
+
+# Модель Прогресс Элементов Заказа
+class ProgressOrderItem(db.Model):
+    __tablename__ = 'progresses_orders_items'
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Элементы заказа
+    order_item_id = db.Column(db.Integer, db.ForeignKey('order_items.id'))
+    order_item = db.relationship("OrderItem", back_populates='progresses')
+
+    # Статус карты (на каком этапе заказа совершены действия)
+    status_card_id = db.Column(db.Integer, db.ForeignKey('statuses_card.id'))
+    status_card = db.relationship("StatusCard")
+
+    intermediate_progresses = db.relationship("ProgressOrderItemIntermediate", back_populates='progress')
+
+    # Дата и время создания статуса
+    date_create = db.Column(db.DateTime(), default=datetime.now)
+
+    # Дата и время окончания статуса
+    date_end = db.Column(db.DateTime())
+
+    def __repr__(self):
+        return str(self.date_create)+' - ' +str(self.status_card)
+
+
+# Модель Промежуточный Прогресс Элементов Заказа
+class ProgressOrderItemIntermediate(db.Model):
+    __tablename__ = 'progresses_orders_items_intermediates'
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Прогресс по карте элемента заказа
+    progress_id = db.Column(db.Integer, db.ForeignKey('progresses_orders_items.id'))
+    progress = db.relationship("ProgressOrderItem", back_populates='intermediate_progresses')
+
+    # Статус промежуточный
+    status_intermediate_id = db.Column(db.Integer, db.ForeignKey('statuses_intermediate.id'))
+    status_intermediate = db.relationship("StatusIntermediate")
+
+    # Дата и время создания статуса
+    date_create = db.Column(db.DateTime(), default=datetime.now)
+
+    # Дата и время окончания статуса
+    date_end = db.Column(db.DateTime())
+
+    def __repr__(self):
+        return str(self.date_create)+' - ' +str(self.status_card)
+
+
 # Модель Действия персонала по заказу
 class ActionOrder(db.Model):
     __tablename__ = 'actions_orders'
@@ -1241,7 +1302,7 @@ class ActionOrder(db.Model):
 
     # Заказ
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
-    order = db.relationship("Order")
+    order = db.relationship("Order", back_populates='order_actions')
 
     # Статус заказа (на каком этапе заказа совершены действия)
     status_order_id = db.Column(db.Integer, db.ForeignKey('statuses_orders.id'))
@@ -1265,6 +1326,8 @@ class ActionOrder(db.Model):
     result_action_id = db.Column(db.Integer, db.ForeignKey('results_actions.id'))
     result_action = db.relationship("ResultAction")
 
+    def __repr__(self):
+        return str(self.date_create)+' Действие: '+str(self.staff_action)+' Результат: '+str(self.result_action)
 
 # Модель Действия персонала по элементу заказа
 class ActionOrderItem(db.Model):

@@ -57,6 +57,67 @@
 
                 <div class="row">
                     <div class="col-10">
+                        <div class="text-success">
+                            Раздел:
+                            <b class="base_color_1">
+                                {{ card_usluga.usluga.punkt_menu.title }}
+                            </b><br>
+                            Услуга раздела:
+                            <b class="base_color_1">
+                                {{ card_usluga.usluga }}
+                            </b>
+                        </div>
+                        <div class="text-success">Карточка услуги:
+                            {% if card_usluga.name_card_usluga %}
+                            <b class="base_color_1">
+                                {{ card_usluga.name_card_usluga }}
+                            </b>
+                            {% endif %}
+
+                            (Id карточки:
+                            <b class="base_color_1">
+                                {{ card_usluga.id }}
+                            </b>
+                            )
+                        </div>
+                        <div class="text-success">
+                            Директория загрузки изображений:
+                            <b class="base_color_1">
+                                /static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{
+                                card_usluga.usluga.link
+                                }}/{{ card_usluga.dir_photos }}
+                            </b>
+                        </div>
+                        <div class="text-success">
+                            Сопроводительный текст:
+                            {% if card_usluga.comments %}
+                            <b class="base_color_1">
+                                {{ card_usluga.comments }}
+                            </b>
+                            {% endif %}
+                        </div>
+                        <div class="text-success">
+                            Статусы:
+                            <!--Информация о статусах - начало-->
+                            <div>
+                                {% if card_usluga.statuses_card_usluga %}
+                                <div>
+                                    <!--<div class="pt-2 pb-1">Статусы:</div>-->
+                                    <!--Статусы карточки (СтатусКардУслуг) сортируем по атрибуту номер(вес) статуса в модели Статус-->
+                                    <div class="base_color_1">
+                                        {% for status_card_usluga in
+                                        (card_usluga.statuses_card_usluga|sort(attribute="status.number")) %}
+
+                                        "{{ status_card_usluga }}" -
+
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!--Информация о статусах - конец-->
+                        </div>
                     </div>
                     <div class="col-2 text-center">
                         {% if card_usluga.active == False %}
@@ -84,66 +145,7 @@
                 </div>
 
 
-                <div class="text-success">
-                    Раздел:
-                    <b class="base_color_1">
-                        {{ card_usluga.usluga.punkt_menu.title }}
-                    </b><br>
-                    Услуга раздела:
-                    <b class="base_color_1">
-                        {{ card_usluga.usluga }}
-                    </b>
-                </div>
-                <div class="text-success">Карточка услуги:
-                    {% if card_usluga.name_card_usluga %}
-                    <b class="base_color_1">
-                        {{ card_usluga.name_card_usluga }}
-                    </b>
-                    {% endif %}
 
-                    (Id карточки:
-                    <b class="base_color_1">
-                        {{ card_usluga.id }}
-                    </b>
-                    )
-                </div>
-                <div class="text-success">
-                    Директория загрузки изображений:
-                    <b class="base_color_1">
-                        /static/images/cards_uslugs/{{ card_usluga.usluga.punkt_menu.link }}/{{ card_usluga.usluga.link
-                        }}/{{ card_usluga.dir_photos }}
-                    </b>
-                </div>
-                <div class="text-success">
-                    Сопроводительный текст:
-                    {% if card_usluga.comments %}
-                    <b class="base_color_1">
-                        {{ card_usluga.comments }}
-                    </b>
-                    {% endif %}
-                </div>
-
-                <div class="text-success">
-                    Статусы:
-                    <!--Информация о статусах - начало-->
-                            <div>
-                            {% if card_usluga.statuses_card_usluga %}
-                            <div>
-                                <!--<div class="pt-2 pb-1">Статусы:</div>-->
-                                <!--Статусы карточки (СтатусКардУслуг) сортируем по атрибуту номер(вес) статуса в модели Статус-->
-                                <div class="base_color_1">
-                                {% for status_card_usluga in (card_usluga.statuses_card_usluga|sort(attribute="status.number")) %}
-
-                                    "{{ status_card_usluga }}" -
-
-                                {% endfor %}
-                                </div>
-
-                            </div>
-                            {% endif %}
-                            </div>
-                            <!--Информация о статусах - конец-->
-                </div>
 
             </div>
             <!--Сведения о карточке услуги - конец-->
