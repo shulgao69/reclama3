@@ -8,7 +8,7 @@ from flask_security import login_required
 # from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo
 # from RECL.components.price.forms import PriceForm
 from RECL.components.order.forms import ApplicationForm
-from RECL.models import CardUsluga, PriceTable
+from RECL.models import CardUsluga, PriceTable, Order
 # from RECL.models import Usluga, Link, Order, User, Role, roles_users, UploadFileMy
 # from RECL.models import OrderStatus
 # from flask_security import login_required, roles_required, roles_accepted
@@ -37,6 +37,17 @@ def render_session_clear():
 
     session.clear()
     return redirect(request.args.get("next") or url_for('render_main'))
+
+
+# Показать все заказы сайта
+@order_blueprint.route('/show_orders/', methods=['GET', 'POST'])
+@login_required
+def show_orders():
+    orders=Order.query.all()
+    return render_template('show_orders.html',
+                           orders=orders)
+
+
 
 
 # Оформить (разместить) заказ из корзины

@@ -3518,40 +3518,20 @@ with warnings.catch_warnings():
     admin.add_view(MyLink(Link, db.session, name='Меню сайта(Link)', category="Меню,Услуги"))
     admin.add_view(MyUsluga(Usluga, db.session, name='Услуги(Usluga)', category="Меню,Услуги"))
 
-    # Пользователи, Роли
+    # Пользователи, Роли (+ телефоны, плательщики)
     admin.add_view(UserView(User, db.session, name='Пользователи(User)', category="Пользователи,Роли"))
     admin.add_view(RoleView(Role, db.session, name='Роли(Role)', category="Пользователи,Роли"))
+    admin.add_view(MyPhone(Phone, db.session, name='Телефоны(Phone)', category="Пользователи,Роли"))
+    admin.add_view(PayerView(Payer, db.session, name='Плательщики(Payer)', category="Пользователи,Роли"))
 
 
+    # Карточки услуг (+ прайсы, фото, тип производства)
     admin.add_view(CardUslugaView(CardUsluga, db.session, name=' Карточки услуг', category="Карточки"))
     admin.add_view(PriceTableView(PriceTable, db.session, name='Прайсы', category="Карточки"))
     admin.add_view(MyPhoto(Photo, db.session, name=' Фото(Photo)', category="Карточки"))
+    admin.add_view(TypeProductionView(TypeProduction, db.session, name='Тип производства', category="Карточки"))
 
-    admin.add_view(TypeProductionView(TypeProduction, db.session, name='Тип производства'))
 
-    # Статусы
-    admin.add_view(StatusOrderView(StatusOrder, db.session, name='Статусы заказов', category="Статусы(справочники)"))
-    admin.add_view(StatusCardView(StatusCard, db.session, name='Статусы карт', category="Статусы(справочники)"))
-    admin.add_view(StatusIntermediateView(StatusIntermediate, db.session, name='Промежуточные статусы карт', category="Статусы(справочники)"))
-
-    admin.add_view(SpecificationStatusCardView(SpecificationStatusCard, db.session,
-                                               name='Спецификация статусов карт', category="Спецификации статусов"))
-    admin.add_view(SpecificationStatusIntermediateView(SpecificationStatusIntermediate, db.session,
-                                                name='Спецификация промежут. статусов', category="Спецификации статусов"))
-
-    # Действия
-    admin.add_view(StaffActionView(StaffAction, db.session,
-                                   name='Действия персонала',
-                                   category="Действия(справочники)"))
-    admin.add_view(GoalActionView(GoalAction, db.session, name='Цели действия', category="Действия(справочники)"))
-    admin.add_view(MethodActionView(MethodAction, db.session, name='Методы действия', category="Действия(справочники)"))
-    admin.add_view(ResultActionView(ResultAction, db.session, name='Результаты действия', category="Действия(справочники)"))
-    admin.add_view(ActionOrderView(ActionOrder, db.session, name='Действия по заказу', category="Действия"))
-    admin.add_view(ActionOrderItemView(ActionOrderItem, db.session, name='Действия по элем. заказа', category="Действия"))
-
-    # admin.add_view(MyStatus(Status, db.session, name='Возможные статусы', category="Статусы"))
-    # admin.add_view(MyStatusCardUsluga(StatusCardUsluga, db.session, name='Статусы карточек', category="Статусы"))
-    # admin.add_view(MyOrderStatus(OrderStatus, db.session, name='Статусы заказов'))
 
     # Заказы
     admin.add_view(OrderView(Order, db.session, name='Заказы', category="Заказы"))
@@ -3563,8 +3543,35 @@ with warnings.catch_warnings():
                                                      category="Прогресс"))
 
 
-    admin.add_view(MyPhone(Phone, db.session, name='Телефоны(Phone)'))
-    admin.add_view(PayerView(Payer, db.session, name='Плательщики(Payer)'))
+    # Статусы
+    admin.add_view(StatusOrderView(StatusOrder, db.session, name='Статусы заказов', category="Статусы(справочники)"))
+    admin.add_view(StatusCardView(StatusCard, db.session, name='Статусы карт', category="Статусы(справочники)"))
+    admin.add_view(StatusIntermediateView(StatusIntermediate, db.session, name='Промежуточные статусы карт', category="Статусы(справочники)"))
+
+    # Специфика статусов
+    admin.add_view(SpecificationStatusCardView(SpecificationStatusCard, db.session,
+                                               name='Спецификация статусов карт', category="Специфика статусов"))
+    admin.add_view(SpecificationStatusIntermediateView(SpecificationStatusIntermediate, db.session,
+                                                name='Спецификация промежут. статусов', category="Специфика статусов"))
+
+    # Действия (справочники)
+    admin.add_view(StaffActionView(StaffAction, db.session, name='Действия персонала', category="Действия(справочники)"))
+    admin.add_view(GoalActionView(GoalAction, db.session, name='Цели действия', category="Действия(справочники)"))
+    admin.add_view(MethodActionView(MethodAction, db.session, name='Методы действия', category="Действия(справочники)"))
+    admin.add_view(ResultActionView(ResultAction, db.session, name='Результаты действия', category="Действия(справочники)"))
+
+    # Действия
+    admin.add_view(ActionOrderView(ActionOrder, db.session, name='Действия по заказу', category="Действия"))
+    admin.add_view(ActionOrderItemView(ActionOrderItem, db.session, name='Действия по элем. заказа', category="Действия"))
+
+    # admin.add_view(MyStatus(Status, db.session, name='Возможные статусы', category="Статусы"))
+    # admin.add_view(MyStatusCardUsluga(StatusCardUsluga, db.session, name='Статусы карточек', category="Статусы"))
+    # admin.add_view(MyOrderStatus(OrderStatus, db.session, name='Статусы заказов'))
+
+
+
+
+
 
     # Карусели
     admin.add_view(MyCarousel(Carousel, db.session, name='Карусели'))

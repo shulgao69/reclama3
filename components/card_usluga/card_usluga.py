@@ -431,7 +431,6 @@ def show_all_cards_uslugs():
 # Поменять флаг для показа всех карточек услуг - конец
 
 
-
 # Показать все карточки услуг - начало
 @card_usluga_blueprint.route('/show_cards_uslugs/', methods=['GET', 'POST'])
 # @roles_accepted('superadmin')
@@ -507,12 +506,14 @@ def create_card_usluga():
     form_create_card_usluga=CreateCardUslugaForm()
     form_create_card_usluga.menu.choices = [(menu.id, menu.title) for menu in Link.query.order_by('title').all()]
     form_create_card_usluga.usluga.choices = [(usluga.id, usluga.title) for usluga in Usluga.query.order_by('title').all()]
-
+    form_create_card_usluga.type_production.choices = [(type_production.id, type_production.name) for type_production in
+                                              TypeProduction.query.order_by('name').all()]
     if form_create_card_usluga.validate_on_submit():
     # if form_create_card_usluga.validate_on_submit() and form_create_card_usluga.name_card_usluga.data:
         name_card_usluga=form_create_card_usluga.name_card_usluga.data
         usluga=form_create_card_usluga.usluga.data
         comments=form_create_card_usluga.comments.data
+        type_production=form_create_card_usluga.type_production.data
         # dir_photos = form_create_card_usluga.dir_photos.data
 
         # Удалим лишние пробелы если есть
@@ -589,6 +590,7 @@ def create_card_usluga():
 
         card_usluga = CardUsluga(name_card_usluga=name_card_usluga,
                                  usluga_id=usluga,
+                                 type_production_id=type_production,
                                  comments=comments,
                                  dir_photos=dir_photos
                                  )

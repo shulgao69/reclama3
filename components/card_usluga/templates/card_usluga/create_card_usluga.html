@@ -7,7 +7,7 @@
         <!--Самый короткий и самый адаптивный, визуально приятный и складный вариант. -->
         <!--Далее наверное нужно использовать его!-->
         <!--class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
-        <div class="d-flex flex-row pt-2 pb-5">
+        <div class="d-flex flex-row pt-2 pb-4">
             <a href="{{ url_for('admin.index') }}">
                 Вернуться в панель администратора
             </a>
@@ -115,26 +115,31 @@
 
                         <div  class="pt-1">
                             <!--Заголовки-->
-                            <h5 class="mb-2 base_color_1"><b>Выберите раздел и услугу,</b></h5>
-                            <!--<h6 class="mb-3 font-weight-light">для которых вы создаете карточку услуг</h6>-->
-                            <div class="mb-3 text-muted">для которых вы создаете карточку услуг</div>
+                            <div class="text-muted"><b class="text-success">Выберите раздел и услугу,</b>
+                            для которых вы создаете карточку услуг
+                            </div>
                             <!--Заголовки -  конец-->
 
+                            <div><b>
+                                {{ form_create_card_usluga.menu.label(class="pt-3 text-success") }}
+                            </b></div>
                             <div>
-                                {{ form_create_card_usluga.menu.label(class="py-1 mt-0") }}
+                                {{ form_create_card_usluga.menu(class="container-fluid form-control") }}
                             </div>
+                            <div><b>
+                                {{ form_create_card_usluga.usluga.label(class="pt-3 text-success") }}
+                            </b></div>
                             <div>
-                                {{ form_create_card_usluga.menu(class="container-fluid py-2 mt-0 form-control") }}
+                                {{ form_create_card_usluga.usluga(class="container-fluid form-control") }}
                             </div>
+                            <div><b>
+                                {{ form_create_card_usluga.type_production.label(class="pt-3 text-success") }}
+                            </b></div>
                             <div>
-                                {{ form_create_card_usluga.usluga.label(class="py-1 mt-2") }}
-                            </div>
-                            <div>
-                                {{ form_create_card_usluga.usluga(class="container-fluid py-2 mt-0 form-control") }}
+                                {{ form_create_card_usluga.type_production(class="container-fluid form-control") }}
                             </div>
 
                         </div>
-                        <!--Загрузка файлов - конец-->
 
 
 
