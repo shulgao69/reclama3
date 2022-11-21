@@ -1311,7 +1311,7 @@ class MyListModel(SpecificView):
     # Задает поля из базы, отображаемые в админ панели
     # Столбцы будут расположены в порядке, указанном в списке!!!
     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
-    column_list = ['id', 'name_model', 'setting']
+    column_list = ['id', 'name_model', 'description', 'setting']
 
     # Удалить столбцы из списка.
     # Если задан column_list, где данный столбец не включен, то column_exclude_list
@@ -1322,7 +1322,8 @@ class MyListModel(SpecificView):
     # Присвоить столбцам из модели заголовки
     # Словарь, где ключ-это имя столбца, а значение-строка для отображения.
     column_labels = dict(name_model='Модель(name_model)',
-                         setting='Список настроек с моделью(setting)')
+                         setting='Список настроек с моделью(setting)',
+                         description='Описание')
 
     # Добавляет столбцы-отношения - задаем в SettingAdminForAllRoles
     # column_display_all_relations = True
@@ -1343,7 +1344,7 @@ class MyListModel(SpecificView):
     # column_searchable_list = ['id', 'name_model', 'setting.model']
     # column_searchable_list = ['id', 'name_model', setting']
     # column_searchable_list = ['id', 'name_model', 'setting.name_setting'
-    column_searchable_list = ['id', 'name_model']
+    column_searchable_list = ['id', 'name_model', 'description']
 
     # Задает поля, в которых возможна фильтрация (выбирается столбец
     # в котором осyществляется поиск (по ключевому слову например или по булеву значению))
@@ -1352,14 +1353,14 @@ class MyListModel(SpecificView):
     # увидим и все поля модели SettingAdmin(например can_create, can_delete и тп)
     # и следовательно можно искать те роли в которых например can_create = True)
     # Но в нашем случае это делать не будем!!!! Оставим фильтр простой
-    column_filters = ['id', 'name_model']
+    column_filters = ['id', 'name_model', 'description']
 
     # Задает поля, в которых возможна сортировка (по алфавиту например)
     # Поля - отношения в сортировку ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
     # ('setting', 'setting.model')
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView
-    column_sortable_list = ['id', 'name_model', ('setting', 'setting.model')]
+    column_sortable_list = ['id', 'name_model', 'description', ('setting', 'setting.model')]
 
      # Задает редактируемые поля.
     # Если не задать то по умолчанию доступны для редактирования все поля
@@ -1372,11 +1373,11 @@ class MyListModel(SpecificView):
     # при создании представлений (admin.add_view...) конкретных моделей см. ниже
     # https://fooobar.com/questions/998148/how-can-i-avoid-flask-admin-21-warning-userwarning-fields-missing-from-ruleset
     # https://docs-python.ru/standart-library/modul-warnings-python/funktsija-warn-modulja-warnings/
-    form_edit_rules = {'name_model'}
+    form_edit_rules = {'name_model', 'description'}
 
     # Задает поля, в кот. возможно быстрое редактирование(то есть при нажатии на это поле)
     # id не включать!!!
-    column_editable_list = ['name_model']
+    column_editable_list = ['name_model', 'description']
 
     # Переопределите этот метод, если вы хотите динамически скрывать или
     # показывать административные представления из структуры меню Flask-Admin

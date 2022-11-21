@@ -30,6 +30,15 @@ app = Flask(__name__)
 app.config.from_object(DevelopConfig)
 # *** Получение данных для валидации (PASSWORD_MIN_LENGTH) из корневого файла config.py - конец
 
+
+# Форма для выбора роли
+class ChooseRoleAndPersonForm(FlaskForm):
+    order = HiddenField('Заказ')
+    manager_role = SelectField('Роль:', validators=[DataRequired()], id='select_manager_role')
+    manager_person = SelectField('Ответственный:', validators=[DataRequired()], id='select_manager_person')
+    submit = SubmitField('Выбрать')
+
+
 # *** Форма заявки (Application) - начало
 class ApplicationForm(FlaskForm):
 

@@ -7,8 +7,9 @@ from flask_security import login_required
 # from wtforms import PasswordField, IntegerField, validators, FieldList, FormField, TextAreaField
 # from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo
 # from RECL.components.price.forms import PriceForm
-from RECL.components.order.forms import ApplicationForm
-from RECL.models import CardUsluga, PriceTable, Order
+from RECL.components.order.forms import ApplicationForm, ChooseRoleAndPersonForm
+from RECL.models import CardUsluga, PriceTable, Order, Role, User
+from RECL.models import db
 # from RECL.models import Usluga, Link, Order, User, Role, roles_users, UploadFileMy
 # from RECL.models import OrderStatus
 # from flask_security import login_required, roles_required, roles_accepted
@@ -39,12 +40,62 @@ def render_session_clear():
     return redirect(request.args.get("next") or url_for('render_main'))
 
 
+# Создать заказ
+@order_blueprint.route('/create_order/', methods=['GET', 'POST'])
+@login_required
+def create_order():
+    orders=Order.query.all()
+    return render_template('show_orders.html',
+                           orders=orders)
+
+
 # Показать все заказы сайта
 @order_blueprint.route('/show_orders/', methods=['GET', 'POST'])
 @login_required
 def show_orders():
-    orders=Order.query.all()
+    new_orders = Order.query.filter(Order.manager_role == None).all()
+    roles = Role.query.all()
+    staff_user=User.query.filter(User.roles != None).all()
+    orders=Order.query.filter(Order.manager_role != None).all()
+
+    form = ChooseRoleAndPersonForm()
+
+    roles = Role.query.order_by('name').all()
+    # Пыталась установить значение по умолчанию - не получилось - начало
+    # https: // xakep.ru / 2018 / 09 / 24 / wtforms /  # toc06.
+    # default_role = Role.query.filter(Role.name == 'project_manager').first()
+    # default_role=Role.query.filter(Role.id==5).first()
+    # form.manager_role.data=[str(default_role.id)]
+    # form.manager_role.data = roles[1].id
+    # Пыталась установить значение по умолчанию - не получилось - конец
+
+
+    form.manager_role.choices = [(manager_role.id, manager_role.name) for manager_role in
+                                 roles]
+    form.manager_person.choices = [(manager_person.id, str(manager_person.email)
+                                    + ' ' + str(manager_person.user_last_name)
+                                    + ' ' + str(manager_person.user_first_name)
+                                    + ' ' + str(manager_person.user_middle_name))
+                                   for manager_person in User.query.order_by('user_last_name').all()]
+    if form.validate_on_submit():
+        manager_role = form.manager_role.data
+        manager_role=Role.query.filter(Role.id==int(manager_role)).first()
+        manager_person = form.manager_person.data
+        manager_person = User.query.filter(User.id==int(manager_person)).first()
+        order=form.order.data
+        print(manager_role.name, manager_person, order)
+        order=Order.query.filter(Order.id==int(order)).first()
+        order.manager_role_id=manager_role.id
+        order.manager_person_id = manager_person.id
+        print(order)
+        db.session.commit()
+        return redirect(url_for('order_bp.show_orders'))
+
     return render_template('show_orders.html',
+                           form=form,
+                           roles=roles,
+                           staff_user=staff_user,
+                           new_orders=new_orders,
                            orders=orders)
 
 

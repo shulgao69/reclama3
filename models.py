@@ -634,7 +634,10 @@ class User(db.Model, UserMixin):
     payers = db.relationship('Payer', back_populates='user')
 
     def __repr__(self):
-        return self.email
+        if self.user_last_name and self.user_first_name and self.user_middle_name:
+            return str(self.user_last_name) + ' ' + str(self.user_first_name)+' '+ str(self.user_middle_name)
+        else:
+            return str(self.email)+' '+str(self.user_last_name)
 
 
 # Модель плательщик - 08.11.22 - дорабатывать - сделана пока для пробы
@@ -682,6 +685,7 @@ class ListModel(db.Model):
     id = db.Column(db.Integer, primary_key=True) # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html видео https://youtu.be/wDBiMtKIBs0#
     name_model = db.Column(db.String(80), unique = True, nullable=False) # Минимум для использования Flask-Security https://pythonhosted.org/Flask-Security/models.html  видео https://youtu.be/wDBiMtKIBs0#
 
+    description = db.Column(db.String())
     # устанавливаем отношение между списком моделей и настройками
     # это отношение один ко многим - одна модель и у нее несколько настроек (для разных ролей)
     setting = db.relationship("SettingAdmin", back_populates="model")
@@ -695,6 +699,13 @@ class ListModel(db.Model):
 
 
 # Модель Настройки CRUD админ. панели
+# Все доступы строятся на основе этих записей в базе.
+# В админке по умолчанию нужно установить все CRUD False а доступы по этим настройкам.
+# Для удобства в процессе написания установила ВРЕМЕННО! в админке все CRUD True!!!.
+# Потом создать все настройки доступов в этой таблице а затем
+# в админке исходные доступы установить False!!!
+
+
 class SettingAdmin(db.Model):
     __tablename__ = 'setting_admin'
     id = db.Column(db.Integer, primary_key=True)
