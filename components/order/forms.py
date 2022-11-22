@@ -34,8 +34,15 @@ app.config.from_object(DevelopConfig)
 # Форма для выбора роли
 class ChooseRoleAndPersonForm(FlaskForm):
     order = HiddenField('Заказ')
-    manager_role = SelectField('Роль:', validators=[DataRequired()], id='select_manager_role')
-    manager_person = SelectField('Ответственный:', validators=[DataRequired()], id='select_manager_person')
+    manager_role = SelectField('Роль:', validators=[DataRequired()],
+                               id='select_manager_role',
+                               render_kw={'autofocus': True }
+                               )
+    manager_person = SelectField('Ответственный:',
+                                 validators=[DataRequired()],
+                                 id='select_manager_person',
+                                 render_kw={'autofocus': True}
+                                 )
     submit = SubmitField('Выбрать')
 
 

@@ -3468,16 +3468,21 @@ class ProgressOrderView(SpecificView):
                      }
 
 class ProgressOrderItemView(SpecificView):
-    column_list = ['id', 'order_item', 'order_item.order',
+    column_list = ['id', 'order_item.order', 'order_item',
                    'status_card',
                    'date_create',
                    'date_end']
     column_labels = {"order_item": 'Элемент заказа',
+                     "order_item.order": 'Заказ',
                      "status_card": 'Статус карты',
                      "date_create": 'Дата создания',
                      "date_end": 'Дата окончания',
                      }
+    # Задает поля при создании записи.
+    form_create_rules = ['order_item', 'status_card', 'date_create', 'date_end']
 
+    # Задает поля при создании записи.
+    form_edit_rules = ['order_item', 'status_card', 'date_create', 'date_end']
 
 class ProgressOrderItemIntermediateView(SpecificView):
     column_list = ['id', 'progress',

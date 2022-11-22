@@ -53,10 +53,11 @@ def create_order():
 @order_blueprint.route('/show_orders/', methods=['GET', 'POST'])
 @login_required
 def show_orders():
-    new_orders = Order.query.filter(Order.manager_role == None).all()
+    new_orders = Order.query.filter(Order.manager_role == None).order_by(Order.date_create.desc()).all()
     roles = Role.query.all()
     staff_user=User.query.filter(User.roles != None).all()
-    orders=Order.query.filter(Order.manager_role != None).all()
+    # заказы, отсортированные по дате(новые в начале)
+    orders=Order.query.filter(Order.manager_role != None).order_by(Order.date_create.desc()).all()
 
     form = ChooseRoleAndPersonForm()
 
