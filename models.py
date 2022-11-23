@@ -635,9 +635,9 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         if self.user_last_name and self.user_first_name and self.user_middle_name:
-            return str(self.user_last_name) + ' ' + str(self.user_first_name)+' '+ str(self.user_middle_name)
+            return str(self.user_last_name) + ' ' + str(self.user_first_name)+' '+ str(self.user_middle_name)+' (id='+str(self.id)+')'
         else:
-            return str(self.email)+' '+str(self.user_last_name)
+            return str(self.email)+' (id='+str(self.id)+')'
 
 
 # Модель плательщик - 08.11.22 - дорабатывать - сделана пока для пробы

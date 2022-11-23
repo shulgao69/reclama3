@@ -1,6 +1,8 @@
 
 from flask_wtf import FlaskForm
 
+from RECL.models import Role, User
+
 from wtforms import SubmitField, SelectField, HiddenField, BooleanField, StringField, \
     PasswordField, IntegerField, validators, DateField, DateTimeField, TelField, RadioField
 from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo, Regexp, ValidationError
@@ -44,6 +46,17 @@ class ChooseRoleAndPersonForm(FlaskForm):
                                  render_kw={'autofocus': True}
                                  )
     submit = SubmitField('Выбрать')
+
+    # Снова проблема выпадающих списков не решена(попытка)
+    # Попробовать потом этот вариант (см ниже)
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.b7ea63a3-637db9a6-891bac08-74722d776562 / https/stackoverflow.com/questions/12099741/how-do-you-set-a-default-value-for-a-wtforms-selectfield
+    # ранее решала только с помощью js (см стр создания карточки услуг)
+    # def __init__(self, manager_role_id, *args, **kwargs):
+    #     super(ChooseRoleAndPersonForm, self).__init__(*args, **kwargs)
+    #     self.manager_role.choices = [(manager_role.id, manager_role.name)
+    #                           for manager_role in Role.query.all()]
+    #     self.manager_person.choices = [(manager_person.id, manager_person.user_last_name)
+    #                          for manager_person in manager_role_id.users]
 
 
 # *** Форма заявки (Application) - начало

@@ -8,7 +8,7 @@ from flask_security import login_required
 # from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo
 # from RECL.components.price.forms import PriceForm
 from RECL.components.order.forms import ApplicationForm, ChooseRoleAndPersonForm
-from RECL.models import CardUsluga, PriceTable, Order, Role, User
+from RECL.models import CardUsluga, PriceTable, Order, Role, User, roles_users
 from RECL.models import db
 # from RECL.models import Usluga, Link, Order, User, Role, roles_users, UploadFileMy
 # from RECL.models import OrderStatus
@@ -48,47 +48,91 @@ def create_order():
     return render_template('show_orders.html',
                            orders=orders)
 
+# роут для выбора пользователя по выбору в роли при назначении ответственного
+# на странице show_orders (см скрипт в конце стр show_orders.html)
+@order_blueprint.route('/choice_users/', methods=['GET', 'POST'])
+def choice_users():
+    role = request.args.get('role', '01', type=str)
+    role=Role.query.filter(Role.id==int(role)).first()
+    # userschoice = [(user.id, user.user_last_name+' '+user.user_first_name+' '+user.user_middle_name) for user in
+    #                role.users ]
+    userschoice = []
+    for user in role.users:
+
+        if user.user_last_name and user.user_first_name and user.user_middle_name:
+            d=(user.id, user.user_last_name+' '+user.user_first_name+' '+user.user_middle_name)
+
+        else:
+            d=(user.id, user.email)
+        userschoice.append(d)
+
+    print(userschoice, type(userschoice[0]))
+    return jsonify(userschoice)
 
 # Показать все заказы сайта
 @order_blueprint.route('/show_orders/', methods=['GET', 'POST'])
 @login_required
 def show_orders():
+    flag_new_orders = session.get('new_orders', True)
+    flag_all_orders = session.get('all_orders', True)
+    flag_end_orders = session.get('end_orders', True)
+    flag_work_orders = session.get('work_orders', True)
+    flag_cancel_orders = session.get('cancel_orders', True)
+
+
+    # Новые поступившие заказы (у них еще не определена роль ответственного)
     new_orders = Order.query.filter(Order.manager_role == None).order_by(Order.date_create.desc()).all()
-    roles = Role.query.all()
+
+    # Персонал исполнителя(все у кого определены роли)
     staff_user=User.query.filter(User.roles != None).all()
-    # заказы, отсортированные по дате(новые в начале)
-    orders=Order.query.filter(Order.manager_role != None).order_by(Order.date_create.desc()).all()
 
-    form = ChooseRoleAndPersonForm()
+    # Заказы, у которых назначен исполнитель (роль) и отсортированные по дате(новые в начале)
+    orders=Order.query.filter(db.and_(Order.manager_role != None,  Order.date_end ==None)).order_by(
+        Order.date_create.desc()).all()
 
+    # Заказы, закрытые
+    orders_end = Order.query.filter(db.and_(Order.manager_role != None, Order.date_end != None)).order_by(
+        Order.date_create.desc()).all()
+
+    # Хочу по умолчанию задать в SelectField определенные значения из списка
+    # (чтобы по умолчанию в поле стояло определенное значение из списка)
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.b7ea63a3-637db9a6-891bac08-74722d776562 / https/stackoverflow.com/questions/12099741/how-do-you-set-a-default-value-for-a-wtforms-selectfield
+    # Можно задать так (где цифры - это id из таблиу Role  и User соответственно)
+    # form = ChooseRoleAndPersonForm(manager_role=6, manager_person=4)
+    # но если этих id нет будет ошибка. Поэтому делаю проверку и условие:
+
+    try:
+        # Где project_manager - роль по умолчанию(чтобы не выбирать)
+        role=Role.query.filter(Role.name=='project_manager').first()
+        # пользователь первый в списке с такой ролью(ноль тк может быть один)
+        # user=role.users[0]
+        # form = ChooseRoleAndPersonForm(manager_role=role.id, manager_person=user.id)
+        form = ChooseRoleAndPersonForm(manager_role=role.id)
+    except:
+        form = ChooseRoleAndPersonForm()
+    # Этот вариант(выше) плох тем что задаю роль по умолчанию в самом коде
+
+    # Все роли исполнителя
     roles = Role.query.order_by('name').all()
-    # Пыталась установить значение по умолчанию - не получилось - начало
-    # https: // xakep.ru / 2018 / 09 / 24 / wtforms /  # toc06.
-    # default_role = Role.query.filter(Role.name == 'project_manager').first()
-    # default_role=Role.query.filter(Role.id==5).first()
-    # form.manager_role.data=[str(default_role.id)]
-    # form.manager_role.data = roles[1].id
-    # Пыталась установить значение по умолчанию - не получилось - конец
 
 
+    # Задаем способ заполнения выпадающих списков ролей и персонала
     form.manager_role.choices = [(manager_role.id, manager_role.name) for manager_role in
                                  roles]
-    form.manager_person.choices = [(manager_person.id, str(manager_person.email)
-                                    + ' ' + str(manager_person.user_last_name)
-                                    + ' ' + str(manager_person.user_first_name)
-                                    + ' ' + str(manager_person.user_middle_name))
-                                   for manager_person in User.query.order_by('user_last_name').all()]
+    form.manager_person.choices = [(manager_person.id, manager_person.email) for manager_person in
+                                    User.query.all()]
+
     if form.validate_on_submit():
+        # Получаем данные из формы
         manager_role = form.manager_role.data
-        manager_role=Role.query.filter(Role.id==int(manager_role)).first()
         manager_person = form.manager_person.data
-        manager_person = User.query.filter(User.id==int(manager_person)).first()
-        order=form.order.data
-        print(manager_role.name, manager_person, order)
+        order = form.order.data
+        # Заполяем данными заказ
+        # int тк type(manager_role, order, manager_person) - строки
         order=Order.query.filter(Order.id==int(order)).first()
-        order.manager_role_id=manager_role.id
-        order.manager_person_id = manager_person.id
-        print(order)
+        order.manager_role_id = int(manager_role)
+        order.manager_person_id = int(manager_person)
+        # Заносим в базу
         db.session.commit()
         return redirect(url_for('order_bp.show_orders'))
 
@@ -97,9 +141,62 @@ def show_orders():
                            roles=roles,
                            staff_user=staff_user,
                            new_orders=new_orders,
-                           orders=orders)
+                           orders=orders,
+                           orders_end=orders_end,
+                           flag_new_orders=flag_new_orders,
+                           flag_all_orders =flag_all_orders,
+                           flag_end_orders =flag_end_orders,
+                           flag_work_orders = flag_work_orders,
+                           flag_cancel_orders = flag_cancel_orders
+                           )
 
+# Поменять флаг для показа только новых заказов - начало
+@order_blueprint.route('/show_new_orders/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def show_new_orders():
+    session['new_orders']=True
+    session['all_orders'] = False
+    session['end_orders'] = False
+    session['work_orders'] = False
+    session['cancel_orders'] = False
+    return redirect(url_for('order_bp.show_orders'))
+# Поменять флаг для показа только новых заказов - конец
 
+# Поменять флаг для показа всех заказов - начало
+@order_blueprint.route('/show_all_orders/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def show_all_orders():
+    session['new_orders']=False
+    session['all_orders'] = True
+    session['end_orders'] = False
+    session['work_orders'] = False
+    session['cancel_orders'] = False
+    return redirect(url_for('order_bp.show_orders'))
+# Поменять флаг для показа всех - конец
+
+# Поменять флаг для показа только новых заказов - начало
+@order_blueprint.route('/show_work_orders/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def show_work_orders():
+    session['new_orders']=False
+    session['all_orders'] = False
+    session['end_orders'] = False
+    session['work_orders'] = True
+    session['cancel_orders'] = False
+    return redirect(url_for('order_bp.show_orders'))
+# Поменять флаг для показа только новых заказов - конец
+
+# Поменять флаг для показа только закрытых заказов - начало
+@order_blueprint.route('/show_end_orders/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+def show_end_orders():
+    session['new_orders']=False
+    session['all_orders'] = False
+    session['end_orders'] = True
+    session['work_orders'] = False
+    session['cancel_orders'] = False
+    return redirect(url_for('order_bp.show_orders'))
+# Поменять флаг для показа только закрытых заказов - конец
 
 
 # Оформить (разместить) заказ из корзины
