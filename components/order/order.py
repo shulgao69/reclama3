@@ -17,6 +17,8 @@ from RECL.models import db
 # from RECL.forms import LoginForm
 # import json
 
+import datetime
+
 #  модуль используем для перевода строки в десятичное число
 from decimal import Decimal
 
@@ -89,6 +91,13 @@ def show_orders():
     # Заказы, у которых назначен исполнитель (роль) и отсортированные по дате(новые в начале)
     orders=Order.query.filter(db.and_(Order.manager_role != None,  Order.date_end ==None)).order_by(
         Order.date_create.desc()).all()
+    # Задаем актуальное дату и время без секунд и миллисекунд
+    # (используем для подсчета времени прогресса заказа)
+    actual_time=datetime.datetime.now().replace(second=0, microsecond=0)
+
+    # Задаем временной интервал равный 0
+    # (используем для подсчета времени прогресса заказа)
+    new_timedelta = datetime.timedelta(0)
 
     # Заказы, закрытые
     orders_end = Order.query.filter(db.and_(Order.manager_role != None, Order.date_end != None)).order_by(
@@ -144,10 +153,12 @@ def show_orders():
                            orders=orders,
                            orders_end=orders_end,
                            flag_new_orders=flag_new_orders,
-                           flag_all_orders =flag_all_orders,
-                           flag_end_orders =flag_end_orders,
-                           flag_work_orders = flag_work_orders,
-                           flag_cancel_orders = flag_cancel_orders
+                           flag_all_orders=flag_all_orders,
+                           flag_end_orders=flag_end_orders,
+                           flag_work_orders=flag_work_orders,
+                           flag_cancel_orders=flag_cancel_orders,
+                           actual_time=actual_time,
+                           new_timedelta=new_timedelta
                            )
 
 # Поменять флаг для показа только новых заказов - начало

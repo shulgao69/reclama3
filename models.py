@@ -1012,6 +1012,7 @@ class SpecificationStatusCard(db.Model):
     hours_norma = db.Column(db.Integer, default=0)
     minutes_norma = db.Column(db.Integer, default=0)
 
+
     # Данные (@hybrid_property) в админке показывает но не могу задать сортировку
     # column_sortable_list - дает ошибку, поэтому в админке этот столбец в сортирвку не включила
     # https://stackoverflow.com/questions/39895123/custom-and-sortable-column-in-flask-admin

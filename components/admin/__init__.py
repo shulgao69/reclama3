@@ -59,15 +59,18 @@ from transliterate import translit
 
 # Импорт, необходимый для создания уникального имени загружаемого файла по времени загрузки
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Импорт, необходимый для перехвата предупреждений при задании form_edit_rules
 import warnings
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField, PasswordField, HiddenField, DateField, \
-    DateTimeField, TimeField
+# from wtforms import StringField, SelectField, SubmitField, PasswordField, HiddenField, DateField, \
+#     DateTimeField, TimeField
+
+from wtforms import  PasswordField
 # from wtforms import BooleanField, IntegerField
+
 
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 # from wtforms.validators import InputRequired, Length
@@ -3236,8 +3239,9 @@ class SpecificationStatusCardView(SpecificView):
                          role_responsible='Ответственный (роль)',
                          status_card='Статус карт(StatusCard)',
                          normativ2='Норматив (из админки)',
-                         normativ='Норматив (из '
-                                                                                                  'модели)')
+                         normativ='Норматив (из модели)')
+    # Задает поля при создании записи.
+
     column_filters = ['id', 'status_card', 'card_usluga', 'role_responsible']
     column_searchable_list = ['id', 'status_card.name', 'card_usluga.name_card_usluga', 'role_responsible.name']
     # column_sortable_list = ['id', ('status', 'status.number'),
