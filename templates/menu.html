@@ -61,10 +61,10 @@
 
                 <!--Услуги пункта меню на основе базы данных - начало-->
                 <div class="menu-katalog pl-4">
-                    <ul class="list-unstyled mt-4 font-weight-normal bg-light">
+                    <ul class="list-unstyled mt-3 font-weight-normal bg-light">
                         {% for usluga in uslugs_punkt_menu %}
 
-                        <li>
+                        <li class="pb-1">
                             <a href="{{ url_for('render_uslugi_link', punkt_menu=punkt_menu, category=usluga.link) }}">{{ usluga.title }} </a>
                             <!--<a href="/{{ punkt_menu }}/{{ usluga.link }}/">{{ usluga.title }} </a>-->
                         </li>

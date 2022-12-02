@@ -36,7 +36,7 @@ from RECL.models import *
 # from RECL.__init__ import app
 
 from RECL.components.card_usluga.forms import CreateCardUslugaForm, UploadFoto, EditFormPhotoCards,\
-    EditFormNameTextCards
+    EditFormNameTextCards, CreateSpecificationStatusCard
 # from RECL.components.fotomanager.forms import  DeleteForm, FormChoice1, PhotoFormAdmin, FormChoice2, DeleteFormFromMini,
 # from RECL.components.fotomanager.forms import EditFormFromMini
 
@@ -56,6 +56,54 @@ from sqlalchemy.dialects.postgresql import JSON
 # импорты для загрузки файлов - конец
 
 card_usluga_blueprint = Blueprint('card_usluga_bp', __name__, template_folder='templates/card_usluga/', static_folder='static')
+
+
+# Задать нормативы (спецификацию) карточке услуг
+@card_usluga_blueprint.route('/create_specification/<int:card_usluga_id>/', methods=['GET', 'POST'])
+def create_specification(card_usluga_id):
+    print('card_usluga_id=', card_usluga_id)
+    card_usluga = CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
+    form = CreateSpecificationStatusCard()
+    form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
+
+    # Все заданные для карты услуг спецификации
+    # Сначала ищем те спецификации, которые относятся к данной карточке услуги (filter(...))
+    # Затем ДЛЯ СОРТИРОВКИ В ОТНОШЕНИИ списка спецификаций по весу статуса карточки услуг применяем
+    # join(SpecificationStatusCard.status_card),
+    # а затем указываем сам параметр сортировкм order_by(StatusCard.weight)
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.27541e0a - 6389be38-6e5ba418-74722d776562/https/stackoverflow.com/questions/9861990/sqlalchemy-how-to-order-query-results-\order-by-on-a-relationships-field)
+    # Пыталась сделать сортировку в отношении с помощью добавления в модель order_by="StatusCard.weight",
+    # но почему-то не получилось (пробовала в обе модели добавлять)
+    # https://translated.turbopages.org/proxy_u/en-ru.ru.84ff8891-6389c048-e89c4e38-74722d776562/https/stackoverflow.com/questions/49042895/order-by-a-related-table-with-flask-sqlalchemy
+    specifications = SpecificationStatusCard.query.filter(
+            SpecificationStatusCard.card_usluga_id==card_usluga_id).join(
+        SpecificationStatusCard.status_card).order_by(StatusCard.weight).all()
+
+    # Все статусы карт
+    statuses_cards = StatusCard.query.order_by(StatusCard.weight).all()
+
+    # Не заданные статусы карт
+    # Удалим те статусы карт из списка статусов у которых есть спецификация для данной карты
+    # те создадим список из тех статусов, которые нужно задать
+    for specification in specifications:
+        if specification.status_card in statuses_cards:
+            statuses_cards.remove(specification.status_card)
+    print('statuses_cards=', statuses_cards)
+
+    if form.validate_on_submit():
+        days=form.days.data
+        hours = form.hours.data
+        minutes = form.minutes.data
+        role = form.role.data
+        print(days, hours, minutes, role)
+        return redirect(url_for('card_usluga_bp.create_specification', card_usluga_id=card_usluga.id))
+    return render_template ('create_specification.html',
+                             card_usluga=card_usluga,
+                            statuses_cards=statuses_cards,
+                            form=form,
+                            specifications=specifications
+                            )
+
 
 
 # Деактивировать прайс в карточке услуг

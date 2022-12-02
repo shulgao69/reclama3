@@ -628,7 +628,7 @@ class User(db.Model, UserMixin):
     orders_manager = db.relationship('Order', foreign_keys="Order.manager_person_id", back_populates='manager_person')
 
     # За какие элементы заказа отвечает (в данный момент?)
-    orders_items = db.relationship('OrderItem', back_populates='staff_actual_status_person')
+    orders_items_manager = db.relationship('OrderItem', back_populates='manager_person')
 
     # Плательщики пользователя (например организация, физ лицо - может быть несколько)
     payers = db.relationship('Payer', back_populates='user')
@@ -672,6 +672,8 @@ class Role(db.Model, RoleMixin):
     # statuses_cards_uslugs = db.relationship("StatusCardUsluga", back_populates='role_responsible')
 
     orders = db.relationship('Order', back_populates='manager_role')
+
+    order_items = db.relationship('OrderItem', back_populates='manager_role')
 
     # Эта функция позволяет отразить в админке в частности не объект SQLalchemy (например <Role1>),
     # а имя (name)(например admin)
@@ -1012,6 +1014,8 @@ class SpecificationStatusCard(db.Model):
     hours_norma = db.Column(db.Integer, default=0)
     minutes_norma = db.Column(db.Integer, default=0)
 
+    norma = db.Column(db.Time)
+
 
     # Данные (@hybrid_property) в админке показывает но не могу задать сортировку
     # column_sortable_list - дает ошибку, поэтому в админке этот столбец в сортирвку не включила
@@ -1025,6 +1029,15 @@ class SpecificationStatusCard(db.Model):
     # @normativ.expression
     # def normativ(cls):
     #     return func.str(cls.days_norma)+' дн. '+ str(cls.hours_norma)+' ч. '+str(cls.minutes_norma) + ' мин.'
+
+    # Это свойство НЕ РАБОТАЕТ!!! (30.11.22)
+    @hybrid_property
+    def norma2(self):
+        self.norma2 = datetime.timedelta(days=self.days_norma,
+                                    hours=self.hours_norma,
+                                    minutes=self.minutes_norma)
+        # print('self.norma2=', self.norma2)
+        return self.norma2
 
     @hybrid_property
     def normativ(self):
@@ -1205,9 +1218,18 @@ class OrderItem(db.Model):
 
     date_create_actual_status = db.Column(db.DateTime())
 
-    # Ответственный за актуальнй статус
-    staff_actual_status_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    staff_actual_status_person = db.relationship("User", back_populates='orders_items')
+    # Роль менеджера элемента заказа (ответственный за элемент заказа (назначает ответственных?))
+    manager_role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    manager_role = db.relationship("Role", back_populates='order_items')
+
+    # Ответственный за элемент заказа (персона)
+    # Персону планируем выбирать из списка юзеров с ролью manager_role, которую определяем ранее
+    manager_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    manager_person = db.relationship("User", back_populates='orders_items_manager')
+
+    # Ответственный за актуальный статус
+    # staff_actual_status_person_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # staff_actual_status_person = db.relationship("User", back_populates='orders_items')
 
     # Прогресс выполнения элемента заказа (статус, ответственный - роль,
     # ответственный - персона, дата создания, дата окончания, отклонение от норматива)

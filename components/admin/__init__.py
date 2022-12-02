@@ -930,7 +930,7 @@ class UserView(SpecificView):
         if has_app_context() and current_user.has_role('superadmin'):
             # superadmin_column_list = ['id', 'roles', 'email', 'active', 'confirmed_at', 'created_on', 'updated_on', 'orders', 'phones', 'password']
             superadmin_column_list = ['id', 'active', 'email', 'roles', 'orders', 'orders_manager',
-                                      'orders_items',
+                                      'orders_items_manager',
                                       'user_last_name', 'user_first_name', 'user_middle_name',
                                         'created_on', 'updated_on', 'confirmed_at', 'phones', 'payers']
             return superadmin_column_list
@@ -969,7 +969,7 @@ class UserView(SpecificView):
                          email='Логин(e-mail)',
                          orders ='Собственные заказы',
                          orders_manager='Отвечает за заказы',
-                         orders_items='Отвечает за определенный этап(статус) элемента заказа',
+                         orders_items_manager='Отвечает за элемент заказа',
                          confirmed_at='Подтвержден',
                          created_on='Создан',
                          updated_on='Обновлен',
@@ -990,7 +990,7 @@ class UserView(SpecificView):
     # см. https://progi.pro/kak-ispolzovat-flask-admin-column_sortable_list-s-bazoy-dannih-6787155
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView  'orders.order',
     column_searchable_list = ['id', 'orders.number', 'orders_manager.number',
-                              'orders_items.id',
+                              'orders_items_manager.id',
                               'user_first_name', 'user_middle_name', 'user_last_name',
                               'roles.name', 'email', 'active',
                               'confirmed_at', 'created_on', 'updated_on',
@@ -1013,7 +1013,7 @@ class UserView(SpecificView):
                       BooleanEqualFilter(column=User.active, name='active'),
                       'password', 'confirmed_at', 'created_on',
                       'updated_on', 'roles', 'phones', 'payers',
-                      'orders_items']
+                      'orders_items_manager']
     # *** column_filters - Задает поля, в которых возможна фильтрация - конец
 
     # *** column_sortable_list- Задает поля, в которых возможна сортировка - начало
@@ -1026,7 +1026,7 @@ class UserView(SpecificView):
     # https://flask-admin.readthedocs.io/en/latest/api/mod_model/#flask_admin.model.BaseModelView ('orders', 'orders.order'),
     column_sortable_list = ['id', ('orders', 'orders.number'),
                             ('orders_manager', 'orders_manager.number'),
-                            ('orders_items', 'orders_items.id'),
+                            ('orders_items_manager', 'orders_items_manager.id'),
                             'user_first_name', 'user_middle_name',
                             'user_last_name',
                             ('roles', 'roles.name'),
@@ -1088,7 +1088,7 @@ class UserView(SpecificView):
             # то возникала ошибка при входе в редактирование юзера в админке - серый экран
             # из-за default=datetime.utcnow (см модель юзера). Почему - не знаю. Исключила - работает.
             # 'orders',
-            return ('roles', 'orders', 'orders_items', 'orders_manager',
+            return ('roles', 'orders', 'orders_items_manager', 'orders_manager',
                     'user_first_name', 'user_middle_name', 'user_last_name',
                     'phones', 'email', 'active',
                        rules.Header('Сбросить пароль'), 'new_password', 'confirm')
@@ -2457,9 +2457,9 @@ class OrderView(SpecificView):
 
     column_list = ['id', 'number', 'user',
                    'manager_person',
-                  'manager_person.user_last_name',
-                   'manager_person.user_first_name',
-                  'manager_person.user_middle_name',
+                  # 'manager_person.user_last_name',
+                  #  'manager_person.user_first_name',
+                  # 'manager_person.user_middle_name',
                    'manager_role',
                    'date_create', 'date_end',
                    'progresses',
@@ -2582,23 +2582,31 @@ class OrderView(SpecificView):
             return True
 
 class OrderItemView(SpecificView):
-    column_list = ['id', 'order', 'card_usluga', 'price',
+    column_list = ['id', 'order', 'order.manager_person', 'manager_role',
+                   'manager_person', 'card_usluga.type_production.name',
+                   'card_usluga', 'price',
                    'gorizontal_position_price_i', 'vertical_position_price_j',
                    'actual_offer',
                    # 'actual_status',
                    'date_create_actual_status',
                    'progresses']
 
-    column_labels = dict(order='Номер заказа',
-                         card_usluga='Карточка услуги',
-                         price='Прайс',
-                         gorizontal_position_price_i='Горизонт. позиция прайса',
-                         vertical_position_price_j='Вертик. позиция прайса',
-                         actual_offer='Актуальность предложения',
-                         # actual_status='Актуальный статус',
-                         date_create_actual_status='Дата начала актуального статуса',
-                         progresses='Прогресс',
-                         )
+    column_labels = {'order': '№ заказа',
+                     'order.number': '№ заказа',
+                     'order.manager_person': 'Ответственный за заказ',
+                     'manager_role': 'Роль ответственного за элемент заказа',
+                     'manager_person': 'Ответственный за элемент заказа',
+                     'card_usluga': 'Карточка услуги',
+                     'card_usluga.type_production.name': 'Тип производства',
+                     'card_usluga.name_card_usluga': 'Имя карточки услуг',
+                     'price': 'Прайс',
+                     'price.name_price_table': 'Имя таблицы прайса',
+                     'gorizontal_position_price_i': 'Горизонт. позиция прайса',
+                     'vertical_position_price_j': 'Вертик. позиция прайса',
+                     'actual_offer': 'Актуальность предложения',
+                     # 'actual_status': 'Актуальный статус',
+                     'date_create_actual_status': 'Дата начала актуального статуса',
+                     'progresses': 'Прогресс'}
     # Задает поля, в которых возможен поиск по словам
     # Поля - отношения в поиск ВКЛЮЧАТЬ ОСОБЫМ СПОСОБОМ!!!!!
     # не roles а roles.name, не 'orders' а 'orders.order'
@@ -2607,6 +2615,8 @@ class OrderItemView(SpecificView):
     column_searchable_list = ['id',
                               'order.number',
                               'card_usluga.name_card_usluga',
+                              'card_usluga.type_production.name',
+                              'manager_role.name',
                               'price.name_price_table',
                               'gorizontal_position_price_i',
                               'vertical_position_price_j',
@@ -2625,6 +2635,10 @@ class OrderItemView(SpecificView):
     column_sortable_list = ['id',
                             ('order', 'order.number'),
                             ('card_usluga', 'card_usluga.name_card_usluga'),
+                            'card_usluga.type_production.name',
+                            ('manager_role', 'manager_role.name'),
+                            ('manager_person', 'manager_person.user_last_name'),
+                            ('order.manager_person', 'order.manager_person.user_last_name'),
                             ('price', 'price.name_price_table'),
                               'gorizontal_position_price_i',
                               'vertical_position_price_j',
@@ -2641,6 +2655,7 @@ class OrderItemView(SpecificView):
     column_filters = ['id',
                       'order.number',
                       'card_usluga.name_card_usluga',
+                      'card_usluga.type_production.name',
                       'price.name_price_table',
                       'gorizontal_position_price_i',
                       'vertical_position_price_j',
@@ -3196,9 +3211,6 @@ class StatusOrderView(SpecificView):
 
 class SpecificationStatusCardView(SpecificView):
 
-    # Добавим валидатор NumberRange (задаем интервалы)
-    # для кол-ва дней, часов или минут на выполнение работ.
-    # https://translated.turbopages.org/proxy_u/en-ru.ru.c1b086fc-62f24a67-9453ffe5-74722d776562/https/stackoverflow.com/questions/45458767/change-the-order-or-disable-the-unique-validator-in-flask-admin-with-sqlalchemy
     form_args = {
         'days_norma': {
             'validators': [NumberRange(min=0, max=366)]
@@ -3225,17 +3237,32 @@ class SpecificationStatusCardView(SpecificView):
     # from sqlalchemy.ext.hybrid import hybrid_property
     # from sqlalchemy import select, func
 
+
+    def _norma3_formatter(view, context, model, name):
+        model.norma3 = timedelta(days=model.days_norma,
+                                 hours=model.hours_norma,
+                                 minutes=model.minutes_norma)
+        return model.norma3
+
+
     def _normativ2_formatter(view, context, model, name):
         # return len(model.uslugs)
         return str(model.days_norma)+' дн. '+ str(model.hours_norma)+' ч. '+str(model.minutes_norma) + ' мин.'
 
     column_formatters = {
-        'normativ2': _normativ2_formatter
+        'normativ2': _normativ2_formatter,
+        'norma3': _norma3_formatter
     }
     # Создадим normativ2 - конец!
 
-    column_list = ['id', 'card_usluga', 'status_card',  'role_responsible', 'normativ', 'normativ2']
+    column_list = ['id', 'card_usluga', 'status_card', 'norma', 'norma2',
+                   'norma3',
+                   'role_responsible',
+                   'normativ',
+                   'normativ2']
     column_labels = dict(card_usluga='Карточка услуги',
+                         norma2='norma2(из модели через timedelta)',
+                         norma3='norma3(из админ через timedelta)',
                          role_responsible='Ответственный (роль)',
                          status_card='Статус карт(StatusCard)',
                          normativ2='Норматив (из админки)',

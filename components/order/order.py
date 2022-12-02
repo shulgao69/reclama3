@@ -8,7 +8,8 @@ from flask_security import login_required
 # from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo
 # from RECL.components.price.forms import PriceForm
 from RECL.components.order.forms import ApplicationForm, ChooseRoleAndPersonForm
-from RECL.models import CardUsluga, PriceTable, Order, Role, User, roles_users
+from RECL.models import CardUsluga, PriceTable, Order, Role, User, roles_users,\
+    StatusOrder, StatusCard, StatusIntermediate
 from RECL.models import db
 # from RECL.models import Usluga, Link, Order, User, Role, roles_users, UploadFileMy
 # from RECL.models import OrderStatus
@@ -80,7 +81,7 @@ def show_orders():
     flag_end_orders = session.get('end_orders', True)
     flag_work_orders = session.get('work_orders', True)
     flag_cancel_orders = session.get('cancel_orders', True)
-
+    statuses_orders = StatusOrder.query.all()
 
     # Новые поступившие заказы (у них еще не определена роль ответственного)
     new_orders = Order.query.filter(Order.manager_role == None).order_by(Order.date_create.desc()).all()
@@ -152,6 +153,7 @@ def show_orders():
                            new_orders=new_orders,
                            orders=orders,
                            orders_end=orders_end,
+                           statuses_orders=statuses_orders,
                            flag_new_orders=flag_new_orders,
                            flag_all_orders=flag_all_orders,
                            flag_end_orders=flag_end_orders,
