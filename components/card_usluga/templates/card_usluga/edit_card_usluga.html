@@ -4,32 +4,29 @@
     <div class="container">
 
         <!--Навигационные ссылки вар 1 - начало-->
-        <!--<div class="row pt-1 pb-4">-->
-        <!--<div class="col-4">-->
-        <!--<a href="{{ url_for('admin.index') }}">-->
-        <!--Вернуться в панель администратора-->
-        <!--</a>-->
-        <!--</div>-->
-        <!--<div class="col-4">-->
-        <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">Вернуться к карточкам услуг</a>-->
-        <!--</div>-->
-        <!--</div>-->
+        <!--<div class="row pt-1 pb-4">
+        <div class="col-4">
+        <a href="{{ url_for('admin.index') }}">
+        Вернуться в панель администратора
+        </a>
+        </div>
+        <div class="col-4">
+        <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">Вернуться к карточкам услуг</a>
+        </div>
+        </div>-->
         <!--Навигационные ссылки вар 1 - конец-->
 
-        <!--Навигационные ссылки вар 2 - начало-->
-        <!--<div class="row pt-1 pb-4">-->
-        <!--<div class="col-6">-->
-        <!--&lt;!&ndash;class="d-flex см https://bootstrap-4.ru/docs/4.0/utilities/flex/&ndash;&gt;-->
-        <!--<div class="d-flex justify-content-between">-->
-        <!--<a href="{{ url_for('admin.index') }}">-->
-        <!--Вернуться в панель администратора-->
-        <!--</a>-->
-        <!--<a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">-->
-        <!--Вернуться к карточкам услуг-->
-        <!--</a>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
+        <!-- Навигационные ссылки вар 2 - начало-->
+        <!--<div class="row pt-1 pb-4">
+        <div class="col-6">
+        class="d-flex см https://bootstrap-4.ru/docs/4.0/utilities/flex/&ndash;&gt;
+        <div class="d-flex justify-content-between">
+        <a href="{{ url_for('admin.index') }}">
+        Вернуться в панель администратора
+        </a>
+        <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+        Вернуться к карточкам услуг</a></div></div>
+        </div>-->
         <!--Навигационные ссылки вар 2- конец-->
 
         <!--Навигационные ссылки вар 3 - начало-->
@@ -96,28 +93,7 @@
                             </b>
                             {% endif %}
                         </div>
-                        <div class="text-success">
-                            Статусы:
-                            <!--Информация о статусах - начало-->
-                            <div>
-                                {% if card_usluga.statuses_card_usluga %}
-                                <div>
-                                    <!--<div class="pt-2 pb-1">Статусы:</div>-->
-                                    <!--Статусы карточки (СтатусКардУслуг) сортируем по атрибуту номер(вес) статуса в модели Статус-->
-                                    <div class="base_color_1">
-                                        {% for status_card_usluga in
-                                        (card_usluga.statuses_card_usluga|sort(attribute="status.number")) %}
 
-                                        "{{ status_card_usluga }}" -
-
-                                        {% endfor %}
-                                    </div>
-
-                                </div>
-                                {% endif %}
-                            </div>
-                            <!--Информация о статусах - конец-->
-                        </div>
                     </div>
                     <div class="col-2 text-center">
                         {% if card_usluga.active == False %}
@@ -139,7 +115,6 @@
                             Деактивировать
                         </a>
                         </div>
-
                         {% endif %}
                     </div>
 
@@ -149,19 +124,14 @@
 <!--                                Ожидает активации-->
 <!--                            </span>-->
                         <div class="pt-2">
-                        <a href="{{ url_for('card_usluga_bp.create_specification', card_usluga_id=card_usluga.id) }}">
-                            Задать спецификацию для карточки услуги
+                        <a href="{{ url_for('card_usluga_bp.specifications', card_usluga_id=card_usluga.id) }}">
+                            Спецификации карточки
                         </a>
                         </div>
-
                     </div>
                     <!--Задать нормативы (спецификацию)- конец-->
 
                 </div>
-
-
-
-
             </div>
             <!--Сведения о карточке услуги - конец-->
 

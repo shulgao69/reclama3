@@ -6,7 +6,7 @@ from wtforms import SubmitField, HiddenField, SelectField, BooleanField, StringF
 from wtforms import PasswordField, IntegerField, validators, FieldList, FormField, TextAreaField
 from wtforms import PasswordField, IntegerField, validators, TextAreaField
 # from wtforms import TextField
-from wtforms.validators import InputRequired, Length, Email, DataRequired, EqualTo, Regexp
+from wtforms.validators import InputRequired, Length, NumberRange, Email, DataRequired, EqualTo, Regexp
 # from wtforms.validators import ValidationError
 # from RECL.models import db, Link, Usluga
 
@@ -17,9 +17,9 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 # Форма для получения исходных данных для создания спецификации статусов карточки услуг
 class CreateSpecificationStatusCard(FlaskForm):
-    days = IntegerField("Дней", [InputRequired()], render_kw={'autofocus': True })
-    hours = IntegerField("Часов", [InputRequired()], render_kw={'autofocus': True})
-    minutes = IntegerField("Минут", [InputRequired()], render_kw={'autofocus': True})
+    days = IntegerField("Дней", [InputRequired(), NumberRange(min=0, max=366)], render_kw={'autofocus': True })
+    hours = IntegerField("Часов", [InputRequired(), NumberRange(min=0, max=23)], render_kw={'autofocus': True})
+    minutes = IntegerField("Минут", [InputRequired(), NumberRange(min=0, max=59)], render_kw={'autofocus': True})
     role = SelectField("Роль", validators=[DataRequired()], render_kw={'autofocus': True})
     status_card_id = HiddenField('статус карты услуг (id)')
     submit = SubmitField('Задать')

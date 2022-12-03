@@ -18,6 +18,14 @@ import json
 
 test_form_blueprint = Blueprint('test_form_bp', __name__, template_folder='templates/test_form/', static_folder='static')
 
+# страница
+@test_form_blueprint.route('/bootstrap/', methods=['GET', 'POST'])
+# @roles_accepted('superadmin')
+# @login_required
+def bootstrap():
+
+    return render_template('bootstrap.html')
+
 
 # страница с параметрами заказа
 @test_form_blueprint.route('/', methods=['GET', 'POST'])

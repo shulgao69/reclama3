@@ -58,9 +58,79 @@ from sqlalchemy.dialects.postgresql import JSON
 card_usluga_blueprint = Blueprint('card_usluga_bp', __name__, template_folder='templates/card_usluga/', static_folder='static')
 
 
+# Удалить спецификацию статуса карточки услуг
+@card_usluga_blueprint.route('/delete_specification/<int:card_usluga_id>/<int:specification_id>/', methods=['GET',
+                                                                                                          'POST'])
+def delete_specification(card_usluga_id, specification_id):
+    card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
+    specification = SpecificationStatusCard.query.filter(SpecificationStatusCard.id==specification_id).first()
+    db.session.delete(specification)
+    db.session.commit()
+    return redirect(url_for('card_usluga_bp.specifications',
+                            card_usluga_id=card_usluga.id))
+
+
+# Создать спецификацию статуса карточки услуг
+@card_usluga_blueprint.route('/create_specification/<int:card_usluga_id>/<int:status_card_id>/', methods=['GET',
+                                                                                                          'POST'])
+def create_specification(card_usluga_id, status_card_id):
+    card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
+    status_card=StatusCard.query.filter(StatusCard.id == status_card_id).first()
+    form = CreateSpecificationStatusCard()
+    form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
+    if form.validate_on_submit():
+        days=form.days.data
+        hours = form.hours.data
+        minutes = form.minutes.data
+        role = form.role.data
+        specification=SpecificationStatusCard(role_responsible_id=role,
+                                              days_norma=days,
+                                              hours_norma = hours,
+                                              minutes_norma = minutes,
+                                              card_usluga_id = card_usluga_id,
+                                              status_card_id = status_card_id)
+        db.session.add(specification)
+        db.session.commit()
+        return redirect(url_for('card_usluga_bp.specifications', card_usluga_id=card_usluga.id))
+    return render_template ('create_specification.html',
+                             card_usluga=card_usluga,
+                            form=form,
+                            status_card=status_card
+                            )
+
+
+# Редактировать спецификацию статуса карточки услуг
+@card_usluga_blueprint.route('/edit_specification/<int:card_usluga_id>/<int:specification_id>/', methods=['GET',
+                                                                                                          'POST'])
+def edit_specification(card_usluga_id, specification_id):
+    card_usluga = CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
+    print('card_usluga_id=', card_usluga_id)
+    print('card_usluga=', card_usluga)
+    specification = SpecificationStatusCard.query.filter(SpecificationStatusCard.id==specification_id).first()
+    print('specification=', specification)
+    form = CreateSpecificationStatusCard()
+    form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
+    if form.validate_on_submit():
+        days=form.days.data
+        hours = form.hours.data
+        minutes = form.minutes.data
+        role = form.role.data
+        specification.role_responsible_id=role
+        specification.days_norma=days
+        specification.hours_norma = hours
+        specification.minutes_norma = minutes
+        db.session.commit()
+        return redirect(url_for('card_usluga_bp.specifications', card_usluga_id=card_usluga.id))
+    return render_template ('edit_specification.html',
+                             card_usluga=card_usluga,
+                            form=form,
+                            specification=specification
+                            )
+
+
 # Задать нормативы (спецификацию) карточке услуг
-@card_usluga_blueprint.route('/create_specification/<int:card_usluga_id>/', methods=['GET', 'POST'])
-def create_specification(card_usluga_id):
+@card_usluga_blueprint.route('/specifications/<int:card_usluga_id>/', methods=['GET', 'POST'])
+def specifications(card_usluga_id):
     print('card_usluga_id=', card_usluga_id)
     card_usluga = CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
     form = CreateSpecificationStatusCard()
@@ -97,7 +167,7 @@ def create_specification(card_usluga_id):
         role = form.role.data
         print(days, hours, minutes, role)
         return redirect(url_for('card_usluga_bp.create_specification', card_usluga_id=card_usluga.id))
-    return render_template ('create_specification.html',
+    return render_template ('specifications.html',
                              card_usluga=card_usluga,
                             statuses_cards=statuses_cards,
                             form=form,
@@ -124,7 +194,6 @@ def active_price_in_card_usluga(card_usluga_id, price_id):
     db.session.commit()
     return redirect (url_for('card_usluga_bp.edit_card_usluga',
                              card_usluga_id=card_usluga_id))
-
 
 
 # *** Редактирование заголовка и сопроводительного текста карточки услуг - начало
