@@ -22,7 +22,7 @@ class CreateSpecificationStatusCard(FlaskForm):
     minutes = IntegerField("Минут", [InputRequired(), NumberRange(min=0, max=59)], render_kw={'autofocus': True})
     role = SelectField("Роль", validators=[DataRequired()], render_kw={'autofocus': True})
     status_card_id = HiddenField('статус карты услуг (id)')
-    submit = SubmitField('Задать')
+    submit = SubmitField('Создать спецификацию')
 
 # Форма для получения исходных данных для создания формы карусели(кол-во фото, имя, директория загрузки)
 class CreateCardUslugaForm(FlaskForm):

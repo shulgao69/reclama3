@@ -4,6 +4,65 @@ body {
     /*font-family: 'Roboto Condensed', sans-serif;*/
 }
 
+/* Попытка задать автоматическое перетекание текста из одной колонки в другую - начало*/
+/* применила на стр bootstrap.html в компонентах test_form как пробу*/
+/* https://webformyself.com/verstka-sajta-s-pomoshhyu-kolonok/*/
+/* https://translated.turbopages.org/proxy_u/en-ru.ru.83cdee19-639045d6-31b79313-74722d776562/https/stackoverflow.com/questions/57565606/how-can-i-make-text-flow-from-one-column-to-another-if-the-column-becomes-full*/
+/* Column-count – свойство задает кол-во колонок, на кот.нужно разбить текст.*/
+/* Column-rule – рисует линию, разделяющую колонки. Синтаксис свойства полностью повторяет свойство border. Сначала записывается толщина линии, потом ее тип, а потом цвет.*/
+/* Column-gap – определяет промежуток между колонками. Можно задавать в пикселях.*/
+/* Column-width – задает кол-во символов текста в одной колонке. Я подчеркиваю, ширина колонки в данном случае
+задается не пикселами, а количеством символов. Оптимально: 30-50 символов.*/
+.columns1-height200 {
+  height: 200px;
+  -webkit-column-count: 1;
+}
+
+.columns3-width100 {
+  -webkit-column-count: 3;
+  -webkit-column-width: 100;
+  -webkit-column-rule: 1px solid red;
+  -webkit-column-gap: 50px;
+}
+
+
+.columns1-height150 {
+  height: 150px;
+  -webkit-column-count: 1;
+  -moz-column-count: 1;
+  column-count: 1;
+  -moz-column-fill: auto;
+  column-fill: auto;
+}
+
+.columns2-height300 {
+  height: 300px;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+  -moz-column-fill: auto;
+  column-fill: auto;
+}
+
+/* https://itchief.ru/bootstrap/typography#perenos-teksta-i-ego-otobrajenie-pri-perepolnenii*/
+.multicolumn {
+  -moz-column-count: 3;
+  -webkit-column-count: 3;
+  column-count: 3; /* оптимальное количество колонок */
+
+  -moz-column-gap: 55px;
+  -webkit-column-gap: 55px;
+  column-gap: 55px; /* расстояние между колонками */
+
+  -moz-column-width: auto;
+  -webkit-column-width: auto;
+  column-width: auto; /* оптимальная ширина колонок */
+
+  -moz-column-rule: medium none;
+  -webkit-column-rule: medium none;
+  column-rule: medium none; /* разделительная линия между колонками */
+}
+/* Попытка задать автоматическое перетекание текста из одной колонки в другую - конец*/
 
 
 /* главное меню сайта (из базы данных)*/
