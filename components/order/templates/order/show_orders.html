@@ -1,0 +1,1130 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container-fluid px-4">
+        <!--Ссылки для показа карточек услуг в архиве, не в архиве, все - начало-->
+        <div class="text-right pr-2">
+            Показать:
+            <a href="{{ url_for('order_bp.show_all_orders') }}" class="px-3">Все заказы</a>
+            <a href="{{ url_for('order_bp.show_new_orders') }}" class="pr-3">Только новые заявки на
+                заказ</a>
+            <a href="{{ url_for('order_bp.show_work_orders') }}" class="pr-3">Заказы в работе</a>
+            <a href="{{ url_for('order_bp.show_end_orders') }}" class="pr-3">Закрытые заказы</a>
+            <a href="{{ url_for('order_bp.show_orders') }}">Отклоненные заказы</a>
+        </div>
+        <!--Ссылки для показа карточек услуг в архиве, не в архиве, все - конец-->
+
+        <!--Новые заявки - начало-->
+        {% if flag_new_orders or flag_all_orders %}
+        {% if new_orders %}
+        <h5>Новые заявки на заказы</h5>
+        <div>
+            <!--class="table-responsive" в отдельном div позволяет сделать прокрутку таблицы -->
+            <!--см. https://bootstrap-4.ru/docs/4.0/content/tables/-->
+            <div class="table-responsive">
+                <table class="table table-reflow mb-1">
+
+                    <thead>
+                    <tr>
+                        <th class="p-1">
+                            № заказа
+                        </th>
+                        <th class="p-1">
+                            Тип заказа
+                        </th>
+                        <th class="p-1">
+                            Дата создания
+                        </th>
+                        <th class="p-1">
+                            Заказчик
+                        </th>
+                        <th class="p-1">
+                            Назначить роль ответственного
+                        </th>
+                        <th class="p-1">
+                            Назначить ответственного
+                        </th>
+                        <th class="p-1">
+                            Выбрать
+                        </th>
+                        <th class="p-1">
+                            Другое
+                        </th>
+                    </tr>
+                    </thead>
+
+                    {% for order in new_orders %}
+                    <tbody>
+                    <tr>
+                        <td class="p-1">
+                            {{ order.number }}
+                        </td>
+                        <td class="p-1">
+
+                            {% for order_item in order.order_items %}
+                            {{ order_item.card_usluga.type_production }},
+                            {% endfor %}
+
+                        </td>
+                        <td class="p-1">
+                            {{ order.date_create }}
+                        </td>
+                        <td class="p-1">
+                            {{ order.user }}
+                        </td>
+                        <form method="POST"
+                              action="{{ url_for('order_bp.show_orders', order_id=order.id) }}"
+                              enctype="multipart/form-data"
+                              id="order.id">
+                            {{ form.csrf_token }}
+                            {{ form.order(value=order.id) }}
+
+                            <td class="p-1">
+                                {{ form.manager_role(class="container-fluid form-control") }}
+                            </td>
+                            <td class="p-1">
+                                {{ form.manager_person(class="container-fluid form-control") }}
+                            </td>
+                            <!--Кнопка загрузки-->
+                            <td class="p-1">
+                                {{ form.submit(class="form-control btn-success btn-block") }}
+                            </td>
+                            <!--Кнопка загрузки -  конец-->
+                            <td class="p-1">
+                                Другое
+                            </td>
+                        </form>
+                    </tr>
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <h5>Новых заявок нет!</h5>
+        {% endif %}
+        {% endif %}
+        <!--Новые заявки - конец-->
+
+        <!--Заказы - начало-->
+        {% if flag_work_orders or flag_all_orders%}
+        <div>
+            <h3 class="pt-5">Заказы в работе</h3>
+            {% for order in orders %}
+            <div class="pb-2">
+                <h4 class="text-success alert alert-secondary py-2 mt-3"><b>Заказ № {{ order.number }}</b></h4>
+                <!--Информация по заказу - начало-->
+                <!--class="table-responsive" в отдельном div позволяет сделать прокрутку таблицы -->
+                <!--см. https://bootstrap-4.ru/docs/4.0/content/tables/-->
+                <div class="table-responsive">
+                    <table class="table table-reflow">
+                        <thead class="base_color_1">
+                        <tr>
+                            <th class="pb-1 pt-0">
+                                № заказа
+                            </th>
+                            <th class="pb-1 pt-0">
+                            Тип производства
+                            </th>
+                            <th class="pb-1 pt-0">
+                                Дата создания
+                            </th>
+                            <th class="pb-1 pt-0">
+                                Дата окончания
+                            </th>
+                            <th class="pb-1 pt-0">
+                                Заказчик
+                            </th>
+                            <th class="pb-1 pt-0">
+                                Роль ответственного
+                            </th>
+                            <th class="pb-1 pt-0">
+                                Ответственный за заказ
+                            </th>
+                            <th class="pb-1 pt-0">
+                                Другое
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr>
+
+                            <td class="pb-1 pt-0">
+                                {{ order.number }}
+                            </td class="pb-1 pt-0">
+                            <td class="pb-1 pt-0">
+                            {% for order_item in order.order_items %}
+                            {{ order_item.card_usluga.type_production }},
+                            {% endfor %}
+                            </td>
+                            <td class="pb-1 pt-0">
+                                {{ order.date_create }}
+                            </td>
+                            <td class="pb-1 pt-0">
+                                {{ order.date_end }}
+                            </td>
+                            <td class="pb-1 pt-0">
+                                {{ order.user }}
+                            </td>
+
+                            <td class="pb-1 pt-0">
+                                {{ order.manager_role }}
+                            </td>
+                            <td class="pb-1 pt-0">
+                                {{ order.manager_person }}
+                            </td>
+
+                            <td class="pb-1 pt-0">
+                                Другое
+                            </td>
+
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+                <!--Информация по заказу - конец-->
+
+                <!--Прогресс по заказу - начало-->
+                <div class="p-2 alert alert-secondary">
+                    {% if order.progresses %}
+                    <div><b class="base_color_1 ">Прогресс по заказу:</b></div>
+                    <!--Создаем переменную время выполнения заказа (time_order) и
+                        устанавливаем исходное значение равное пременной new_timedelta
+                        (она у нас задана в роуте и равна 00:00:00 (то есть 0), а
+                        потом в цикле ее увеличиваем-->
+                    <!--https://askdev.ru/q/jinja2-izmenenie-znacheniya-peremennoy-vnutri-cikla-59582/-->
+                    {% set ns = namespace(time_order=new_timedelta) %}
+
+                    <div class="row py-2">
+                        {% for progress in order.progresses|sort(attribute="date_create") %}
+                        <div class="col-2">
+                            {% if progress.date_end %}
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                     role="progressbar"
+                                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                    {{ progress.status_order }}
+                                </div>
+                            </div>
+                            <small>
+                                <div class="pt-2">
+                                    Начало: {{ progress.date_create }}<br>
+                                    Конец: {{ progress.date_end}}<br>
+                                    <b class="text-danger">Время в работе:</b>
+                                    <b>
+                                        {% set time=progress.date_end-progress.date_create %}
+                                        {{ time }}<br>
+                                        <!--Изменяем переменную time_order-->
+                                        {% set ns.time_order=ns.time_order + time %}
+                                    </b>
+                                </div>
+                            </small>
+
+                            {% else %}
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                     role="progressbar"
+                                     aria-valuenow="25"
+                                     aria-valuemin="0"
+                                     aria-valuemax="50"
+                                     style="width:75%">
+                                    {{ progress.status_order }}
+                                </div>
+                            </div>
+                            <small>
+                                <div class="pt-2">
+                                    Начало: {{ progress.date_create }}<br>
+                                    Конец: <b class="text-danger">Этап не завершен</b><br>
+                                    <b class="text-danger">Время в работе:</b>
+                                    {% set time1=actual_time-progress.date_create %}
+                                    <b>{{ time1 }}</b>
+                                    {% set ns.time_order=ns.time_order + time1 %}
+                                </div>
+                            </small>
+                            {% endif %}
+
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!--Общее время в работе - начало-->
+                    <div>
+                        <b class="text-danger">
+                            Общее время в работе:
+                        </b>
+                        <b>
+                            {{ ns.time_order }}
+                        </b>
+                    </div>
+                    <!--Общее время в работе - конец-->
+                    {% else %}
+                    <div>Прогресса по заказу нет</div>
+                    {% endif %}
+                </div>
+                <!--Прогресс по заказу - конец-->
+
+
+                <!--Действия по заказу - начало-->
+                {% if order.order_actions %}
+                <div>
+                    <div class="border p-2">
+
+                        <!--Внимание! если закрывающий тег ссылки перенесен на др строку, то скрипт смены текста на кнопке-->
+                        <!--почему-то работает неверно! Поэтому закрывающий тег не переносить!!! Почему не знаю!!-->
+                        <!--По нажатию кнопки открывать текст и закрывать -->
+                        <!--collapse в раскрываемом тексте - текст не виден по умолчанию-->
+                        <!--collapse show в раскрываемом тексте-  текст виден по умолчанию-->
+                        <!--data-toggle='collapse' - обязательно-->
+                        <!--Скрипт (смена надписи на кнопке по клику )в конце стр.-->
+                        <!--https://stackoverflow.com/questions/42834154/changing-bootstrap-button-text-on-toggle-->
+                        <!--Кнопка раскрытия таблицы действий по заказу - начало-->
+                        <button id='{{ order.id }}'
+                           class='ppp btn btn-success btn-sm' data-toggle='collapse'
+                           href='#control1{{ order.id }}'>Скрыть действия по заказу</button>
+                        <!--Кнопка раскрытия таблицы действий по заказу - конец-->
+
+
+                        <!--Таблица действий по заказу - начало-->
+                        <div id="control1{{ order.id }}" class="collapse show pt-3">
+                            <div class="table-responsive">
+                                <table class="table table-reflow">
+                                    <thead class="base_color_1">
+                                    <tr>
+                                        <th class="p-1">
+                                            Дата:
+                                        </th>
+                                        <th class="p-1">
+                                            Статус:
+                                        </th>
+                                        <th class="p-1">
+                                            Действие:
+                                        </th>
+                                        <th class="p-1">
+                                            Цель действия:
+                                        </th>
+                                        <th class="p-1">
+                                            Метод действия:
+                                        </th>
+                                        <th class="p-1">
+                                            Результат действия:
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!--Двойная сортировка-->
+                                    <!--https://docs-python.ru/packages/modul-jinja2-python/vstroennye-filtry-modulja-jinja2/#filter.sort-->
+                                    {% for order_action in
+                                    order.order_actions|sort(attribute="status_order_id.weight")|sort(
+                                    attribute="date_create") %}
+                                    <tr>
+                                        <td class="p-1"><small>
+                                            {{ order_action.date_create }}</small>
+                                        </td>
+                                        <td class="p-1">
+                                            {{ order_action.status_order }}
+                                        </td>
+
+                                        <td class="p-1">
+                                            {{ order_action.staff_action }}
+                                        </td>
+                                        <td class="p-1">
+                                            {{ order_action.goal_action }}
+                                        </td>
+                                        <td class="p-1">
+                                            {{ order_action.method_action }}
+                                        </td>
+                                        <td class="p-1">
+                                            {{ order_action.result_action }}
+                                        </td>
+                                        <td class="p-1">
+
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!--Таблица действий по заказу - конец-->
+
+
+                    </div>
+                    {% else %}
+                    <div>Действий по заказу нет</div>
+                </div>
+                {% endif %}
+                <!--Действия по заказу - конец-->
+
+                <!--Состав заказ - начало-->
+                <div class="border px-2 mt-3">
+                    {% if order.order_items %}
+                    <!--Заголовок Состав заказ: - начало-->
+                    <div class="base_color_1 pt-3">
+                        <b>Состав заказа № {{ order.number }}:</b>
+                    </div>
+                    <!--Заголовок Состав заказ: - конец-->
+
+                    {% for order_item in order.order_items %}
+                    <!--Данные по элементу заказа - начало-->
+                    <div class="table-responsive">
+                        <table class="table table-reflow pb-2">
+                            <thead class="base_color_1">
+                            <tr>
+                                <th class="p-1">
+                                    Позиция заказа
+                                </th>
+                                <th class="p-1">
+                                    date_create_actual_status
+                                </th>
+                                <th class="p-1">
+                                    Роль ответственного
+                                </th>
+                                <th class="p-1">
+                                    Ответственный за элемент заказа
+                                </th>
+                                <th class="p-1">
+                                    Тип произв-ва
+                                </th>
+                                <th class="p-1">
+                                    Карточка услуги
+                                </th>
+
+                                <th class="p-1">
+                                    Прайс:
+                                </th>
+                                <th class="p-1">
+                                    Горизонт поз
+                                </th>
+                                <th class="p-1">
+                                    Вертик поз:
+                                </th>
+                                <th class="p-1">
+                                    actual_offer заказа
+                                </th>
+                                <th class="p-1">
+                                    Другое
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="p-1">
+                                    {{ order_item }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.date_create_actual_status }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.manager_role }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.manager_person }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.card_usluga.type_production }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.card_usluga }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.price }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.gorizontal_position_price_i }}
+                                </td>
+
+                                <td class="p-1">
+                                    {{ order_item.vertical_position_price_j }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.actual_offer }}
+                                </td>
+                                <td class="p-1">
+                                    Другое
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--Данные по элементу заказа - конец-->
+
+                    {% if order_item.card_usluga.specification %}
+                    <!--Список всех заданных спецификаций статусов по карточке услуг элемента заказа - начало-->
+                    <div class="text-danger">
+                        Список всех заданных спецификаций статусов по карточке услуг элемента заказа: {{
+                        order_item.card_usluga.specification}}
+                    </div>
+                    <div class="text-danger">
+                        Нормативы заданных спецификаций:
+                    </div>
+                    <!--Список всех заданных спецификаций статусов по карточке услуг элемента заказа - конец-->
+                    {% for specification in order_item.card_usluga.specification %}
+                    <div class="text-danger">
+                        Статус: "{{ specification.status_card }} ".
+                        Норматив:- {{ specification.normativ }}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <!--Сообщение (если заданных спецификаций по карточке услуг нет) - начало-->
+                    <div class="text-danger">
+                        Спецификация статусов (норматив) для данной карточки услуг не задана!
+                    </div>
+                    <!--Сообщение (если заданных спецификаций по карточке услуг нет) - конец-->
+                    {% endif %}
+
+                    <!--Прогресс по элементу заказа - начало-->
+                    {% if order_item.progresses %}
+                    <div class="p-2 mt-2 alert alert-secondary">
+                        <div class="pt-1"><b class="base_color_1 ">Прогресс по позиции заказа:</b></div>
+                        <div class="row pt-2">
+
+                            {% for progress in order_item.progresses|sort(attribute="date_create") %}
+
+                            <div class="col-2">
+                                {% if progress.date_end %}
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                         role="progressbar"
+                                         aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                        {{ progress.status_card }}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <small>
+                                        <div class="pt-2">
+                                            Начало: {{ progress.date_create }}<br>
+                                            Конец: {{ progress.date_end}}<br>
+                                            <b class="text-danger">Время в работе:</b>
+                                            {% set time_progress_order_item=progress.date_end-progress.date_create %}
+                                            <b>
+                                                {{ time_progress_order_item }}<br>
+                                            </b>
+                                        </div>
+                                    </small>
+
+                                    {% for specification in order_item.card_usluga.specification %}
+                                    {% if specification.status_card== progress.status_card %}
+                                    <small>
+                                        <div>
+                                            Ответственный:
+                                            <b class="text-danger">
+                                                {{ specification.role_responsible }}
+                                            </b>
+                                        </div>
+                                        Норматив статуса карточки услуги:
+                                        <b class="text-danger">
+                                            {{ specification.normativ }}
+                                        </b><br>NORMA2: {{ specification.norma2 }}
+                                        <div>
+                                            norma: {{ specification.norma }}
+                                        </div>
+                                        <div>
+                                            Отклонение:
+                                        </div>
+                                    </small>
+                                    {% endif %}
+                                    {% endfor %}
+                                    </small>
+                                </div>
+
+                                {% else %}
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                         role="progressbar"
+                                         aria-valuenow="25"
+                                         aria-valuemin="0"
+                                         aria-valuemax="50"
+                                         style="width:75%">
+                                        {{ progress.status_card }}
+                                    </div>
+                                </div>
+                                <div><small>
+                                    {{ progress.date_create }} - {{ progress.date_end}}</small>
+                                </div>
+                                <div><small>
+
+                                    {% for specification in order_item.card_usluga.specification %}
+                                    {% if specification.status_card== progress.status_card %}
+                                    <div>
+                                        Роль ответственного:
+                                        <b class="text-danger">
+                                            {{ specification.role_responsible }}
+                                        </b>
+                                    </div>
+                                    <div>
+                                        Ответственный:
+                                    </div>
+                                    Норматив:
+                                    <b class="text-danger">
+                                        {{ specification.normativ }}
+                                    </b><br>
+                                    norma2: {{ specification.norma2 }}
+                                    <div>
+                                        Фактически:
+                                    </div>
+                                    <div>
+                                        Отклонение от норматива:
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </small>
+                                </div>
+
+
+                                {% endif %}
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="pt-0">Прогресса по позиции заказа нет.</div>
+                    {% endif %}
+                    <!--Прогресс по элементу заказа - конец-->
+
+                    {% endfor %}
+                    {% else %}
+                    <div> У заказа нет элементов</div>
+                    {% endif %}
+                </div>
+
+                <!--Состав заказ - конец-->
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!--Заказы - конец-->
+
+        <!--Заказы закрытые - начало-->
+        {% if flag_end_orders or flag_all_orders %}
+        <div>
+            {% if orders_end %}
+            <h3 class="pt-5">Заказы закрытые</h3>
+            {% for order in orders_end %}
+            <div class="px-0 pb-5">
+                <h4 class="text-success"><b>Заказ № {{ order.number }}</b></h4>
+
+                <!--Информация по заказу - начало-->
+                <!--class="table-responsive" в отдельном div позволяет сделать прокрутку таблицы -->
+                <!--см. https://bootstrap-4.ru/docs/4.0/content/tables/-->
+                <div class="table-responsive">
+                    <table class="table table-reflow pb-2">
+
+                        <thead class="base_color_1">
+                        <tr>
+                            <th class="p-1">
+                                № заказа
+                            </th>
+                            <td class="p-1">
+                            Тип производства
+                        </td>
+                            <th class="p-1">
+                                Дата создания
+                            </th>
+                            <th class="p-1">
+                                Дата окончания
+                            </th>
+                            <th class="p-1">
+                                Заказчик
+                            </th>
+                            <th class="p-1">
+                                Роль ответственного
+                            </th>
+                            <th class="p-1">
+                                Ответственный за заказ
+                            </th>
+                            <th class="p-1">
+                                Другое
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr>
+                            <td class="p-1">
+                                {{ order.number }}
+                            </td class="p-1">
+                            <td class="p-1">
+
+                            {% for order_item in order.order_items %}
+                            {{ order_item.card_usluga.type_production }},
+                            {% endfor %}
+
+                        </td>
+                            <td class="p-1">
+                                {{ order.date_create }}
+                            </td>
+                            <td class="p-1">
+                                {{ order.date_end }}
+                            </td>
+                            <td class="p-1">
+                                {{ order.user }}
+                            </td>
+
+                            <td class="p-1">
+                                {{ order.manager_role }}
+                            </td>
+                            <td class="p-1">
+                                {{ order.manager_person }}
+                            </td>
+
+                            <td class="p-1">
+                                Другое
+                            </td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <!--Информация по заказу - конец-->
+
+                <!--Прогресс по заказу - начало-->
+                {% if order.progresses %}
+                <div><b class="base_color_1 ">Прогресс по заказу:</b></div>
+                <div class="row py-3">
+
+                    {% for progress in order.progresses|sort(attribute="date_create") %}
+                    <div class="col-2">
+
+                        {% if progress.date_end %}
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                 role="progressbar"
+                                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                {{ progress.status_order }}
+                            </div>
+                        </div>
+                        <div><small>
+                            {{ progress.date_create }} - {{ progress.date_end}}</small>
+                        </div>
+                        {% else %}
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                 role="progressbar"
+                                 aria-valuenow="25"
+                                 aria-valuemin="0"
+                                 aria-valuemax="50"
+                                 style="width:75%">
+                                {{ progress.status_order }}
+                            </div>
+                        </div>
+                        <div>
+                            {{ progress.date_create }} - {{ progress.date_end}}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+                {% else %}
+                <div>Прогресса по заказу нет</div>
+                {% endif %}
+                <!--Прогресс по заказу - конец-->
+
+                <!--Действия по заказу - начало-->
+                {% if order.order_actions %}
+                <!--Внимание! если закрывающий тег ссылки перенесен на др строку, то скрипт смены текста на кнопке-->
+                <!--почему-то работает неверно! Поэтому закрывающий тег не переносить!!! Почему не знаю!!-->
+                <!--По нажатию кнопки открывать текст и закрывать -->
+                <!--collapse в раскрываемом тексте - текст не виден по умолчанию-->
+                <!--collapse show в раскрываемом тексте-  текст виден по умолчанию-->
+                <!--data-toggle='collapse' - обязательно-->
+                <!--Скрипт (смена надписи на кнопке по клику )в конце стр.-->
+                <!--https://stackoverflow.com/questions/42834154/changing-bootstrap-button-text-on-toggle-->
+                <!--Кнопка раскрытия таблицы действий по заказу - начало-->
+                <a id='collapseOrder2'
+                   class='btn btn-success btn-sm' data-toggle='collapse'
+                   href='#control2{{ order.id }}'>Показать действия по заказу</a>
+                <!--Кнопка раскрытия таблицы действий по заказу - конец-->
+                <!--Таблица действий по заказу - начало-->
+                <div id="control2{{ order.id }}" class="collapse">
+                    <div class="table-responsive">
+                        <table class="table table-reflow">
+                            <thead class="base_color_1">
+                            <tr>
+                                <th class="p-1">
+                                    Дата:
+                                </th>
+                                <th class="p-1">
+                                    Статус:
+                                </th>
+                                <th class="p-1">
+                                    Действие:
+                                </th>
+                                <th class="p-1">
+                                    Цель действия:
+                                </th>
+                                <th class="p-1">
+                                    Метод действия:
+                                </th>
+                                <th class="p-1">
+                                    Результат действия:
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--Двойная сортировка-->
+                            <!--https://docs-python.ru/packages/modul-jinja2-python/vstroennye-filtry-modulja-jinja2/#filter.sort-->
+                            {% for order_action in
+                            order.order_actions|sort(attribute="status_order_id.weight")|sort(
+                            attribute="date_create") %}
+                            <tr>
+                                <td class="p-1"><small>
+                                    {{ order_action.date_create }}</small>
+                                </td>
+                                <td class="p-1">
+                                    {{ order_action.status_order }}
+                                </td>
+
+                                <td class="p-1">
+                                    {{ order_action.staff_action }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_action.goal_action }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_action.method_action }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_action.result_action }}
+                                </td>
+                                <td class="p-1">
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--Таблица действий по заказу - конец-->
+                {% else %}
+                <div>Действий по заказу нет</div>
+                {% endif %}
+                <!--Действия по заказу - конец-->
+
+
+                <!--Состав заказ - начало-->
+                {% if order.order_items %}
+                <div>
+                    <!--Заголовок Состав заказ: - начало-->
+                    <div>
+                        <b class="base_color_1">Состав заказ:</b>{{ order.order_items }}
+                    </div>
+                    <!--Заголовок Состав заказ: - конец-->
+
+                    {% for order_item in order.order_items %}
+                    <!--Данные по элементу заказа - начало-->
+                    <div class="table-responsive">
+                        <table class="table table-reflow pb-2">
+                            <thead class="base_color_1">
+                            <tr>
+                                <th class="p-1">
+                                    Позиция заказа
+                                </th>
+                                <th class="p-1">
+                                    date_create_actual_status
+                                </th>
+                                <th class="p-1">
+                                    Карточка услуги:
+                                </th>
+                                <th class="p-1">
+                                    Прайс:
+                                </th>
+                                <th class="p-1">
+                                    Горизонт поз
+                                </th>
+                                <th class="p-1">
+                                    Вертик поз:
+                                </th>
+                                <th class="p-1">
+                                    actual_offer заказа
+                                </th>
+
+                                <th class="p-1">
+                                    staff_actual_status_person заказа
+                                </th>
+                                <th class="p-1">
+                                    Другое
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="p-1">
+                                    {{ order_item }}
+                                </td class="p-1">
+                                <td class="p-1">
+                                    {{ order_item.date_create_actual_status }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.card_usluga }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.price }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.gorizontal_position_price_i }}
+                                </td>
+
+                                <td class="p-1">
+                                    {{ order_item.vertical_position_price_j }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.actual_offer }}
+                                </td>
+                                <td class="p-1">
+                                    {{ order_item.staff_actual_status_person }}
+                                </td>
+                                <td class="p-1">
+                                    Другое
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--Данные по элементу заказа - конец-->
+
+                    {% if order_item.card_usluga.specification %}
+                    <!--Список заданных спецификаций по элем. заказа(карточке услуг) если они есть - начало-->
+                    <div class="text-danger">
+                        Спецификация статусов для данной карточки услуг {{ order_item.card_usluga.specification}}
+                    </div>
+                    <!--Список заданных спецификаций по элем. заказа(карточке услуг) если они есть - конец-->
+                    {% for specification in order_item.card_usluga.specification %}
+                    <div class="text-danger">
+                        Норматив для статуса "
+                        {{ specification.status_card }} "- {{ specification.normativ }}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <!--Сообщение (если заданных спецификаций по карточке услуг нет) - начало-->
+                    <div class="text-danger">
+                        Спецификация статусов (норматив) для данной карточки услуг не задана!
+                    </div>
+                    <!--Сообщение (если заданных спецификаций по карточке услуг нет) - конец-->
+                    {% endif %}
+
+                    <!--Прогресс по элементу заказа - начало-->
+                    <div>
+                        {% if order_item.progresses %}
+                        <div><b class="base_color_1 ">Прогресс по позиции заказа:</b></div>
+                        <div class="row py-3">
+
+                            {% for progress in order_item.progresses|sort(attribute="date_create") %}
+
+                            <div class="col-2">
+                                {% if progress.date_end %}
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                         role="progressbar"
+                                         aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                        {{ progress.status_card }}
+                                    </div>
+                                </div>
+                                <div><small>
+                                    {{ progress.date_create }} - {{ progress.date_end}}</small>
+                                </div>
+                                <div><small>
+
+                                    {% for specification in order_item.card_usluga.specification %}
+                                    {% if specification.status_card== progress.status_card %}
+                                    <div>
+                                        Ответственный:
+                                        <b class="text-danger">
+                                            {{ specification.role_responsible }}
+                                        </b>
+                                    </div>
+                                    Норматив:
+                                    <b class="text-danger">
+                                        {{ specification.normativ }}
+                                    </b>
+                                    <div>
+                                        Фактически:
+                                    </div>
+                                    <div>
+                                        Отклонение:
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </small>
+                                </div>
+
+                                {% else %}
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped bg-success progress-bar-animated"
+                                         role="progressbar"
+                                         aria-valuenow="25"
+                                         aria-valuemin="0"
+                                         aria-valuemax="50"
+                                         style="width:75%">
+                                        {{ progress.status_card }}
+                                    </div>
+                                </div>
+                                <div><small>
+                                    {{ progress.date_create }} - {{ progress.date_end}}</small>
+                                </div>
+                                <div><small>
+
+                                    {% for specification in order_item.card_usluga.specification %}
+                                    {% if specification.status_card== progress.status_card %}
+                                    <div>
+                                        Роль ответственного:
+                                        <b class="text-danger">
+                                            {{ specification.role_responsible }}
+                                        </b>
+                                    </div>
+                                    <div>
+                                        Ответственный:
+                                    </div>
+                                    Норматив:
+                                    <b class="text-danger">
+                                        {{ specification.normativ }}
+                                    </b>
+                                    <div>
+                                        Фактически:
+                                    </div>
+                                    <div>
+                                        Отклонение от норматива:
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </small>
+                                </div>
+
+
+                                {% endif %}
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+                        {% else %}
+                        <div>Прогресса по элементу заказа нет</div>
+                        {% endif %}
+                    </div>
+                    <!--Прогресс по элементу заказа - конец-->
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div>В заказе нет элементов</div>
+                {% endif %}
+                <!--Состав заказ - конец-->
+            </div>
+            {% endfor %}
+            {% else %}
+            <h5>Закрытых заказов нет</h5>
+            {% endif %}
+        </div>
+        {% endif %}
+        <!--Заказы закрытые - конец-->
+
+    </div>
+</main>
+
+<!--Делала как в create_card_usluga.html-->
+<!--Без этого подключения не работает!!!!-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous">
+</script>
+<!--Без этого подключения не работает!!!! -  конец-->
+
+<!--select_manager_role и select_manager_person это id, которые заданы в форме-->
+<!--заданы в форме class ChooseRoleAndPersonForm(FlaskForm): блюпринта order_bp-->
+<!--Функция отправляет в -->
+<!--@order_blueprint.route('/choice_users/', methods=['GET', 'POST'])-->
+<!--def choice_users():-->
+<!--который возвращает jsonify(userschoice)-->
+
+<!--***** Скрипт для выбора пользователя при выборе роли - начало-->
+<script charset="utf-8" type="text/javascript">
+
+$(function() {
+
+    // jQuery selection for the 2 select boxes (Выбор jQuery для 2 полей выбора)
+    var dropdown = {
+        role: $('#select_manager_role'),
+        user: $('#select_manager_person')
+    };
+
+    // call to update on load (вызов для обновления при загрузке)
+    updateUsers();
+
+    // function to call XHR and update usluga dropdown (функция для вызова XHR и обновления раскрывающегося списка услуг)
+    function updateUsers() {
+        var send = {
+            role: dropdown.role.val()
+        };
+        dropdown.user.attr('disabled', 'disabled');
+        dropdown.user.empty();
+        $.getJSON("{{ url_for('order_bp.choice_users') }}", send, function(data) {
+            data.forEach(function(item) {
+                dropdown.user.append(
+                    $('<option>', {
+                        value: item[0],
+                        text: item[1]
+                    })
+                );
+            });
+            dropdown.user.removeAttr('disabled');
+        });
+    }
+
+    // event listener to state dropdown change (прослушиватель событий для изменения раскрывающегося списка состояния)
+    dropdown.role.on('change', function() {
+        updateUsers();
+    });
+
+});
+
+</script>
+<!--***** Скрипт для выбора пользователя при выборе роли - конец-->
+
+<!--*** Скрипт смена надписи на кнопке Скрыть(показать) действия по заказу по клику - начало-->
+<!--https://stackoverflow.com/questions/42834154/changing-bootstrap-button-text-on-toggle-->
+<!--Этот скрипт не работает!!!! https://overcoder.net/q/3124812/использование-jquery-для-предоставления-события-onclick-внутри-цикла-jinja2-->
+<script>
+$(document).ready(function(){
+ $('.ppp').on('click', function(){
+ var buttonId=$(this).attr("id");
+  var text=$('#buttonId').text();
+  if(text === 'Скрыть действия по заказу'){
+    $(this).html('Показать действия по заказу');
+  } else{
+    $(this).text('Скрыть действия по заказу');
+ }
+});
+});
+</script>
+<!--*** Скрипт смена надписи на кнопке Скрыть(показать) действия по заказу по клику - конец-->
+
+<!--*** Скрипт смена надписи на кнопке Скрыть(показать) действия по заказу по клику - начало-->
+<!--https://stackoverflow.com/questions/42834154/changing-bootstrap-button-text-on-toggle-->
+<!--работает но только на одной кнопке. Если их несколь(в цикле) - то работает не корректно-->
+<script>
+$(document).ready(function(){
+ $('#collapseOrder2').on('click', function () {
+  var text=$('#collapseOrder2').text();
+  if(text === "Скрыть действия по заказу"){
+    $(this).html('Показать действия по заказу');
+  } else{
+    $(this).text('Скрыть действия по заказу');
+ }
+});
+});
+</script>
+<!--*** Скрипт смена надписи на кнопке Скрыть(показать) действия по заказу по клику - конец-->
+
+
+
+{% endblock %}

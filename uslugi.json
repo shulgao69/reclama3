@@ -1,0 +1,52 @@
+[
+  {
+    "punkt_menu": "poligraf",
+    "title": "Книги",
+    "link": "books"
+  },
+  {
+    "punkt_menu": "poligraf",
+    "title": "Брошюры",
+    "link": "broshura"
+  },
+  {
+    "punkt_menu": "poligraf",
+    "title": "Листовки",
+    "link": "listovki"
+  },
+  {
+    "punkt_menu": "poligraf",
+    "title": "Буклеты",
+    "link": "buklet"
+  },
+  {
+    "punkt_menu": "poligraf",
+    "title": "Стикеры",
+    "link": "stiker"
+  },
+  {
+    "punkt_menu": "poligraf",
+    "title": "Наклейки",
+    "link": "nakleiki"
+  },
+  {
+    "punkt_menu": "dizain",
+    "title": "Модули для полиграфии",
+    "link": "modul"
+  },
+  {
+    "punkt_menu": "dizain",
+    "title": "Модули для сайтов",
+    "link": "modul-site"
+  },
+  {
+    "punkt_menu": "dizain",
+    "title": "Логотипы",
+    "link": "logo"
+  },
+  {
+    "punkt_menu": "dizain",
+    "title": "Фирменный стиль",
+    "link": "style"
+  }
+]

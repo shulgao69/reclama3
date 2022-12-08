@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block container %}
+<div class="container">
+  <h3> Содержание</h3>
+  <h5><a href="#glav">Главная страница</a></h5>
+  <h5><a href="#">Раздел</a></h5>
+  <h5><a href="#">Услуга</a></h5>
+  <h5><a href="#card_usluga">Карточки услуг</a></h5>
+  <h5><a href="#">Прайсы</a></h5>
+  <h5><a href="#">Фото карточек услуг</a></h5>
+  <h5><a href="#">Пользователи</a></h5>
+  <h5><a href="#">Роли</a></h5>
+  <h5><a href="#">Модели и настройки</a></h5>
+  <h5><a href="#">Права доступа</a></h5>
+
+  <h5><a href="#">Статусы заказов</a></h5>
+  <div class="row">
+    <div class="col-3 column150"">
+<!--      <div class="columns">-->
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
+        dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper
+        suscipit
+        lobortis nisl ut aliquip ex
+        ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat,
+        vel
+        illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
+        luptatum zzril delenit augue
+        duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet
+        doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis
+        qui
+        facit eorum claritatem.
+        Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius.
+<!--      </div>-->
+    </div>
+</div>
+  <div class="row">
+    <div class="col-3 column300"">
+<!--      <div class="columns">-->
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
+        dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper
+        suscipit
+        lobortis nisl ut aliquip ex
+        ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat,
+        vel
+        illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
+        luptatum zzril delenit augue
+        duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet
+        doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis
+        qui
+        facit eorum claritatem.
+        Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius.
+<!--      </div>-->
+    </div>
+</div>
+  <div class="row">
+    <div class="col-3">
+warhaw
+    </div>
+  </div>
+
+  <h5><a href="#">Статусы карточек услуг</a></h5>
+  <h5><a href="#">Промежуточные статусы карточек услуг</a></h5>
+
+  <h5><a href="#">Размещение элементов на сайте</a></h5>
+  <h5><a href="#">Параметры размещения элементов на сайте</a></h5>
+  <h5><a href="#">Места моделей и размеры</a></h5>
+  <h5><a href="#">Размещение каруселей</a></h5>
+  <h5><a href="#">Карусели</a></h5>
+  <h5><a href="#">Авторизация, регистрация</a></h5>
+  <h5><a href="#">Админка</a></h5>
+  <h5><a href="#"Управление сайтом</a></h5>
+  <h5><a href="#"Заказы услуг</a></h5>
+  <h5><a href="#"Ошибки</a></h5>
+
+
+  <h5><a href="#korzina">Корзина</a></h5>
+  <h5><a href="#session">Сессии</a></h5>
+  <a href="#session_avtomat"> Сессии, которые создаются  автоматически:</a><br>
+  <a href="#session_not_avtomat"> Сессии, которые создаются НЕ автоматически:</a>
+
+  <h4 class="pt-4">НАЧАЛО</h4>
+
+  <h4 id="glav">Главная страница</h4>
+  <div> На главной стр. отражаются .....</div>
+  <h4 id="korzina">Корзина</h4>
+  <div>
+    Корзина работает на основе сессии. В рамках одной сессии может быть несколько клиентов. Например на одном ПК
+    может зайти несколько пользователей с разными пародями. Их корзины будут различны.
+  </div>
+  <h4 id="session" class="pt-2 base_color_1">Сессии</h4>
+  <div> Просмотреть все сессии можно print(session)</div>
+  <div> Получим словарь</div>
+  <div>Пример: {'_fresh': True, '_id': '47b3eda5752ce2eafef....', '_user_id': '1'}</div>
+  <div> Создать запись в сессии: например session['card_usluga_id']=35</div>
+  <div> Получить значение из сессии: например session.get('_fresh', '')</div>
+  <div> Очистить всю сессию: session.clear()</div>
+  <div> Удалить запись в сессии: session.pop('card_usluga_id')</div>
+
+  <br>
+  <h5>Сессии, используемые на сайте:</h5>
+  <h6 id="session_avtomat" class="pt-2 base_color_1"> Сессии, которые создаются  автоматически:</h6>
+  <div>
+  <b>- '_fresh': True,</b>  - показывает новая сессия или нет <br>
+  <b>- '_id':  '47b3eda5752ce2eafef....'</b> - это id сессии <br>
+  <b>- '_user_id': '1'</b> - (создаются при авторизации пользователя (с помощью Flask-login?). Если пользователь не
+  авторизован '_user_id' в словаре сессии нет<br>
+  <b>- 'csrf_token': '90e9a795eaa69cf1a1a8836936538863f99fa73e'</b> -  используется при создании форм? Когда
+    создается?<br>
+  </div>
+  <h6 id="session_not_avtomat" class="pt-2 base_color_1"> Сессии, которые создаются НЕ автоматически:</h6>
+  <div>
+  <b>- 'card_usluga_id': 39</b> -  <br>
+  <b>- 'cart': [{'card_usluga_id': 38, 'count': 1, 'i': 1, 'j': 1, 'order_request_sum': '2000.45', 'price_id': 82}]</b>
+   -  <br>
+  <b>- 'carts_users': [{'cart': [{'card_usluga_id': 38, 'count': 1, 'i': 1, 'j': 1, 'order_request_sum': '2000.45',
+    'price_id': 82}],
+    'user_id': 1}, {'cart': [], 'user_id': 'anonymous'}]</b> - список корзин всех пользователей в рамках данной сессии
+    <br>
+  <b>- 'count': 1</b> -  <br>
+  <b>- 'd_in_cart': True</b> -  <br>
+  <b>- 'list_users_id_in_carts_users': [1, 'anonymous']</b> -  <br>
+  <b>- 'message_add': ''</b> -  <br>
+  <b>- 'message_upload': ''</b> -  <br>
+  <b>- 'order_request': {}</b> -  <br>
+  <b>- 'order_request_add_to_cart': False</b> -  <br>
+  <b>- 'user_id': '1'</b> - <br>
+    </div>
+<h4 id="card_usluga" class="pt-2">Карточки услуг</h4>
+  <div> Карточка услуги содержит прайс, фото, и находится только в одном разделе и услуге.<br>
+
+  Карточка услуги отражается на сайте только если имеет фото, активна, не в архиве.....
+  </div>
+
+
+
+</div>
+
+{% endblock %}

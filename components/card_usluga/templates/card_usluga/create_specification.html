@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container-fluid px-5">
+        <!--Навигационные ссылки вар 1 - начало-->
+        <!--<div class="row pt-1 pb-4">
+        <div class="col-4">
+        <a href="{{ url_for('admin.index') }}">
+        Вернуться в панель администратора
+        </a>
+        </div>
+        <div class="col-4">
+        <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">Вернуться к карточкам услуг</a>
+        </div>
+        </div>-->
+        <!--Навигационные ссылки вар 1 - конец-->
+
+        <!-- Навигационные ссылки вар 2 - начало-->
+        <!--<div class="row pt-1 pb-4">
+        <div class="col-6">
+        class="d-flex см https://bootstrap-4.ru/docs/4.0/utilities/flex/&ndash;&gt;
+        <div class="d-flex justify-content-between">
+        <a href="{{ url_for('admin.index') }}">
+        Вернуться в панель администратора
+        </a>
+        <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+        Вернуться к карточкам услуг</a></div></div>
+        </div>-->
+        <!--Навигационные ссылки вар 2- конец-->
+
+        <!--Навигационные ссылки вар 3 - начало
+        Самый короткий и самый адаптивный, визуально приятный и складный вариант.
+        Далее наверное нужно использовать его!
+        class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pt-2 pb-4">
+
+            <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Вернуться к карточкам услуг
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">
+                Вернуться к редактированию карточки
+            </a>
+            <a class="pl-4"
+               href="{{ url_for('card_usluga_bp.specifications', card_usluga_id=card_usluga.id) }}">
+                Вернуться к спецификациям карточки
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+
+        <h5 class="base_color_1 pb-3">Создайте спецификацию</h5>
+        <!--Выравнивание по низу-->
+        <!--https://leodev.ru/blog/bootstrap/bootstrap-позиционирование-выравнивание/-->
+        <!--class="row align-items-end"-->
+        <div class="row align-items-end">
+            <!-- Сведения о спецификации - начало-->
+            <div class="col-4">
+                <b>Сведения о спецификации:</b>
+                <!--Карта услуг: - начало-->
+                <div class="row pt-1">
+                    <div class="col-3">
+                        Карта услуг:
+                    </div>
+                    <div class="col-9">
+                        <b class="base_color_1">
+                            "{{ card_usluga }}"</b>
+                    </div>
+                </div>
+                <!--Карта услуг: - конец-->
+
+                <!--Статус: - начало-->
+                <div class="row pt-1">
+                    <div class="col-3">
+                        Статус:
+                    </div>
+                    <div class="col-9">
+                        <b class="base_color_1">
+                            "{{ status_card.name }}"</b>
+                    </div>
+                </div>
+                <!--Статус: - конец-->
+
+                <!-- Описание статуса: - начало-->
+                <div class="row pt-1">
+                    <div class="col-3">
+                        Описание статуса:
+                    </div>
+                    <div class="col-9">
+                        <b class="base_color_1">
+                            "{{ status_card.description }}"</b>
+                    </div>
+                </div>
+                <!-- Описание статуса: - конец-->
+
+                <!-- Вес статуса: - начало-->
+                <div class="row pt-1">
+                    <div class="col-3">
+                        Вес статуса:
+                    </div>
+                    <div class="col-9">
+                        <b class="base_color_1">
+                            "{{ status_card.weight }}"</b>
+                    </div>
+                </div>
+                <!-- Вес статуса: - конец-->
+
+                <!-- Пояснение 1 - начало-->
+                <div class="row pt-4">
+                    <div class="col-3 text-danger">
+                        *Пояснение:
+                    </div>
+                    <div class="col-9">
+                        <b>Укажите кол-во дней, часов, минут чтобы задать
+                            плановое время (норматив) на выполнение данного этапа
+                            работ (статуса) для конкретной карточки услуг</b>
+                    </div>
+                </div>
+                <!-- Пояснение 1 - конец-->
+
+                <!-- Пояснение 2 - начало-->
+                <div class="row pt-4">
+                    <div class="col-3 text-danger">
+                        **Пояснение:
+                    </div>
+                    <div class="col-9">
+                        <b>Укажите роль ответственного за данный этап
+                            работ (статус)</b>
+                    </div>
+                </div>
+                <!-- Пояснение 2 - конец-->
+
+
+            </div>
+            <!-- Сведения о спецификации - конец-->
+
+            <!-- Форма ввода данных - начало-->
+            <div class="col-4">
+                <form method="POST"
+                      action="{{ url_for('card_usluga_bp.create_specification',
+                          card_usluga_id=card_usluga.id,
+                          status_card_id=status_card.id) }}" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+                   <div class="row">
+                       <div class="col-4">
+                           Кол-во дней:
+                       </div>
+                       <div class="col-8 pt-2">
+                        {{ form.days(class="form-control") }}
+                        </div>
+                   </div>
+                    <div class="row pt-2">
+                       <div class="col-4">
+                           Кол-во часов:
+                       </div>
+                       <div class="col-8 pt-2">
+                        {{ form.hours(class="form-control") }}
+                        </div>
+                   </div>
+                    <div class="row pt-2">
+                       <div class="col-4">
+                           Кол-во минут:
+                       </div>
+                       <div class="col-8 pt-2">
+                        {{ form.minutes(class="form-control") }}
+                        </div>
+                   </div>
+                    <div class="row pt-2">
+                       <div class="col-4">
+                           Роль ответственного:
+                       </div>
+                       <div class="col-8 pt-2">
+                        {{ form.role(class="form-control") }}
+                        </div>
+                   </div>
+                    <div class="pt-2">
+                        {{ form.submit(class="form-control btn-success btn-block") }}
+                    </div>
+                </form>
+            </div>
+            <!-- Форма ввода данных - конец-->
+        </div>
+
+
+
+    </div>
+</main>
+
+{% endblock %}
