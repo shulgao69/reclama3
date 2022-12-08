@@ -1098,7 +1098,7 @@ class SpecificationStatusIntermediate(db.Model):
 
     def __repr__(self):
         # return 'Статус - ' + str(self.status)+' (карточка услуги '+ str(self. card_usluga)+')'
-        return str(self.status_card)
+        return str(self.status_intermediate)
 
 # Модель Действия персонала (например позвонить, написать,)
 class StaffAction(db.Model):

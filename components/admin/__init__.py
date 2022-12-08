@@ -3203,7 +3203,19 @@ class StatusCardView(SpecificView):
     column_list = ['id', 'name', 'weight', 'description', 'statuses_intermediate']
 
 class StatusIntermediateView(SpecificView):
+
     column_list = ['id', 'type_production', 'status_card', 'name', 'weight', 'description']
+
+    column_labels = dict(card_usluga='Карточка услуги',
+                         type_production='Тип производства',
+                         name='Имя промежуточного статуса',
+                         weight='Вес промежуточного статуса',
+                         description='Описание промежуточного статуса')
+    column_sortable_list = ['id', ('type_production', 'type_production.name'),
+                            ('status_card', 'status_card.name'),
+                            'name', 'weight', 'description'
+                            ]
+
 
 class StatusOrderView(SpecificView):
     column_list = ['id', 'name', 'weight', 'description']
@@ -3326,7 +3338,9 @@ class SpecificationStatusIntermediateView(SpecificView):
     }
     # Создадим normativ2 - конец!
 
-    column_list = ['id', 'card_usluga', 'status_intermediate.status_card', 'status_intermediate',  'role_responsible',
+    column_list = ['id', 'card_usluga', 'status_intermediate.status_card',
+                   'status_intermediate',
+                   'role_responsible',
                    'normativ', 'normativ2']
 
     # Если задавала column_labels как dict(...), а не как {"card_usluga": 'Карточка услуги',....}
