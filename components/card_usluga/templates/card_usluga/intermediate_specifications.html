@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block container %}
+<main>
+    <div class="container-fluid px-5">
+        <!--Навигационные ссылки вар 1 - начало-->
+        <!--<div class="row pt-1 pb-4">
+        <div class="col-4">
+        <a href="{{ url_for('admin.index') }}">
+        Вернуться в панель администратора
+        </a>
+        </div>
+        <div class="col-4">
+        <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">Вернуться к карточкам услуг</a>
+        </div>
+        </div>-->
+        <!--Навигационные ссылки вар 1 - конец-->
+
+        <!-- Навигационные ссылки вар 2 - начало-->
+        <!--<div class="row pt-1 pb-4">
+        <div class="col-6">
+        class="d-flex см https://bootstrap-4.ru/docs/4.0/utilities/flex/&ndash;&gt;
+        <div class="d-flex justify-content-between">
+        <a href="{{ url_for('admin.index') }}">
+        Вернуться в панель администратора
+        </a>
+        <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+        Вернуться к карточкам услуг</a></div></div>
+        </div>-->
+        <!--Навигационные ссылки вар 2- конец-->
+
+        <!--Навигационные ссылки вар 3 - начало
+        Самый короткий и самый адаптивный, визуально приятный и складный вариант.
+        Далее наверное нужно использовать его!
+        class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
+        <div class="d-flex flex-row pl-2 pt-2 pb-4">
+            <a href="{{ url_for('admin.index') }}">
+                Вернуться в панель администратора
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
+                Вернуться к карточкам услуг
+            </a>
+            <a class="pl-4" href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">
+                Вернуться к редактированию карточки
+            </a>
+        </div>
+        <!--Навигационные ссылки вар 3- конец-->
+
+        <h5 class="pt-3 pb-2 base_color_1">
+            Спецификации промежуточных статусов для статуса "{{ status_card }}" и карточки услуг "{{
+            card_usluga.name_card_usluga }}"
+        </h5>
+        <div class="table-responsive">
+            <table class="table table-reflow pb-2 ">
+                <thead class="base_color_1">
+                <tr>
+                    <th class="p-1">Вес статуса:</th>
+                    <th class="p-1">Промежуточный статус:</th>
+                    <th class="p-1">Описание статуса</th>
+                    <th class="p-1">Норматив:</th>
+                    <th class="p-1">Роль ответственного:</th>
+                    <th class="p-1">Действие:</th>
+                    <th class="p-1">Удалить</th>
+                </tr>
+                </thead>
+                {% for specification in specifications %}
+                <tbody>
+                <tr>
+                    <td class="p-1">{{ specification.status_intermediate.weight
+                        }}</td>
+                    <td class="p-1">{{ specification.status_intermediate.name }}</td>
+                    <td class="base_color_1 p-1">{{ specification.status_intermediate.description }}</td>
+                    <td class="p-1">{{ specification.normativ }}</td>
+                    <td class="p-1">
+                        {% if specification.role_responsible %}
+                        {{ specification.role_responsible }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td class="p-1 pr-2">
+                        <a
+                          href="{{ url_for('card_usluga_bp.edit_intermediate_specification',
+                          card_usluga_id=card_usluga.id,
+                          specification_id=specification.id,
+                          status_card_id=status_card.id) }}">
+                        Редактировать
+                        </a>
+                    </td>
+                    <td class="p-1">
+                        <a
+                          href="{{ url_for('card_usluga_bp.delete_intermediate_specification',
+                          card_usluga_id=card_usluga.id,
+                          specification_id=specification.id,
+                          status_card_id=status_card.id) }}">
+                        Удалить
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+                {% endfor %}
+
+                {% for intermediate_status in intermediate_statuses %}
+                <tbody>
+                <tr>
+                    <td class="p-1">{{ intermediate_status.weight }}</td>
+                    <td class="p-1 text-danger">{{ intermediate_status.name }}***</td>
+                    <td class="p-1 base_color_1 ">{{ intermediate_status.description }}</td>
+                    <td class="p-1">-</td>
+                    <td class="p-1">-</td>
+                    <td class="p-1">
+                        <a href="{{ url_for('card_usluga_bp.create_intermediate_specification',
+                          card_usluga_id=card_usluga.id,
+                          status_card_id=status_card.id,
+                          intermediate_status_id=intermediate_status.id) }}">
+                            Создать
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="p-1 text-danger">Внимание! <br>
+            *** помечены промежуточные статусы, для которых еще не созданы спецификации! <br>
+            Их необходимо создать! В противном случае контроль прохождения заказ НЕ ВОЗМОЖЕН!</div>
+
+
+    </div>
+</main>
+
+{% endblock %}
