@@ -20,7 +20,9 @@ from transliterate import translit
 
 # Импорт, необходимый для создания уникального имени загружаемого файла по времени загрузки
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta
+import time
+
 
 # Импорт, необходимый для перехвата предупреждений при задании form_edit_rules
 import warnings
@@ -36,7 +38,7 @@ from RECL.models import *
 # from RECL.__init__ import app
 
 from RECL.components.card_usluga.forms import CreateCardUslugaForm, UploadFoto, EditFormPhotoCards,\
-    EditFormNameTextCards, CreateSpecificationStatusCard
+    EditFormNameTextCards, Specification
 # from RECL.components.fotomanager.forms import  DeleteForm, FormChoice1, PhotoFormAdmin, FormChoice2, DeleteFormFromMini,
 # from RECL.components.fotomanager.forms import EditFormFromMini
 
@@ -57,6 +59,35 @@ from sqlalchemy.dialects.postgresql import JSON
 
 card_usluga_blueprint = Blueprint('card_usluga_bp', __name__, template_folder='templates/card_usluga/', static_folder='static')
 
+
+# Удалить спецификацию промежуточного статуса карточки услуг
+@card_usluga_blueprint.route('/edit_intermediate_specification/<int:card_usluga_id>/<int:status_card_id>/<int'
+                             ':specification_id>/', methods=['GET',
+                                                                                                          'POST'])
+def edit_intermediate_specification(card_usluga_id, specification_id, status_card_id):
+    card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
+    specification = SpecificationStatusIntermediate.query.filter(SpecificationStatusIntermediate.id==specification_id).first()
+    print('specification =', specification )
+    status_card = StatusCard.query.filter(StatusCard.id == status_card_id).first()
+    form = Specification()
+    form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
+    if form.validate_on_submit():
+        days = form.days.data
+        hours = form.hours.data
+        minutes = form.minutes.data
+        role = form.role.data
+        specification.role_responsible_id = role
+        specification.days_norma = days
+        specification.hours_norma = hours
+        specification.minutes_norma = minutes
+        db.session.commit()
+        return redirect(url_for('card_usluga_bp.intermediate_specifications', card_usluga_id=card_usluga.id, status_card_id=status_card_id))
+    return render_template ('edit_intermediate_specification.html',
+                            card_usluga=card_usluga,
+                            status_card=status_card,
+                            specification=specification,
+                            form=form
+                            )
 
 
 # Удалить спецификацию промежуточного статуса карточки услуг
@@ -86,7 +117,7 @@ def create_intermediate_specification(card_usluga_id, status_card_id, intermedia
     intermediate_status=StatusIntermediate.query.filter(StatusIntermediate.id == intermediate_status_id).first()
 
     print('intermediate_status_id=', intermediate_status_id)
-    form = CreateSpecificationStatusCard()
+    form = Specification()
     form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
     if form.validate_on_submit():
         days=form.days.data
@@ -115,14 +146,19 @@ def create_intermediate_specification(card_usluga_id, status_card_id, intermedia
 # Задать нормативы (спецификацию) промежуточных статусов
 @card_usluga_blueprint.route('/intermediate_specifications/<int:card_usluga_id>/<int:status_card_id>/', methods=['GET', 'POST'])
 def intermediate_specifications(card_usluga_id, status_card_id):
-    print('card_usluga_id=', card_usluga_id)
-    print('status_card_id=', status_card_id)
     card_usluga = CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
     status_card = StatusCard.query.filter(StatusCard.id == status_card_id).first()
-    print('card_usluga=', card_usluga)
-    print('status_card=', status_card)
 
-    # Все заданные для карты услуг спецификации
+    # спецификация статуса карты
+    specification_status_card=SpecificationStatusCard.query.filter(
+        SpecificationStatusCard.status_card_id==status_card_id,
+        SpecificationStatusCard.card_usluga_id==card_usluga_id).first()
+
+    # норматив статуса в минутах
+    normativ=specification_status_card.days_norma * 24 * 60  + specification_status_card.hours_norma * 60 + \
+             specification_status_card.minutes_norma
+
+    # Все заданные для карты услуг и выбранного статуса спецификации
     # Сначала ищем те спецификации, которые относятся к данной карточке услуги (filter(...))
     # Затем ДЛЯ СОРТИРОВКИ В ОТНОШЕНИИ списка спецификаций по весу статуса карточки услуг применяем
     # join(SpecificationStatusCard.status_card),
@@ -131,27 +167,39 @@ def intermediate_specifications(card_usluga_id, status_card_id):
     # Пыталась сделать сортировку в отношении с помощью добавления в модель order_by="StatusCard.weight",
     # но почему-то не получилось (пробовала в обе модели добавлять)
     # https://translated.turbopages.org/proxy_u/en-ru.ru.84ff8891-6389c048-e89c4e38-74722d776562/https/stackoverflow.com/questions/49042895/order-by-a-related-table-with-flask-sqlalchemy
-    # specifications = SpecificationStatusCard.query.filter(
-    #         SpecificationStatusCard.card_usluga_id==card_usluga_id).join(
-    #     SpecificationStatusCard.status_card).order_by(StatusCard.weight).all()
 
-    # specifications = SpecificationStatusIntermediate.query.filter(
-    #         SpecificationStatusIntermediate.card_usluga_id==card_usluga_id).all()
     specifications = SpecificationStatusIntermediate.query.join(
         SpecificationStatusIntermediate.status_intermediate).filter(
         SpecificationStatusIntermediate.card_usluga_id == card_usluga_id,
         StatusIntermediate.status_card_id==status_card.id).all()
-    print('specifications=', specifications)
 
-    # Все статусы карт
-    # statuses_cards = StatusCard.query.order_by(StatusCard.weight).all()
+    # Общее время всех промежуточных спецификаций в минутах
+    time_intermediate_specifications=0
+    for specification in specifications:
+        time_intermediate_specifications +=specification.days_norma*24*60\
+                                             +specification.hours_norma*60+specification.minutes_norma
+
+
+    message1, message2, message3 = '', '', ''
+
+    # Сравним общее время промежуточных спецификаций статуса и нормативом статуса
+    if time_intermediate_specifications>normativ:
+        message1 = 'Нормативы заданы не верно!'
+        message2 = 'Суммарное время нормативов промежуточных статусов не должно превышать норматива статуса!'
+        message3 = 'Исправьте значение промежуточных нормативов либо измените норматив основного статуса!'
+
+    # Переведем в дни, часы, минуты и отформатируем результат для передачи на страницу
+    days = time_intermediate_specifications // (24 * 60)
+    hours = time_intermediate_specifications % (24 * 60) // 60
+    minutes = time_intermediate_specifications % 60
+    time_intermediate_specifications_format = ("{} дн. {} ч. {} мин.".format(days, hours, minutes))
+
 
     # Все промежуточные статусы карт для данного типа производства и для данного статуса
     intermediate_statuses = StatusIntermediate.query.filter(
         StatusIntermediate.type_production_id==card_usluga.type_production_id,
         StatusIntermediate.status_card_id==status_card_id).order_by(
         StatusIntermediate.weight).all()
-    print('intermediate_statuses=', intermediate_statuses)
 
     # Не заданные статусы карт
     # Удалим те статусы карт из списка статусов у которых есть спецификация для данной карты
@@ -159,12 +207,17 @@ def intermediate_specifications(card_usluga_id, status_card_id):
     for specification in specifications:
         if specification.status_intermediate in intermediate_statuses:
             intermediate_statuses.remove(specification.status_intermediate)
-    print('intermediate_statuses=', intermediate_statuses)
+
     return render_template ('intermediate_specifications.html',
                              card_usluga=card_usluga,
                             status_card=status_card,
                             intermediate_statuses=intermediate_statuses,
-                            specifications=specifications
+                            specifications=specifications,
+                            specification_status_card=specification_status_card,
+                            message1=message1,
+                            message2=message2,
+                            message3=message3,
+                            time_intermediate_specifications_format=time_intermediate_specifications_format
                             )
 
 
@@ -188,7 +241,7 @@ def delete_specification(card_usluga_id, specification_id):
 def create_specification(card_usluga_id, status_card_id):
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     status_card=StatusCard.query.filter(StatusCard.id == status_card_id).first()
-    form = CreateSpecificationStatusCard()
+    form = Specification()
     form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
     if form.validate_on_submit():
         days=form.days.data
@@ -220,7 +273,7 @@ def edit_specification(card_usluga_id, specification_id):
     print('card_usluga=', card_usluga)
     specification = SpecificationStatusCard.query.filter(SpecificationStatusCard.id==specification_id).first()
     print('specification=', specification)
-    form = CreateSpecificationStatusCard()
+    form = Specification()
     form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
     if form.validate_on_submit():
         days=form.days.data
@@ -243,10 +296,7 @@ def edit_specification(card_usluga_id, specification_id):
 # Задать нормативы (спецификацию) карточке услуг
 @card_usluga_blueprint.route('/specifications/<int:card_usluga_id>/', methods=['GET', 'POST'])
 def specifications(card_usluga_id):
-    print('card_usluga_id=', card_usluga_id)
     card_usluga = CardUsluga.query.filter(CardUsluga.id==card_usluga_id).first()
-    form = CreateSpecificationStatusCard()
-    form.role.choices = [(role.id, role.name) for role in Role.query.order_by('name').all()]
 
     # Все заданные для карты услуг спецификации
     # Сначала ищем те спецификации, которые относятся к данной карточке услуги (filter(...))
@@ -261,6 +311,21 @@ def specifications(card_usluga_id):
             SpecificationStatusCard.card_usluga_id==card_usluga_id).join(
         SpecificationStatusCard.status_card).order_by(StatusCard.weight).all()
 
+    time_specifications = 0
+    for specification in specifications:
+        time_specifications = time_specifications + specification.days_norma *24 * 60  \
+                                            + specification.hours_norma * 60 + specification.minutes_norma
+        print('time_specifications=', time_specifications)
+
+    days = time_specifications // (24 * 60)
+    print('days=', days)
+    hours = time_specifications % (24*60) // 60
+    print('hours=', hours)
+    minutes = time_specifications % 60
+    print('minutes=', minutes)
+    time_specifications_format=("{} дн. {} ч. {} мин.".format(days, hours, minutes))
+
+
     # Все статусы карт
     statuses_cards = StatusCard.query.order_by(StatusCard.weight).all()
 
@@ -270,12 +335,12 @@ def specifications(card_usluga_id):
     for specification in specifications:
         if specification.status_card in statuses_cards:
             statuses_cards.remove(specification.status_card)
-    print('statuses_cards=', statuses_cards)
+
     return render_template('specifications.html',
                              card_usluga=card_usluga,
                             statuses_cards=statuses_cards,
-                            form=form,
-                            specifications=specifications
+                            specifications=specifications,
+                           time_specifications_format=time_specifications_format
                             )
 
 

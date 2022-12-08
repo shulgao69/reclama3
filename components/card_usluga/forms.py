@@ -16,13 +16,13 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 
 # Форма для получения исходных данных для создания спецификации статусов карточки услуг
-class CreateSpecificationStatusCard(FlaskForm):
+class Specification(FlaskForm):
     days = IntegerField("Дней", [InputRequired(), NumberRange(min=0, max=366)], render_kw={'autofocus': True })
     hours = IntegerField("Часов", [InputRequired(), NumberRange(min=0, max=23)], render_kw={'autofocus': True})
     minutes = IntegerField("Минут", [InputRequired(), NumberRange(min=0, max=59)], render_kw={'autofocus': True})
     role = SelectField("Роль", validators=[DataRequired()], render_kw={'autofocus': True})
     status_card_id = HiddenField('статус карты услуг (id)')
-    submit = SubmitField('Создать спецификацию')
+    submit = SubmitField('Сохранить')
 
 # Форма для получения исходных данных для создания формы карусели(кол-во фото, имя, директория загрузки)
 class CreateCardUslugaForm(FlaskForm):

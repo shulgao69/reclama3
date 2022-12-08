@@ -32,7 +32,7 @@
         Самый короткий и самый адаптивный, визуально приятный и складный вариант.
         Далее наверное нужно использовать его!
         class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
-        <div class="d-flex flex-row pl-2 pt-2 pb-4">
+        <div class="d-flex flex-row pt-2 pb-4">
             <a href="{{ url_for('admin.index') }}">
                 Вернуться в панель администратора
             </a>
@@ -45,10 +45,13 @@
         </div>
         <!--Навигационные ссылки вар 3- конец-->
 
-        <h5 class="pt-3 pb-2 base_color_1">
+        <h5 class="pb-2 base_color_1">
             Cпецификации статусов карточки услуг "{{ card_usluga.name_card_usluga }}"
         </h5>
-        <div class="table-responsive">
+        <div>Плановое время выполнения заказа (сумма нормативов):
+            <b class="base_color_1">
+                {{ time_specifications_format }}</b></div>
+        <div class="pt-3 table-responsive">
             <table class="table table-reflow pb-2 ">
                 <thead class="base_color_1">
                 <tr>
@@ -69,8 +72,7 @@
                         <a href="{{ url_for('card_usluga_bp.intermediate_specifications',
                           card_usluga_id=card_usluga.id,
                           status_card_id=specification.status_card.id) }}">Спецификации промежуточных статусов для
-                            статуса </a>{{
-                        specification.status_card.name }}</td>
+                            данного статуса </a></td>
                     <td class="base_color_1 p-1">{{ specification.status_card.description }}</td>
                     <td class="p-1">{{ specification.normativ }}</td>
                     <td class="p-1">
@@ -120,9 +122,12 @@
                 {% endfor %}
             </table>
         </div>
+        {% if statuses_cards %}
         <div class="p-1 text-danger">Внимание! <br>
             *** помечены статусы, для которых еще не созданы спецификации! <br>
-            Их необходимо создать! В противном случае контроль прохождения заказ НЕ ВОЗМОЖЕН!</div>
+            Их необходимо создать! В противном случае контроль прохождения заказ НЕ ВОЗМОЖЕН!
+        </div>
+        {% endif %}
 
 
     </div>

@@ -34,15 +34,18 @@
         class="d-flex flex-row" https://bootstrap-4.ru/docs/4.0/utilities/flex/-->
         <div class="d-flex flex-row pt-2 pb-4">
 
-            <a href="{{ url_for('card_usluga_bp.show_cards_uslugs') }}">
-                Вернуться к карточкам услуг
-            </a>
             <a class="pl-4" href="{{ url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga.id) }}">
                 Вернуться к редактированию карточки
             </a>
             <a class="pl-4"
                href="{{ url_for('card_usluga_bp.specifications', card_usluga_id=card_usluga.id) }}">
                 Вернуться к спецификациям карточки
+            </a>
+            <a class="pl-4"
+               href="{{ url_for('card_usluga_bp.intermediate_specifications',
+               card_usluga_id=card_usluga.id,
+               status_card_id=status_card.id) }}">
+                Вернуться к промежуточным спецификациям
             </a>
         </div>
         <!--Навигационные ссылки вар 3- конец-->
@@ -62,27 +65,33 @@
                         "{{ card_usluga }}"
                     </b>
                 </div>
-                <div> Статус:
+                <div> Основной статус:
                     <b class="base_color_1">
-                        "{{ specification }}"
+                        "{{ status_card }}"
+                    </b>
+                </div>
+                <div> Промежуточный статус:
+                    <b class="base_color_1">
+                        "{{ specification.status_intermediate }}"
                     </b>
                 </div>
                 <div> Описание статуса:
                     <b class="base_color_1">
-                        "{{ specification.status_card.description }}"
+                        "{{ specification.status_intermediate.description }}"
                     </b>
                 </div>
                 <div> Вес статуса:
                     <b class="base_color_1">
-                        "{{ specification.status_card.weight }}"
+                        "{{ specification.status_intermediate.weight }}"
                     </b>
                 </div>
             </div>
             <div class="col-4">
                 <form method="POST"
-                      action="{{ url_for('card_usluga_bp.edit_specification',
+                      action="{{ url_for('card_usluga_bp.edit_intermediate_specification',
                           card_usluga_id=card_usluga.id,
-                          specification_id=specification.id) }}" enctype="multipart/form-data">
+                          specification_id=specification.id,
+                          status_card_id=status_card.id) }}" enctype="multipart/form-data">
                     {{ form.csrf_token }}
                    <div class="row">
                        <div class="col-3">
