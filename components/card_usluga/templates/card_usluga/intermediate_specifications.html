@@ -45,15 +45,20 @@
             </a>
         </div>
         <!--Навигационные ссылки вар 3- конец-->
+        <h5 class="base_color_1">
+            Карточка услуг "{{ card_usluga.name_card_usluga }}"
+        </h5>
 
-        <h5>
-            Спецификации промежуточных статусов </h5>
-        <div>Статус: <b class="base_color_1"> "{{ status_card }}"</b></div>
-        <div>Карточка услуг: <b class="base_color_1"> "{{ card_usluga.name_card_usluga }}"</b></div>
-        <div>Норматив статуса: <b class="base_color_1"> "{{ specification_status_card.normativ }}"</b></div>
+        <h5 class="base_color_1">
+            Спецификации промежуточных статусов для статуса "{{ status_card }}"</h5>
 
-        <div>Суммарное время нормативов промежуточных статусов: <b class="base_color_1"> "{{
-            time_intermediate_specifications_format }}"</b></div>
+
+        <ul class="list-inline">
+            <li class="list-inline-item">Норматив статуса "{{ status_card }}":</li>
+            <li class="list-inline-item">
+                <h5 class="base_color_1"> "{{ specification_status_card.normativ }}"</h5>
+            </li>
+        </ul>
 
         <div class="pt-3 text-danger">
             <b>{{ message1 }}</b>
@@ -66,17 +71,22 @@
         </div>
         <div class="pt-2 table-responsive">
             <table class="table table-reflow pb-2 ">
+
+                <!--Заголовки столбцов таблицы - начало-->
                 <thead class="base_color_1">
                 <tr>
-                    <th class="p-1">Вес статуса:</th>
+                    <th class="p-1">Вес промеж.статуса:</th>
                     <th class="p-1">Промежуточный статус:</th>
-                    <th class="p-1">Описание статуса</th>
+                    <th class="p-1">Описание промеж.статуса</th>
                     <th class="p-1">Норматив:</th>
-                    <th class="p-1">Роль ответственного:</th>
+                    <th class="p-1">Кто отвечает (роль):</th>
                     <th class="p-1">Действие:</th>
                     <th class="p-1">Удалить</th>
                 </tr>
                 </thead>
+                <!--Заголовки столбцов табдлицы - конец-->
+
+                <!--Статусы, в которых заданы нормативы - начало-->
                 {% for specification in specifications %}
                 <tbody>
                 <tr>
@@ -113,7 +123,26 @@
                 </tr>
                 </tbody>
                 {% endfor %}
+                <!--Статусы, в которых заданы нормативы - конец-->
 
+                <tbody>
+                <tr>
+                    <td class="p-1"></td>
+                    <td class="p-1"></td>
+                    <td class="p-1"><b>Суммарное время нормативов:</b></td>
+                    <td class="p-1"><b>{{time_intermediate_specifications_format }}</b></td>
+                    <td class="p-1"></td>
+                    <td class="p-1 pr-2">
+                        -
+                    </td>
+                    <td class="p-1">
+                        -
+                    </td>
+                </tr>
+                </tbody>
+
+
+                <!--Статусы, в которых не заданы нормативы - начало-->
                 {% for intermediate_status in intermediate_statuses %}
                 <tbody>
                 <tr>
@@ -133,6 +162,7 @@
                 </tr>
                 </tbody>
                 {% endfor %}
+                <!--Статусы, в которых не заданы нормативы - конец-->
             </table>
         </div>
         {% if intermediate_statuses %}

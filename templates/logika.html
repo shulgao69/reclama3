@@ -1,136 +1,179 @@
 {% extends 'base.html' %}
 {% block container %}
 <div class="container">
-  <h3> Содержание</h3>
-  <h5><a href="#glav">Главная страница</a></h5>
-  <h5><a href="#">Раздел</a></h5>
-  <h5><a href="#">Услуга</a></h5>
-  <h5><a href="#card_usluga">Карточки услуг</a></h5>
-  <h5><a href="#">Прайсы</a></h5>
-  <h5><a href="#">Фото карточек услуг</a></h5>
-  <h5><a href="#">Пользователи</a></h5>
-  <h5><a href="#">Роли</a></h5>
-  <h5><a href="#">Модели и настройки</a></h5>
-  <h5><a href="#">Права доступа</a></h5>
+    <h3> Содержание:</h3>
+    <h5><a href="#glav">Главная страница</a></h5>
+    <h5><a href="#razdel">Раздел</a></h5>
+    <h5><a href="#usluga">Услуга</a></h5>
+    <h5><a href="#card_usluga">Карточки услуг</a></h5>
+    <h5><a href="#price">Прайсы</a></h5>
+    <h5><a href="#">Фото карточек услуг</a></h5>
+    <h5><a href="#user">Пользователи</a></h5>
+    <h5><a href="#role">Роли</a></h5>
+    <h5><a href="#model and setting">Модели и настройки</a></h5>
+    <h5><a href="#prava">Права доступа</a></h5>
+    <h5><a href="#order">Заказы</a></h5>
+    <h5><a href="#status_order">Статусы заказов</a></h5>
 
-  <h5><a href="#">Статусы заказов</a></h5>
-  <div class="row">
-    <div class="col-3 column150"">
-<!--      <div class="columns">-->
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
-        dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper
-        suscipit
-        lobortis nisl ut aliquip ex
-        ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat,
-        vel
-        illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
-        luptatum zzril delenit augue
-        duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet
-        doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis
-        qui
-        facit eorum claritatem.
-        Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius.
-<!--      </div>-->
+    <h5><a href="#status_card_usluga">Статусы карточек услуг</a></h5>
+    <h5><a href="#status_intermediate_card_usluga">
+        Промежуточные статусы карточек услуг</a></h5>
+
+    <h5><a href="#">Размещение элементов на сайте</a></h5>
+    <h5><a href="#">Параметры размещения элементов на сайте</a></h5>
+    <h5><a href="#">Места моделей и размеры</a></h5>
+    <h5><a href="#">Размещение каруселей</a></h5>
+    <h5><a href="#">Карусели</a></h5>
+    <h5><a href="#">Авторизация, регистрация</a></h5>
+    <h5><a href="#">Админка</a></h5>
+    <h5><a href="#">Управление сайтом</a></h5>
+
+    <h5><a href="#">Ошибки</a></h5>
+    <h5><a href="#korzina">Корзина</a></h5>
+    <h5><a href="#session">Сессии</a></h5>
+    <a href="#session_avtomat"> Сессии, которые создаются автоматически:</a><br>
+    <a href="#session_not_avtomat"> Сессии, которые создаются НЕ автоматически:</a>
+
+    <h4 class="pt-4">НАЧАЛО</h4>
+
+    <h4 id="glav" class="pt-2 base_color_1">Главная страница</h4>
+    <div class="columns3-width100"> На главной стр. отражаются На главной стр. отражаютсяНа главной стр.
+        отражаютсяНа главной стр. отражаются.....
     </div>
-</div>
-  <div class="row">
-    <div class="col-3 column300"">
-<!--      <div class="columns">-->
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
-        dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper
-        suscipit
-        lobortis nisl ut aliquip ex
-        ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat,
-        vel
-        illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
-        luptatum zzril delenit augue
-        duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet
-        doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis
-        qui
-        facit eorum claritatem.
-        Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius.
-<!--      </div>-->
+    <h4 id="korzina" class="pt-2 base_color_1">Корзина</h4>
+    <div class="columns3-width100">
+        Корзина работает на основе сессии. В рамках одной сессии может быть несколько клиентов. Например на
+        одном ПК
+        может зайти несколько пользователей с разными паролями. Их корзины будут различны.
     </div>
-</div>
-  <div class="row">
-    <div class="col-3">
-warhaw
-    </div>
-  </div>
+    <h4 id="session" class="pt-2 base_color_1">Сессии</h4>
+    <div> Просмотреть все сессии можно print(session)</div>
+    <div> Получим словарь</div>
+    <div>Пример: {'_fresh': True, '_id': '47b3eda5752ce2eafef....', '_user_id': '1'}</div>
+    <div> Создать запись в сессии: например session['card_usluga_id']=35</div>
+    <div> Получить значение из сессии: например session.get('_fresh', '')</div>
+    <div> Очистить всю сессию: session.clear()</div>
+    <div> Удалить запись в сессии: session.pop('card_usluga_id')</div>
 
-  <h5><a href="#">Статусы карточек услуг</a></h5>
-  <h5><a href="#">Промежуточные статусы карточек услуг</a></h5>
-
-  <h5><a href="#">Размещение элементов на сайте</a></h5>
-  <h5><a href="#">Параметры размещения элементов на сайте</a></h5>
-  <h5><a href="#">Места моделей и размеры</a></h5>
-  <h5><a href="#">Размещение каруселей</a></h5>
-  <h5><a href="#">Карусели</a></h5>
-  <h5><a href="#">Авторизация, регистрация</a></h5>
-  <h5><a href="#">Админка</a></h5>
-  <h5><a href="#"Управление сайтом</a></h5>
-  <h5><a href="#"Заказы услуг</a></h5>
-  <h5><a href="#"Ошибки</a></h5>
-
-
-  <h5><a href="#korzina">Корзина</a></h5>
-  <h5><a href="#session">Сессии</a></h5>
-  <a href="#session_avtomat"> Сессии, которые создаются  автоматически:</a><br>
-  <a href="#session_not_avtomat"> Сессии, которые создаются НЕ автоматически:</a>
-
-  <h4 class="pt-4">НАЧАЛО</h4>
-
-  <h4 id="glav">Главная страница</h4>
-  <div> На главной стр. отражаются .....</div>
-  <h4 id="korzina">Корзина</h4>
-  <div>
-    Корзина работает на основе сессии. В рамках одной сессии может быть несколько клиентов. Например на одном ПК
-    может зайти несколько пользователей с разными пародями. Их корзины будут различны.
-  </div>
-  <h4 id="session" class="pt-2 base_color_1">Сессии</h4>
-  <div> Просмотреть все сессии можно print(session)</div>
-  <div> Получим словарь</div>
-  <div>Пример: {'_fresh': True, '_id': '47b3eda5752ce2eafef....', '_user_id': '1'}</div>
-  <div> Создать запись в сессии: например session['card_usluga_id']=35</div>
-  <div> Получить значение из сессии: например session.get('_fresh', '')</div>
-  <div> Очистить всю сессию: session.clear()</div>
-  <div> Удалить запись в сессии: session.pop('card_usluga_id')</div>
-
-  <br>
-  <h5>Сессии, используемые на сайте:</h5>
-  <h6 id="session_avtomat" class="pt-2 base_color_1"> Сессии, которые создаются  автоматически:</h6>
-  <div>
-  <b>- '_fresh': True,</b>  - показывает новая сессия или нет <br>
-  <b>- '_id':  '47b3eda5752ce2eafef....'</b> - это id сессии <br>
-  <b>- '_user_id': '1'</b> - (создаются при авторизации пользователя (с помощью Flask-login?). Если пользователь не
-  авторизован '_user_id' в словаре сессии нет<br>
-  <b>- 'csrf_token': '90e9a795eaa69cf1a1a8836936538863f99fa73e'</b> -  используется при создании форм? Когда
-    создается?<br>
-  </div>
-  <h6 id="session_not_avtomat" class="pt-2 base_color_1"> Сессии, которые создаются НЕ автоматически:</h6>
-  <div>
-  <b>- 'card_usluga_id': 39</b> -  <br>
-  <b>- 'cart': [{'card_usluga_id': 38, 'count': 1, 'i': 1, 'j': 1, 'order_request_sum': '2000.45', 'price_id': 82}]</b>
-   -  <br>
-  <b>- 'carts_users': [{'cart': [{'card_usluga_id': 38, 'count': 1, 'i': 1, 'j': 1, 'order_request_sum': '2000.45',
-    'price_id': 82}],
-    'user_id': 1}, {'cart': [], 'user_id': 'anonymous'}]</b> - список корзин всех пользователей в рамках данной сессии
     <br>
-  <b>- 'count': 1</b> -  <br>
-  <b>- 'd_in_cart': True</b> -  <br>
-  <b>- 'list_users_id_in_carts_users': [1, 'anonymous']</b> -  <br>
-  <b>- 'message_add': ''</b> -  <br>
-  <b>- 'message_upload': ''</b> -  <br>
-  <b>- 'order_request': {}</b> -  <br>
-  <b>- 'order_request_add_to_cart': False</b> -  <br>
-  <b>- 'user_id': '1'</b> - <br>
+    <h5>Сессии, используемые на сайте:</h5>
+    <h6 id="session_avtomat" class="pt-2 base_color_1"> Сессии, которые создаются автоматически:</h6>
+    <div>
+        <b>- '_fresh': True,</b> - показывает новая сессия или нет <br>
+        <b>- '_id': '47b3eda5752ce2eafef....'</b> - это id сессии <br>
+        <b>- '_user_id': '1'</b> - (создаются при авторизации пользователя (с помощью Flask-login?). Если
+        пользователь не
+        авторизован '_user_id' в словаре сессии нет<br>
+        <b>- 'csrf_token': '90e9a795eaa69cf1a1a8836936538863f99fa73e'</b> - используется при создании форм?
+        Когда
+        создается?<br>
     </div>
-<h4 id="card_usluga" class="pt-2">Карточки услуг</h4>
-  <div> Карточка услуги содержит прайс, фото, и находится только в одном разделе и услуге.<br>
+    <h6 id="session_not_avtomat" class="pt-2 base_color_1"> Сессии, которые создаются НЕ
+        автоматически:</h6>
+    <div>
+        <b>- 'card_usluga_id': 39</b> - <br>
+        <b>- 'cart': [{'card_usluga_id': 38, 'count': 1, 'i': 1, 'j': 1, 'order_request_sum': '2000.45',
+            'price_id': 82}]</b>
+        - <br>
+        <b>- 'carts_users': [{'cart': [{'card_usluga_id': 38, 'count': 1, 'i': 1, 'j': 1,
+            'order_request_sum': '2000.45',
+            'price_id': 82}],
+            'user_id': 1}, {'cart': [], 'user_id': 'anonymous'}]</b> - список корзин всех пользователей в
+        рамках данной сессии
+        <br>
+        <b>- 'count': 1</b> - <br>
+        <b>- 'd_in_cart': True</b> - <br>
+        <b>- 'list_users_id_in_carts_users': [1, 'anonymous']</b> - <br>
+        <b>- 'message_add': ''</b> - <br>
+        <b>- 'message_upload': ''</b> - <br>
+        <b>- 'order_request': {}</b> - <br>
+        <b>- 'order_request_add_to_cart': False</b> - <br>
+        <b>- 'user_id': '1'</b> - <br>
+    </div>
+    <h4 id="card_usluga" class="pt-2 base_color_1">Карточки услуг</h4>
+    <div class="columns3-width100"> Карточка услуги содержит прайс, фото, и находится только в одном
+        разделе и услуге.<br>
 
-  Карточка услуги отражается на сайте только если имеет фото, активна, не в архиве.....
-  </div>
+        Карточка услуги отражается на сайте только если имеет фото, активна, не в архиве.....
+        <div>
+            К одному разделу может относится много карточек услуг. Вероятнее всего у них будет одинаковый
+            тип производства, но разное время (норматив) на выполнение заказа и разные ответственные лица
+            (например печать
+            книг и печать визиток).
+            Эта специфика отражается в спецификациях карточек услуг, которые задаются при создании карточки
+            услуги.
+        </div>
+    </div>
+    <h4 id="status_order" class="pt-2 base_color_1">Статусы заказов</h4>
+    <div class="columns3-width100">
+        Статусы заказов - это общие этапы по заказу,
+        который может состоять из нескольких разных услуг.
+        Этапы не нормированы и отражают только общую динамику по заказу.
+        <div>Согласно логике сайта статусы одинаковы для всех заказов.
+            При изменении названий этапов (статусов) и их веса может поменятся последовательность и логика
+            работы над заказом.
+        </div>
+        <div>Поэтому при задании статусов заказов необходимо согласовать все
+            и далее не предоставлять доступ к редактированию (за исключением топов).
+        </div>
+    </div>
 
+    <h4 id="status_card_usluga" class="pt-2 base_color_1">Статусы карточек услуг</h4>
+    <div class="columns3-width100">
+        Статусы карточек услуг (StatusCard) - это стандартный набор статусов,
+        общий для всех карточек услуг.
+        Вес задавать так - 0, 1000, 2000 (Пока так).
+        Нужно для того, чтобы потом сортировать в соответствии с основными
+        статусами? Складывать вес основного статуса и промежуточного для сортировки?
+        Затем для каждой карточки услуги задаются спецификации (SpecificationStatusCard)
+        для каждого стандартного статуса карты. В этой спецификации задается
+        временной норматив и ответственный (роль). Это позволяет контролировать
+        сроки выполнения заказа и видеть на каком этапе происходит отклонение
+        и кто за это отвечает.
+        <div>
+        </div>
+        <div>
+        </div>
+    </div>
+
+    <h4 id="status_intermediate_card_usluga" class="pt-2 base_color_1">
+        Промежуточные статусы карточек услуг (зависят от статуса карт и типа производства)
+    </h4>
+    <div class="columns3-width100">
+        Промежуточные статусы карточек услуг (StatusIntermediate) -
+        это стандартный набор промежуточных статусов для определенного
+        статуса карточки услуг и определенного типа производства.
+        Вес задавать так - 1-999 (Пока так).
+        Нужно для того, чтобы потом сортировать в соответствии с
+        основными статусами?
+        Складывать вес основного статуса и промежуточного для сортировки?
+
+        Затем задаются спецификации для каждого промежуточного статуса
+        относящегося к определеннгому статусу карточки услуг.
+        В этой спецификации задается временной норматив и ответственный (роль).
+        Это позволяет контролировать сроки выполнения заказа и видеть на каком этапе
+        происходит отклонение и кто за это отвечает.
+    </div>
+    <h4 id="order" class="pt-2 base_color_1">
+        Заказы
+    </h4>
+    <div class="columns3-width100">
+        Модель Order.<br>
+        Заказ может быть создан 2 способами.<br>
+        1) Заказ создает пользователь (из корзины).<br>
+        2) Заказ создает менеджер в своем рабочем кабинете
+        (в случае прямого звонка клиента например).<br>
+        При создании заказа заявка попадает .... и далее...
+    </div>
+
+   <h4 id="" class="pt-2 base_color_1">Заголовок заготовки</h4>
+    <div class="columns3-width100">
+        Модель ....<br>
+        Текст заготовки.<br>
+      Текст заготовки.<br>
+      Текст заготовки.<br>
+      Текст заготовки.<br>
+    </div>
 
 
 </div>

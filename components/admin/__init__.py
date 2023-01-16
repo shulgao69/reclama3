@@ -1667,7 +1667,16 @@ class MyLink(SpecificView):
         if is_created:
 
             # Преобразуем русские буквы в латиницу и переведем в нижний регистр
-            model.link=translit(model.title, language_code='ru', reversed=True).lower()
+            # model.link = translit(model.title, language_code='ru', reversed=True).lower()
+            # Если имя уникальное, но дает одинаковый translit на латиницу (например абра и abra дает abra),
+            # и таких вариантов может быть много (комбинации латинских и русских букв)
+            # то выдает ошибку, тк в базе поле link уникальное. Поэтому для создания уникального link
+            # добавим дату и время создания записи в базе(до секунд) (пока так)
+
+            model.link = translit(model.title, language_code='ru', reversed=True).lower() + \
+                         '-' + str(datetime.now().date()) + '-' + \
+                         str(datetime.now().time().replace(microsecond=0)).replace(':', '-')
+
 
             # re.search(r'[^a-zA-Z]', model.link) возвращает объект, если есть несовпадения
             # Если текст полностью соответствует шаблону (у нас латинские буквы) - то выдает None
@@ -1801,7 +1810,7 @@ class MyLink(SpecificView):
     #     )
     # ********
 
-class MyUsluga(SpecificView):
+class UslugaView(SpecificView):
     # ВНИМАНИЕ!!! нужно определить функцию  def on_model_delete(self, model):
     # при каскадном удалении если есть карточки услуг с фото чтобы удалялись
     # и фото из файловой системы! (см MyCardUsluga) На 10/06/22 е сделано
@@ -1957,7 +1966,16 @@ class MyUsluga(SpecificView):
             # re.search(r'[^a-zA-Z]', model.link) возвращает объект, если есть несовпадения
             # Если текст полностью соответствует шаблону (у нас латинские буквы) - то выдает None
             # Преобразуем русские буквы в латиницу и переведем в нижний регистр
-            model.link=translit(model.title, language_code='ru', reversed=True).lower()
+            # model.link = translit(model.title, language_code='ru', reversed=True).lower()
+            # model.link=str(model.id)+'-'+translit(model.title, language_code='ru', reversed=True).lower()
+            # Если имя уникальное, но дает одинаковый translit на латиницу (например абра и abra дает abra),
+            # и таких вариантов может быть много (комбинации латинских и русских букв)
+            # то выдает ошибку, тк в базе поле link уникальное. Поэтому для создания уникального link
+            # добавим дату и время создания записи в базе(до секунд) (пока так)
+
+            model.link = translit(model.title, language_code='ru', reversed=True).lower() + \
+                         '-' + str(datetime.now().date()) + '-' + \
+                         str(datetime.now().time().replace(microsecond=0)).replace(':', '-')
 
             # **** Проверка на символы типа #$&$^%*&|/ - начало
             # Если символы в строке model.link, заданных юзером не a-zA-Z0-9\s- (регулярка),
@@ -2456,11 +2474,11 @@ class OrderView(SpecificView):
     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
 
     column_list = ['id', 'number', 'user',
+                   'manager_role',
                    'manager_person',
                   # 'manager_person.user_last_name',
                   #  'manager_person.user_first_name',
                   # 'manager_person.user_middle_name',
-                   'manager_role',
                    'date_create', 'date_end',
                    'progresses',
                    'order_actions',
@@ -2477,11 +2495,11 @@ class OrderView(SpecificView):
 
     column_labels = {"number": 'Номер заказа',
                      "user": 'Заказчик',
-                         "manager_person": 'Менеджер заказа',
+                     "manager_role": 'Ответственный за заказ (роль)',
+                         "manager_person": 'Ответственный за заказ (ФИО)',
                          "manager_person.user_last_name":  'Фамилия',
                          "manager_person.user_first_name": 'Имя',
                          "manager_person.user_middle_name": 'Отчество',
-                         "manager_role": 'Роль ответственного',
                          "date_create": 'Дата создания',
                          "date_end": 'Дата закрытия',
                          # statuses='Статусы заказа',
@@ -3567,7 +3585,7 @@ with warnings.catch_warnings():
 
     # Меню, Услуги
     admin.add_view(MyLink(Link, db.session, name='Меню сайта(Link)', category="Меню,Услуги"))
-    admin.add_view(MyUsluga(Usluga, db.session, name='Услуги(Usluga)', category="Меню,Услуги"))
+    admin.add_view(UslugaView(Usluga, db.session, name='Услуги(Usluga)', category="Меню,Услуги"))
 
     # Пользователи, Роли (+ телефоны, плательщики)
     admin.add_view(UserView(User, db.session, name='Пользователи(User)', category="Пользователи,Роли"))

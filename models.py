@@ -706,8 +706,6 @@ class ListModel(db.Model):
 # Для удобства в процессе написания установила ВРЕМЕННО! в админке все CRUD True!!!.
 # Потом создать все настройки доступов в этой таблице а затем
 # в админке исходные доступы установить False!!!
-
-
 class SettingAdmin(db.Model):
     __tablename__ = 'setting_admin'
     id = db.Column(db.Integer, primary_key=True)
@@ -1189,7 +1187,8 @@ class Order(db.Model):
 
 
 # Модель Элементы заказа
-# Содержит параметры по каждой заказанной услуге
+# Содержит параметры по каждой позиции заказа
+# (№ заказа, какая карточка услуги, какой прайс, строка и столбец прайса и тд))
 class OrderItem(db.Model):
     __tablename__ = 'order_items'
     id = db.Column(db.Integer, primary_key=True)
@@ -1270,7 +1269,7 @@ class ProgressOrder(db.Model):
     status_order_id = db.Column(db.Integer, db.ForeignKey('statuses_orders.id'))
     status_order = db.relationship("StatusOrder")
 
-    # Дата и время создания перехода на другой статус
+    # Дата и время создания (перехода на другой статус???)
     date_create = db.Column(db.DateTime(), default=datetime.now)
 
     # Дата и время окончания статуса

@@ -41,6 +41,7 @@ def render_session_clear():
 
     session.clear()
     return redirect(request.args.get("next") or url_for('render_main'))
+# Очистить сессию - конец
 
 
 # Создать заказ
@@ -76,6 +77,7 @@ def choice_users():
 @order_blueprint.route('/show_orders/', methods=['GET', 'POST'])
 @login_required
 def show_orders():
+    # флаги для отображения заказов в соответствующей категории (по ссылкам(напр. только новые заказы))
     flag_new_orders = session.get('new_orders', True)
     flag_all_orders = session.get('all_orders', True)
     flag_end_orders = session.get('end_orders', True)
