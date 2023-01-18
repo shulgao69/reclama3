@@ -85,7 +85,7 @@
                 Сопроводительный текст:
                 {% if card_usluga.comments %}
                 <b class="base_color_1">
-                    {{ card_usluga.comments }}
+                    {{ card_usluga.comments|safe }}
                 </b>
                 {% endif %}
             </div>
@@ -108,6 +108,7 @@
                             {{ form.name_card_usluga(class="form-control py-2 mt-2", value= card_usluga.name_card_usluga) }}
                         </div>
                         <div class="mt-4"><b>Введите новый сопроводительный текст:</b></div>
+
                         <div class="text-success">
                             {{ form.comments(class="form-control py-2 mt-2") }}
                         </div>
@@ -191,8 +192,7 @@
         </div>
 
 
-
-
     </div>
 </main>
+
 {% endblock %}

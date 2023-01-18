@@ -68,7 +68,7 @@
                 <tbody>
                 <tr>
                     <td class="p-1">{{ specification.status_card.weight }}</td>
-                    <td class="p-1">{{ specification.status_card.name }}<br>
+                    <td class="p-1"><b>{{ specification.status_card.name }}</b><br>
                         <a href="{{ url_for('card_usluga_bp.intermediate_specifications',
                           card_usluga_id=card_usluga.id,
                           status_card_id=specification.status_card.id) }}">см.Промежуточные статусы</a></td>
@@ -105,7 +105,7 @@
                 <tbody>
                 <tr>
                     <td class="p-1">{{ status_card.weight }}</td>
-                    <td class="p-1 text-danger">{{ status_card.name }}***</td>
+                    <td class="p-1 text-danger"><b>{{ status_card.name }}***</b></td>
                     <td class="p-1 base_color_1 ">{{ status_card.description }}</td>
                     <td class="p-1">-</td>
                     <td class="p-1">-</td>

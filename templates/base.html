@@ -745,6 +745,18 @@
     </div>
 </footer>
 
+<!--Включить ресурсы CKEditor для вставки в поле ввода редактор-->
+<!--поля форм CKEditorField (например comments = CKEditorField("Сопроводительный текст"))-->
+<!--https://flask-ckeditor.readthedocs.io/en/latest/basic.html-->
+<!--CKEditor предоставляет пять типов установок (см. сравнительную таблицу для различий):-->
+<!--basic, standard(значение по умолчанию), full, standard-all(доступно только из CDN)-->
+<!--full-all(доступно только из CDN)-->
+<!--Сравнительная таблица см. https://ckeditor.com/cke4/presets-all-->
+<!--Выбрала basic, тк мне нужно только редактирование по абзацам, болд, италик, ссылки.-->
+<!--Другие фукции здесь пока не нужны(загрузка изображений, цвет и тд)-->
+
+{{ ckeditor.load(pkg_type="basic") }}
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
@@ -874,10 +886,10 @@ $('#mask-phone').mask('+7 (999) 999-99-99');
 </script>
 <!--Пример использования maskedinput без использования wtforms -конец-->
 
-<!--*******jQuery-плагин - конец
+<!--*******jQuery-плагин - конец-->
 
 
-<!--Подключить для Варианта 1 cookies (1 или 2 скрипта(можно без второго))-->
+<!--Подключить для Варианта 1 cookies (1 или 2 скрипта(можно без второго))&ndash;&gt;&ndash;&gt;-->
 <!--<script src="https://cdn.jsdelivr.net/gh/Wruczek/Bootstrap-Cookie-Alert@gh-pages/cookiealert.js"></script>-->
 <!--<script>-->
 <!--window.addEventListener("cookieAlertAccept", function() {-->

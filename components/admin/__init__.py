@@ -3219,20 +3219,41 @@ class TypeProductionView(SpecificView):
 
 class StatusCardView(SpecificView):
     column_list = ['id', 'name', 'weight', 'description', 'statuses_intermediate']
+    column_labels = {"name": 'Статус карточки услуг',
+                     "statuses_intermediate": 'Промежуточные статусы статуса карточки услуг',
+                     "weight": 'Вес статуса',
+                     "description": 'Описание статуса'}
+    column_sortable_list = ['id', 'name', 'weight', 'description',
+                            ('statuses_intermediate', 'statuses_intermediate.name')]
+    column_searchable_list = ['id', 'name', 'weight', 'description', 'statuses_intermediate.name']
 
 class StatusIntermediateView(SpecificView):
 
     column_list = ['id', 'type_production', 'status_card', 'name', 'weight', 'description']
 
-    column_labels = dict(card_usluga='Карточка услуги',
-                         type_production='Тип производства',
-                         name='Имя промежуточного статуса',
-                         weight='Вес промежуточного статуса',
-                         description='Описание промежуточного статуса')
+    # column_labels = dict(card_usluga='Карточка услуги',
+    #                      type_production='Тип производства',
+    #                      name='Имя промежуточного статуса',
+    #                      weight='Вес промежуточного статуса',
+    #                      description='Описание промежуточного статуса',
+    #                      status_card='11')
+    column_labels = {"type_production": 'Тип производства',
+                         "name": 'Статус промежуточный',
+                         "status_intermediate.status_card": 'Статус основной',
+                         "weight": 'Вес промежуточного статуса',
+                         "description": 'Описание промежуточного статуса',
+                        "status_card": 'Статус основной',
+                         "status_card.name": 'Статус основной',
+                     "type_production.name": 'Тип производства'}
     column_sortable_list = ['id', ('type_production', 'type_production.name'),
                             ('status_card', 'status_card.name'),
                             'name', 'weight', 'description'
                             ]
+    column_searchable_list = ['id', 'name', 'weight', 'description',
+                              'status_card.name', 'type_production.name']
+
+    column_filters = ['id', 'name', 'weight', 'description',
+                      'status_card.name', 'type_production.name']
 
 
 class StatusOrderView(SpecificView):

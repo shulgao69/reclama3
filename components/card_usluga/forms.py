@@ -2,6 +2,7 @@ import re
 import email_validator
 
 from flask_wtf import FlaskForm
+from flask_ckeditor import CKEditorField
 from wtforms import SubmitField, HiddenField, SelectField, BooleanField, StringField, MultipleFileField
 from wtforms import PasswordField, IntegerField, validators, FieldList, FormField, TextAreaField
 from wtforms import PasswordField, IntegerField, validators, TextAreaField
@@ -33,7 +34,8 @@ class CreateCardUslugaForm(FlaskForm):
                                 #           message='Имя может содержать только буквы, цифры, тире, дефис, а также пробелы'),
                                 # Length(min=1, max=60)],
                                    render_kw={'autofocus': True })
-    comments = TextAreaField("Сопроводительный текст")
+    # comments = TextAreaField("Сопроводительный текст")
+    comments =CKEditorField("Сопроводительный текст")
     # Regexp("^[a-zA-Z]+$", - только латинские буквы
     # message='Имя директории загрузки должно быть задано латинскими буквами'),
     # Regexp("^[a-zA-Z0-9]+[a-zA-Z0-9_-]+$" - только латинские буквы, цифры или _ -(кроме первого символа)
@@ -73,7 +75,7 @@ class EditFormNameTextCards(FlaskForm):
     # про render_kw задает высоту поля(строки)
     #  см: https://stackoverflow.com/questions/7979548/how-to-render-my-textarea-with-wtforms
     # в самой форме это поле можно вытянуть за правый нижний угол
-    comments = TextAreaField("Сопроводительный текст", render_kw={"rows": 4, "cols": 1})
+    comments = CKEditorField("Сопроводительный текст", render_kw={"rows": 4, "cols": 1})
     submit = SubmitField('Сохранить изменения')
 
 

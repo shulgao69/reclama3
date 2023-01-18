@@ -379,7 +379,9 @@ def edit_name_and_text_card(card_usluga_id ):
 
         # Принимаем данные
         name_card_usluga = form.name_card_usluga.data
+        print(name_card_usluga)
         comments = form.comments.data
+        print(comments)
 
         # Удалим лишние пробелы если есть
         # https://docs-python.ru/tutorial/operatsii-tekstovymi-strokami-str-python/metod-str-split/
@@ -399,6 +401,9 @@ def edit_name_and_text_card(card_usluga_id ):
         db.session.commit()
         # Возвращаемся на страницу с миниатюрами
         return redirect (url_for('card_usluga_bp.edit_card_usluga', card_usluga_id=card_usluga_id))
+
+    # Загрузили в форму редактирования исходный текст
+    form.comments.data = card_usluga.comments
 
     return render_template('edit_name_and_text_card.html',
                            form=form,

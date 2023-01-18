@@ -5,6 +5,9 @@ from flask import Flask
 # from flask_security import Security, current_user
 # from flask_security import SQLAlchemyUserDatastore
 
+from flask_ckeditor import CKEditor
+
+
 from flask_migrate import Migrate
 # from flask_login import LoginManager
 #
@@ -68,6 +71,8 @@ migrate = Migrate()
 
 app = Flask(__name__)
 app.config.from_object(DevelopConfig)
+
+ckeditor = CKEditor(app)
 
 # Инициализация экземпляров классов
 db.init_app(app)

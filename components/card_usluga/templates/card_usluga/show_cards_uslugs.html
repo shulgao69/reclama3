@@ -96,35 +96,18 @@
                             <div class="card-text">
                                 <div>Карточка услуги:
                                     <!--{% if card_usluga.name_card_usluga %}-->
-                                    <b class="base_color_1">{{ card_usluga.name_card_usluga }}</b>
+                                    <b class="base_color_1">
+                                        {{ card_usluga.name_card_usluga }}
+                                        (id {{ card_usluga.id }})</b>
                                     <!--{% endif %}-->
                                 </div>
-                                <div>Уникальный номер карточки (id):
-                                    <b class="base_color_1"> {{ card_usluga.id }}</b>
-                                </div>
-                                <div>Сопроводительный текст:
-                                    <b class="base_color_1">{{ card_usluga.comments }}</b>
-                                </div>
-
-                                <!--Информация о прайсах - начало-->
-                                {% if card_usluga.prices %}
-                                <div> Прайсы:
-                                    {% for price in card_usluga.prices %}
-                                    <b class="base_color_1">{{ price }}, </b>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                                <!--Информация о прайсах - конец-->
-
 
                                 <!--Информация о фото - начало-->
                                 <div>
-                                    {% if card_usluga.photos %}
-
                                     <div class="pt-2 pb-1">
-                                        Прикрепленные изображения:
+                                        Фото:
                                     </div>
-
+                                    {% if card_usluga.photos %}
                                     <div class="row">
                                         {% for photo in card_usluga.photos %}
                                         <div class="col-3 pr-0 pb-3">
@@ -134,10 +117,9 @@
                                         </div>
                                         {% endfor %}
                                     </div>
-
                                     {% endif %}
                                     <div>
-                                        Директория загрузки изображений:
+                                        Директория загрузки фото:
                                         <b class="base_color_1">
                                             /static/images/cards_uslugs/{{ menu.link }}/{{ usluga.link }}/{{
                                             card_usluga.dir_photos }}
@@ -145,6 +127,23 @@
                                     </div>
                                 </div>
                                 <!--Информация о фото - конец-->
+
+                                <!--Информация о прайсах - начало-->
+                                <div> Прайсы:
+                                    {% if card_usluga.prices %}
+                                    {% for price in card_usluga.prices %}
+                                    <b class="base_color_1">{{ price }}, </b>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <!--Информация о прайсах - конец-->
+
+
+
+
+                                <div>Сопроводительный текст:
+                                    <b class="base_color_1">{{ card_usluga.comments|safe }}</b>
+                                </div>
 
 
                                 <!--Информация о статусах - начало-->

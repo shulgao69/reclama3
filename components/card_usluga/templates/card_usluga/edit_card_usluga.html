@@ -50,7 +50,12 @@
             <!--Сведения о карточке услуги - начало-->
             <div>
                 <!--<h5 class="base_color_1">Сведения о карточке услуги</h5>-->
-                <h5>Сведения о карточке</h5>
+                <h5>Сведения о карточке услуги
+                    {% if card_usluga.name_card_usluga %}
+                    <b class="base_color_1">{{ card_usluga.name_card_usluga }}</b>
+                     {% endif %}
+                    (Id <b class="base_color_1">{{ card_usluga.id }}</b>)
+                </h5>
 
                 <div class="row">
                     <div class="col-8">
@@ -64,19 +69,6 @@
                                 {{ card_usluga.usluga }}
                             </b>
                         </div>
-                        <div class="text-success">Карточка услуги:
-                            {% if card_usluga.name_card_usluga %}
-                            <b class="base_color_1">
-                                {{ card_usluga.name_card_usluga }}
-                            </b>
-                            {% endif %}
-
-                            (Id карточки:
-                            <b class="base_color_1">
-                                {{ card_usluga.id }}
-                            </b>
-                            )
-                        </div>
                         <div class="text-success">
                             Директория загрузки изображений:
                             <b class="base_color_1">
@@ -85,15 +77,6 @@
                                 }}/{{ card_usluga.dir_photos }}
                             </b>
                         </div>
-                        <div class="text-success">
-                            Сопроводительный текст:
-                            {% if card_usluga.comments %}
-                            <b class="base_color_1">
-                                {{ card_usluga.comments }}
-                            </b>
-                            {% endif %}
-                        </div>
-
                     </div>
                     <div class="col-2 text-center">
                         {% if card_usluga.active == False %}
@@ -130,7 +113,6 @@
                         </div>
                     </div>
                     <!--Задать нормативы (спецификацию)- конец-->
-
                 </div>
             </div>
             <!--Сведения о карточке услуги - конец-->
@@ -147,10 +129,9 @@
             <!--В противном случае есть небольшие отступы справа и слева-->
 
 
-
             <div>
                 <!--Заголовок Вид карточки услуги на сайте - начало-->
-                <div class="row pt-5">
+                <div class="row pt-4">
                     <div class="col-12">
                         <!--<h5 class="base_color_1">Вид карточки услуги на сайте</h5>-->
                         <h5>Вид карточки услуги на сайте</h5>
@@ -386,7 +367,7 @@
                         <div class="col-8 container-fluid">
                         {% if card_usluga.comments %}
                         <div>
-                            {{ card_usluga.comments }}
+                            {{ card_usluga.comments|safe }}
                         </div>
                         {% endif %}
 

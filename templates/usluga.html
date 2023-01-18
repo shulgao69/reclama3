@@ -186,8 +186,12 @@
                 <div class="col-8 container-fluid">
                     {% if card_usluga.comments %}
                     <div class="row pb-2">
+<!--https://translated.turbopages.org/proxy_u/en-ru.ru.f2595e7c-63c7cbfb-7bb38b05-74722d776562/https/stackoverflow.com/questions/60622142/how-do-i-format-ckeditor-editor-elements-in-the-html-after-saving-them-into-a-da-->
+<!--https://docs-python.ru/packages/modul-jinja2-python/vstroennye-filtry-modulja-jinja2/#filter.safe-->
+<!--safe() отменяет автоматическое экранирование HTML,
+при этом из базы загружается текст из базы, созданный в ckeditor (а в нем теги)-->
                         <div class="col-12">
-                            {{ card_usluga.comments }}
+                            {{ card_usluga.comments|safe }}
                         </div>
                     </div>
                     {% endif %}
