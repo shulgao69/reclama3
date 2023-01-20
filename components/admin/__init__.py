@@ -15,6 +15,8 @@ from flask_admin.contrib.sqla.filters import BooleanEqualFilter
 
 from flask_admin.contrib import sqla
 
+
+
 # from flask.ext.admin.form import Select2Widget
 
 # Импортирую валидатор для проверки вводимых данных (интервал от min до max)
@@ -129,6 +131,7 @@ from RECL.components.admin.forms import PhotoFormAdmin
 # Но в админке app используется до создания контекста приложения
 # security = Security(app, user_datastore),  @app.before_request и др поэтому оставим
 from RECL.__init__ import app
+
 
 # from RECL.components.login import login_manager
 # from RECL import app
@@ -1487,7 +1490,39 @@ class MySettingAdmin(SpecificView):
     # def is_accessible(self):
     #     return (current_user.has_role('manager'))
 
+
+from flask_ckeditor import CKEditor, CKEditorField
+# from wtforms.widgets import TextArea, TextInput
+# from wtforms.fields import TextAreaField
+
+# class CKEditorWidget(TextArea):
+#     def __call__(self, field, **kwargs):
+#         if kwargs.get('class'):
+#             kwargs['class'] += " ckeditor"
+#         else:
+#             kwargs.setdefault('class', 'ckeditor')
+#         return super(CKEditorWidget, self).__call__(field, **kwargs)
+#
+#
+# class CKEditorField(TextAreaField):
+#     widget = CKEditorWidget()
+
+
+
 class MyLink(SpecificView):
+    # form_overrides = {'comments_1': CKEditorField}
+    form_overrides=dict(Text=CKEditorField)
+    # form_overrides = dict(comments_1=CKEditorField)
+    # create_template = 'edit.html'
+    # edit_template = 'edit.html'
+    # Показать детали
+    can_view_details = True
+
+
+
+    # можно задать свой вариант создания и редактирования стр
+    # create_template = 'edit.html'
+    # edit_template = 'edit.html'
 
     # ВНИМАНИЕ!!! нужно определить функцию  def on_model_delete(self, model):
     # при каскадном удалении если есть карточки услуг с фото чтобы удалялись
@@ -1498,7 +1533,9 @@ class MyLink(SpecificView):
     # Столбцы будут расположены в порядке, указанном в списке!!!
     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
 
+
     column_list = ['id', 'title', 'link', 'comments_1', 'comments_2', 'comments_3', 'comments_4', 'count_uslugs', 'count_uslugs_in_model', 'uslugs']
+
     # Здесь count_uslugs - счетчик, создаваемый в админке!
     # а count_uslugs_in_link - счетчик создаваемый в модели (те атрибут модели)
 
@@ -1509,6 +1546,8 @@ class MyLink(SpecificView):
     # для них нужны импорты
     # from sqlalchemy.ext.hybrid import hybrid_property
     # from sqlalchemy import select, func
+
+
 
     def _count_formatter(view, context, model, name):
         return len(model.uslugs)
@@ -1592,13 +1631,15 @@ class MyLink(SpecificView):
     # https://docs-python.ru/standart-library/modul-warnings-python/funktsija-warn-modulja-warnings/
     # Если включить 'uslugs' или, ('uslugs', 'uslugs.punkt_menu'),
     # выдает ошибку. Но редактировать услуги не требуется!!!! Их редактируем в своей модели
-    form_edit_rules = ['title', 'comments_1', 'comments_2', 'comments_3', 'comments_4']
+    # form_edit_rules = ['title', 'comments_1', 'comments_2', 'comments_3', 'comments_4']
     # исключила из списка редактирования link,
     # т.к. используется в директории загрузки фото в карточках услуг!!!
     # То есть при загрузке фото в карточку услуг фото загружается в
     # определенное место(директорию), зависящую от директориии меню и директории услуг.
     # Поэтому директорию запрещаю редактировать!!
-    # form_edit_rules = ['title', 'comments_1', 'comments_2', 'comments_3', 'comments_4']
+    form_edit_rules = ['title', 'comments_1', 'comments_2', 'comments_3', 'comments_4']
+
+
 
     form_create_rules = ['title', 'comments_1', 'comments_2', 'comments_3', 'comments_4']
 

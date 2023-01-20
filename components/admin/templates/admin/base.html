@@ -165,6 +165,26 @@
 {% endblock %}
 
 {% block tail_js %}
+
+<!--Мой кусок - начало-->
+<!--Это интеграция в flask-admin CKEditor-->
+<!--Включить ресурсы CKEditor для вставки в поле ввода редактор-->
+<!--поля форм CKEditorField (например comments = CKEditorField("Сопроводительный текст"))-->
+<!--https://flask-ckeditor.readthedocs.io/en/latest/basic.html-->
+<!--CKEditor предоставляет пять типов установок (см. сравнительную таблицу для различий):-->
+<!--basic, standard(значение по умолчанию), full, standard-all(доступно только из CDN)-->
+<!--full-all(доступно только из CDN)-->
+<!--Сравнительная таблица см. https://ckeditor.com/cke4/presets-all-->
+<!--Выбрала basic, тк мне нужно только редактирование по абзацам, болд, италик, ссылки.-->
+<!--Другие фукции здесь пока не нужны(загрузка изображений, цвет и тд)-->
+{{ ckeditor.load(pkg_type="basic") }}
+{{ ckeditor.config(name='comments_1') }}
+{{ ckeditor.config(name='comments_2') }}
+{{ ckeditor.config(name='comments_3') }}
+{{ ckeditor.config(name='comments_4') }}
+<!--<script src="http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>-->
+<!--Мой кусок - конец-->
+
 <script src="{{ admin_static.url(filename='vendor/jquery.min.js', v='2.1.4') }}" type="text/javascript"></script>
 <script src="{{ admin_static.url(filename='bootstrap/bootstrap4/js/popper.min.js') }}" type="text/javascript"></script>
 <script src="{{ admin_static.url(filename='bootstrap/bootstrap4/js/bootstrap.min.js', v='4.2.1') }}"

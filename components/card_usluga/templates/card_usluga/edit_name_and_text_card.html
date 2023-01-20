@@ -52,8 +52,16 @@
 
 
         <!--Сведения о карточке услуги - начало-->
+
         <div>
             <h6>Сведения о карточке услуги</h6>
+            <div class="text-success">Карточка услуги:
+                {% if card_usluga.name_card_usluga %}
+                <b class="base_color_1">
+                    {{ card_usluga.name_card_usluga }} (id {{ card_usluga.id }})
+                </b>
+                {% endif %}
+            </div>
             <div class="text-success">
                 Раздел:
                 <b class="base_color_1">
@@ -64,17 +72,7 @@
                     {{ card_usluga.usluga }}
                 </b>
             </div>
-            <div class="text-success">Карточка услуги:
-                {% if card_usluga.name_card_usluga %}
-                <b class="base_color_1">
-                    {{ card_usluga.name_card_usluga }}
-                </b>
-                {% endif %}
-                Id карточки услуг:
-                <b class="base_color_1">
-                    {{ card_usluga.id }}
-                </b>
-            </div>
+
             <div class="text-success">
                     Директория загрузки изображений:
                     <b class="base_color_1">
@@ -94,102 +92,107 @@
 
 
         <!--Форма редактирования -->
-        <div class="row">
-            <div class="col-4">
-                    <form method="POST" action="" enctype="multipart/form-data">
-                        {{ form.csrf_token }}
-                        <div class="mt-5"><b>Введите новый заголовок карточки услуги:</b></div>
-                        {% if form.name_card_usluga.errors %}
-                        {% for err in form.name_card_usluga.errors %}
-                        <div class="text-danger"><b>{{ err }}</b></div>
-                        {% endfor %}
-                        {% endif %}
-                        <div class="text-success">
-                            {{ form.name_card_usluga(class="form-control py-2 mt-2", value= card_usluga.name_card_usluga) }}
-                        </div>
-                        <div class="mt-4"><b>Введите новый сопроводительный текст:</b></div>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <div class="row">
+                <div class="col-4">
+                    <div class="mt-4"><b>Введите новый заголовок карточки услуги:</b></div>
+                    {% if form.name_card_usluga.errors %}
+                    {% for err in form.name_card_usluga.errors %}
+                    <div class="text-danger"><b>{{ err }}</b></div>
+                    {% endfor %}
+                    {% endif %}
+                    <div class="text-success">
+                        {{ form.name_card_usluga(class="form-control py-2 mt-2", value= card_usluga.name_card_usluga) }}
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="mt-4"><b>Введите новый сопроводительный текст:</b></div>
 
-                        <div class="text-success">
-                            {{ form.comments(class="form-control py-2 mt-2") }}
-                        </div>
+                    <div class="text-success">
+                        {{ form.comments(class="form-control py-2 mt-2") }}
+                    </div>
+                </div>
+
+                    <!--Модальное окно -->
+                    <!--см.  - https://it-blog.ru/js/modalnoe-okno-bootstrap/-->
+                    <!--https://bootstrap-4.ru/docs/5.1/components/modal/-->
+                    <!--Можно использовать ссылку с атрибутом href или кнопку с атрибутом data-target.-->
+                    <!--В обоих случаях требуется атрибут data-toggle="modal".-->
+                    <!--https://bootstrap-4.ru/docs/4.0/components/collapse/-->
 
 
-                        <!--Модальное окно -->
-                        <!--см.  - https://it-blog.ru/js/modalnoe-okno-bootstrap/-->
-                        <!--https://bootstrap-4.ru/docs/5.1/components/modal/-->
-                        <!--Можно использовать ссылку с атрибутом href или кнопку с атрибутом data-target.-->
-                        <!--В обоих случаях требуется атрибут data-toggle="modal".-->
-                        <!--https://bootstrap-4.ru/docs/4.0/components/collapse/-->
+                    <!--Модальное окно 1  - начало-->
+                    <!--Его не видно пока не нажать ссылку Сохранить изменения. т.е.активируется после
+                    нажатия на триггер(ссылку  Сохранить изменения))-->
+                    <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
 
+                    <!--Передача данных в модальное окно Важно!!!  - начало -->
+                    <!--Для передачи данных (карточки услуги) в модальное окно нужно указать уникальный идентификатор удаляемого объекта!!-->
+                    <!--и в тригере модального окна (data-target="#EditNameTextCard{{ card_usluga.id }}")-->
+                    <!--и в самом модальном окне id="EditNameTextCard{{ card_usluga.id }}"-->
+                    <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
+                    <div class="modal fade" id="EditNameTextCard{{ card_usluga.id }}"
+                         tabindex="-1" role="dialog"
+                         aria-labelledby="EditNameTextCard{{ card_usluga.id }}Label"
+                         aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title base_color_1" id="EditNameTextCard{{ card_usluga.id }}Label">
+                                        Вы уверены, что хотите внести изменения в заголовок и комментарий карточки
+                                        услуги?
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <!--&times; - это крестик для закрытия-->
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6 class="text-danger">
+                                        <b>Внимание!</b>
+                                    </h6>
+                                    <b class="base_color_1">
+                                        Старый заголовок и сопроводительный текст карточки услуг будут изменены!
+                                    </b>
+                                    <br><br>
 
-                        <!--Модальное окно 1  - начало-->
-                        <!--Его не видно пока не нажать ссылку Сохранить изменения. т.е.активируется после
-                        нажатия на триггер(ссылку  Сохранить изменения))-->
-                        <!--Мод. окно рекомендуют ставить как можно ближе к началу стр., чтобы не повлияло на др.элементы-->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                        Отменить изменения
+                                    </button>
+                                    <!--{#{{ form.submit(class='form-control my-3 btn-success btn-block') }}#}-->
 
-                        <!--Передача данных в модальное окно Важно!!!  - начало -->
-                        <!--Для передачи данных (карточки услуги) в модальное окно нужно указать уникальный идентификатор удаляемого объекта!!-->
-                        <!--и в тригере модального окна (data-target="#EditNameTextCard{{ card_usluga.id }}")-->
-                        <!--и в самом модальном окне id="EditNameTextCard{{ card_usluga.id }}"-->
-                        <!--см. конец https://stackoverflow.com/questions/44606429/modal-window-in-jinja2-template-flask-->
-                        <div class="modal fade" id="EditNameTextCard{{ card_usluga.id }}"
-                             tabindex="-1" role="dialog"
-                             aria-labelledby="EditNameTextCard{{ card_usluga.id }}Label"
-                             aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title base_color_1" id="EditNameTextCard{{ card_usluga.id }}Label">
-                                            Вы уверены, что хотите внести изменения в заголовок и комментарий карточки услуги?
-                                        </h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <!--&times; - это крестик для закрытия-->
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <h6 class="text-danger">
-                                            <b>Внимание!</b>
-                                        </h6>
-                                        <b class="base_color_1">
-                                            Старый заголовок и сопроводительный текст карточки услуг будут изменены!
-                                        </b>
-                                        <br><br>
-
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                            Отменить изменения
-                                        </button>
-                                        <!--{#{{ form.submit(class='form-control my-3 btn-success btn-block') }}#}-->
-
-                                        <!--Кнопка загрузки-->
-                                        <a class=""
-                                           href="{{ url_for('card_usluga_bp.edit_name_and_text_card', card_usluga_id=card_usluga.id) }}"
-                                           role="button">
-                                            {{ form.submit(class='form-control my-3 btn-success btn-block') }}
-                                        </a>
-                                        <!--Кнопка загрузки -  конец-->
-                                    </div>
+                                    <!--Кнопка загрузки-->
+                                    <a class=""
+                                       href="{{ url_for('card_usluga_bp.edit_name_and_text_card', card_usluga_id=card_usluga.id) }}"
+                                       role="button">
+                                        {{ form.submit(class='form-control my-3 btn-success btn-block') }}
+                                    </a>
+                                    <!--Кнопка загрузки -  конец-->
                                 </div>
                             </div>
                         </div>
-                        <!--Передача данных в модальное окно Важно!!!  - конец -->
-                        <!--Модальное окно 1 - конец-->
+                    </div>
+                    <!--Передача данных в модальное окно Важно!!!  - конец -->
+                    <!--Модальное окно 1 - конец-->
 
 
-                        <!--Триггер модального окна  - начало-->
-                        <a class="btn btn-success container-fluid"
-                           href=""
-                           data-toggle="modal"
-                           data-target="#EditNameTextCard{{ card_usluga.id }}"
-                           type="button"> Сохранить изменения
-                        </a>
-                        <!--Триггер модального окна -  конец-->
+                <!--Триггер модального окна  - начало-->
+                <div class="col-12 pt-3">
+                    <a class="btn btn-success container-fluid"
+                       href=""
+                       data-toggle="modal"
+                       data-target="#EditNameTextCard{{ card_usluga.id }}"
+                       type="button"> Сохранить изменения
+                    </a>
+                    </div>
+                    <!--Триггер модального окна -  конец-->
 
-                    </form>
             </div>
-        </div>
+
+        </form>
 
 
     </div>

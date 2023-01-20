@@ -52,7 +52,7 @@ class CreateCardUslugaForm(FlaskForm):
     # photo = FileField('Загрузите фото для карусели', render_kw={'multiple': True})
     menu = SelectField('Раздел:', validators=[DataRequired()], id='select_menu')
     usluga = SelectField('Услуга:', validators=[DataRequired()], id='select_usluga')
-    type_production = SelectField('Выберите тип производства:', validators=[DataRequired()])
+    type_production = SelectField('Тип производства:', validators=[DataRequired()])
     submit_create = SubmitField('Следующий шаг')
 
 
