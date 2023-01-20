@@ -778,6 +778,9 @@ class SettingAdminForAllRoles(ModelView):
     # Активировать False после настройки - конец!!
     # ***
 
+    # Показать детали
+    can_view_details = True
+
     # export_types - Задает формат экспорта строк
     # (если впоследствии для данной роли экспорт будет разрешен)
     # Если export_types явно не указан - по умолчанию экспортирует в csv
@@ -1510,13 +1513,32 @@ from flask_ckeditor import CKEditor, CKEditorField
 
 
 class MyLink(SpecificView):
+    # *** Попытка внедрить CKEditor - начало
+    # https: // flask - ckeditor.readthedocs.io / en / latest / faq.html  # how-to-make-this-extension-work-with-flask-admin
+    # https: // stackru.com / questions / 26991804 / kak - zastavit - ckeditor - rabotat - s - flask - admin
+    # https: // flask - admin.readthedocs.io / en / latest / introduction /
+    # https: // askdev.ru / q / s - ckeditor - vnutri - modalnoe - okno - butstrapa - 591239 /
     # form_overrides = {'comments_1': CKEditorField}
-    form_overrides=dict(Text=CKEditorField)
-    # form_overrides = dict(comments_1=CKEditorField)
+    # form_overrides=dict(Text=CKEditorField)
+    # form_overrides = dict(Text=CKEditorField)
+    # 'edit.html' в templates/admin в блюпринте админки
+    # edit_modal_template = 'edit.html'
     # create_template = 'edit.html'
     # edit_template = 'edit.html'
-    # Показать детали
-    can_view_details = True
+    # Не получилось полноценно!
+    # А этот код
+    # {{ckeditor.load(pkg_type="basic")}}
+    # {{ckeditor.config(name='comments_1')}}
+    # {{ckeditor.config(name='comments_2')}}
+    # находится в 'base.html' в templates/admin в блюпринте админки
+    # позволил внедрить но только через детали(глаз)
+    # а через модальныен окна нет!
+    # Перенесла в SettingAdminForAllRoles, а SpecificView наследует это свойство
+    # Показать детали (глаз)
+    # can_view_details = True
+    # *** Попытка внедрить CKEditor - конец
+
+
 
 
 
@@ -1852,6 +1874,8 @@ class MyLink(SpecificView):
     # ********
 
 class UslugaView(SpecificView):
+
+
     # ВНИМАНИЕ!!! нужно определить функцию  def on_model_delete(self, model):
     # при каскадном удалении если есть карточки услуг с фото чтобы удалялись
     # и фото из файловой системы! (см MyCardUsluga) На 10/06/22 е сделано
