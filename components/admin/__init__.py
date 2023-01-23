@@ -17,6 +17,8 @@ from flask_admin.contrib import sqla
 
 
 
+
+
 # from flask.ext.admin.form import Select2Widget
 
 # Импортирую валидатор для проверки вводимых данных (интервал от min до max)
@@ -111,6 +113,12 @@ from RECL.models import PlaceElement, PlaceModelElement, BaseLocationElement, \
 from RECL.models import WidthElement, HeightElement
 from RECL.models import UploadFileMy
 # from RECL.models import roles_models
+
+
+from flask_ckeditor import CKEditor
+from flask_ckeditor.fields import CKEditorField
+# from wtforms.widgets import TextArea, TextInput
+# from wtforms.fields import TextAreaField
 
 from RECL.models import db
 
@@ -1494,9 +1502,7 @@ class MySettingAdmin(SpecificView):
     #     return (current_user.has_role('manager'))
 
 
-from flask_ckeditor import CKEditor, CKEditorField
-# from wtforms.widgets import TextArea, TextInput
-# from wtforms.fields import TextAreaField
+
 
 # class CKEditorWidget(TextArea):
 #     def __call__(self, field, **kwargs):
@@ -1519,12 +1525,13 @@ class MyLink(SpecificView):
     # https: // flask - admin.readthedocs.io / en / latest / introduction /
     # https: // askdev.ru / q / s - ckeditor - vnutri - modalnoe - okno - butstrapa - 591239 /
     # form_overrides = {'comments_1': CKEditorField}
-    # form_overrides=dict(Text=CKEditorField)
-    # form_overrides = dict(Text=CKEditorField)
+    # form_overrides=dict(comments_1=CKEditorField)
     # 'edit.html' в templates/admin в блюпринте админки
     # edit_modal_template = 'edit.html'
     # create_template = 'edit.html'
     # edit_template = 'edit.html'
+    # create_template = 'templates/admin/edit.html'
+    # edit_template = 'templates/admin/edit.html'
     # Не получилось полноценно!
     # А этот код
     # {{ckeditor.load(pkg_type="basic")}}
@@ -1532,14 +1539,11 @@ class MyLink(SpecificView):
     # {{ckeditor.config(name='comments_2')}}
     # находится в 'base.html' в templates/admin в блюпринте админки
     # позволил внедрить но только через детали(глаз)
-    # а через модальныен окна нет!
-    # Перенесла в SettingAdminForAllRoles, а SpecificView наследует это свойство
+    # а через модальные окна нет! Разбираться с модальными окнами!!!
+    # Перенесла can_view_details в SettingAdminForAllRoles, а SpecificView наследует это свойство
     # Показать детали (глаз)
     # can_view_details = True
     # *** Попытка внедрить CKEditor - конец
-
-
-
 
 
     # можно задать свой вариант создания и редактирования стр
@@ -1556,8 +1560,9 @@ class MyLink(SpecificView):
     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
 
 
-    column_list = ['id', 'title', 'link', 'comments_1', 'comments_2', 'comments_3', 'comments_4', 'count_uslugs', 'count_uslugs_in_model', 'uslugs']
+    # column_list = ['id', 'title', 'link', 'comments_1', 'comments_2', 'comments_3', 'comments_4', 'count_uslugs', 'count_uslugs_in_model', 'uslugs']
 
+    column_list = ['id', 'title', 'link', 'count_uslugs', 'count_uslugs_in_model', 'uslugs']
     # Здесь count_uslugs - счетчик, создаваемый в админке!
     # а count_uslugs_in_link - счетчик создаваемый в модели (те атрибут модели)
 
@@ -1828,45 +1833,43 @@ class MyLink(SpecificView):
     #     return (current_user.has_role('manager'))
 
     # ********
+    # Попытка загрузка файла в модальном окне админки, картинки - начало
+    # Не получилось!!!
+    # см.  https://dev-gang.ru/article/flask-admin-zagruzka-faylov-i-obrabotka-formy-v-modeli/
 
-    # Загрузка файла в модальном окне админки, картинки - начало
-    # https://dev-gang.ru/article/flask-admin-zagruzka-faylov-i-obrabotka-formy-v-modeli/
-
-    # Первая же строка form_extra_fields создает ошибку при попытке создать новую запись
-    # в меню сайта(модель link)
-    # form_extra_fields = {
-    #     'file': form.FileUploadField('file')
-    # }
+    # def _list_thumbnail(view, context, model, name):
+    #     if not model.path:
+    #         return ''    #
+    #     url = url_for('static', filename=os.path.join('storage/', model.path))    #
+    #     if model.type in ['jpg', 'jpeg', 'png', 'svg', 'gif']:
+    #         return Markup('' % url)    #
+    #     if model.type in ['mp3']:
+    #         return Markup('' % url)
     #
+    # column_formatters = {'path': _list_thumbnail }
+
+    # form_extra_fields = { 'file': form.FileUploadField('file')}    # #
     # def _change_path_data(self, _form):
     #     try:
-    #         storage_file = _form.file.data
-    #
+    #         storage_file = _form.file.data    #
     #         if storage_file is not None:
     #             hash = random.getrandbits(128)
     #             ext = storage_file.filename.split('.')[-1]
-    #             path = '%s.%s' % (hash, ext)
-    #
+    #             path = '%s.%s' % (hash, ext)    #
     #             storage_file.save(
     #                 os.path.join(app.config['STORAGE'], path)
-    #             )
-    #
+    #             )    #
     #             _form.name.data = _form.name.data or storage_file.filename
     #             _form.path.data = path
-    #             _form.type.data = ext
-    #
-    #             del _form.file
-    #
+    #             _form.type.data = ext    #
+    #             del _form.file    #
     #     except Exception as ex:
-    #         pass
-    #
-    #     return _form
-    #
+    #         pass    #
+    #     return _form    #
     # def edit_form(self, obj=None):
     #     return self._change_path_data(
     #         super(MyLink, self).edit_form(obj)
-    #     )
-    #
+    #     )    #
     # def create_form(self, obj=None):
     #     return self._change_path_data(
     #         super(MyLink, self).create_form(obj)
@@ -1883,7 +1886,7 @@ class UslugaView(SpecificView):
     # Задает поля из базы, отображаемые в админ панели
     # Столбцы будут расположены в порядке, указанном в списке!!!
     # (либо в column_exclude_list указать те столбцы, что нужно удалить из списка)
-    column_list = ['id', 'title', 'punkt_menu', 'link', 'comments_1', 'comments_2', 'comments_3', 'comments_4', 'count_cards_uslugs_in_model', 'cards_usluga']
+    column_list = ['id', 'title', 'punkt_menu', 'link', 'count_cards_uslugs_in_model', 'cards_usluga']
 
     # Удалить столбцы из списка.
     # Если задан column_list, где данный столбец не включен, то column_exclude_list

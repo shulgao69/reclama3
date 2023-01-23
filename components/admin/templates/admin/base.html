@@ -178,11 +178,20 @@
 <!--Выбрала basic, тк мне нужно только редактирование по абзацам, болд, италик, ссылки.-->
 <!--Другие фукции здесь пока не нужны(загрузка изображений, цвет и тд)-->
 {{ ckeditor.load(pkg_type="basic") }}
+{{ ckeditor.config(name='comments') }}
+<!--{{ ckeditor.config(name='comments_1', width=300 ) }}-->
 {{ ckeditor.config(name='comments_1') }}
 {{ ckeditor.config(name='comments_2') }}
-<!--{{ ckeditor.config(name='comments_3') }}-->
-<!--{{ ckeditor.config(name='comments_4') }}-->
+{{ ckeditor.config(name='comments_3') }}
+{{ ckeditor.config(name='comments_4') }}
 <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js"></script>-->
+<!--# Не получилось полноценно!-->
+<!--    # Этот код-->
+<!--    # {{ckeditor.load(pkg_type="basic")}}-->
+<!--    # {{ckeditor.config(name='comments_1')}}-->
+<!--    # {{ckeditor.config(name='comments_2')}}-->
+<!--    # позволил внедрить но только через детали(глаз)-->
+<!--    # а через модальныен окна нет!-->
 <!--Мой кусок - конец-->
 
 <script src="{{ admin_static.url(filename='vendor/jquery.min.js', v='2.1.4') }}" type="text/javascript"></script>

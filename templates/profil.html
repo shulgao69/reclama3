@@ -3,30 +3,50 @@
 
 
 <main class="container">
-    <div class="row mt-4">
+    <div class="row mt-3">
         <div class="col-3">
-            <h4>{{ current_user.email }}</h4>
-            <div>{{ current_user.password|truncate(5) }}</div>
 
-            {% if current_user.has_role('admin') %}
-            <div>Вы администратор(admin) - {{ current_user.has_role('admin') }}</div>
-            <div>Ваши полномочия:....</div>
-            {% elif current_user.has_role('editor') %}
-            <div>Вы редактор (editor) - {{ current_user.has_role('editor') }}</div>
-            <div>Ваши полномочия:....</div>
-            {% elif current_user.has_role('manager') %}
-            <div>Вы менеджер (manager) - {{ current_user.has_role('manager') }}</div>
-            <div>Ваши полномочия:....</div>
-            {% else %}
-            <div>Вы - пользователь</div>
-            <div>Ваши полномочия:....</div>
+
+            <div>
+                Добро пожаловать,
+                {% if current_user.user_first_name %}
+                <b>{{ current_user.user_first_name }}!</b>
+                {% else %}
+                <b>{{ current_user.email }}</b>
+                {% endif %}
+            </div>
+
+
+
+
+<!--            <div>{{ current_user.password|truncate(10) }}</div>-->
+            {% if current_user.roles %}
+            <div>
+                Ваша роль (или роли):
+                <b>{{ current_user.roles }}</b>
+            </div>
             {% endif %}
+
+<!--            {% if current_user.has_role('admin') %}-->
+<!--            <div>Вы администратор(admin) - {{ current_user.has_role('admin') }}</div>-->
+<!--            <div>Ваши полномочия:....</div>-->
+<!--            {% elif current_user.has_role('editor') %}-->
+<!--            <div>Вы редактор (editor) - {{ current_user.has_role('editor') }}</div>-->
+<!--            <div>Ваши полномочия:....</div>-->
+<!--            {% elif current_user.has_role('manager') %}-->
+<!--            <div>Вы менеджер (manager) - {{ current_user.has_role('manager') }}</div>-->
+<!--            <div>Ваши полномочия:....</div>-->
+<!--            {% else %}-->
+<!--            <div>Вы - пользователь</div>-->
+<!--            <div>Ваши полномочия:....</div>-->
+<!--            {% endif %}-->
+
         </div>
         <div class="col-4">
-            <h4>Ваша роль:.....</h4>
+            <div>Ваша роль:.....</div>
         </div>
         <div class="col-5 text-right">
-            <div>Ваши заказы</div>
+            <div><a href="#">Профиль</a></div>
         </div>
     </div>
 
@@ -39,7 +59,7 @@
                 <li class="mb-3"><a href="#">Настройки профиля</a></li>
                 <li class="mb-3"><a href="#">Смена пароля</a></li>
                 <li class="mb-3"><a href="#">Заказы в работе</a></li>
-                <li class="mb-3"><a href="#">Выполненные заказы</a></li>
+                <li class="mb-3"><a href="#">Архив заказов</a></li>
             </ul>
         </div>
         <div class="col-9">

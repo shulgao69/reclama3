@@ -768,7 +768,13 @@ def render_profil():
     links_menu = Link.query.all()
     return render_template("profil.html", links_menu=links_menu, err=err)
 
-
+# Профиль персонала (кабинет?)
+@app.route('/staff_profil/', methods=["GET", "POST"])
+@login_required
+def render_staff_profil():
+    err = ""
+    links_menu = Link.query.all()
+    return render_template("staff_profil.html", links_menu=links_menu, err=err)
 
 #
 @app.route('/cookies-success/')

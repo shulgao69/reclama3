@@ -325,6 +325,21 @@
 
                 {% if current_user.is_authenticated %}
                 {% if current_user.is_active %}
+                {% if current_user.roles %}
+                <!--Кабинет сотрудника - начало-->
+                <li class="nav-item">
+                    <a class="nav-link text-center" href="/staff_profil/">
+                        <!--Подключаем иконку с сайта https://icons.bootstrap-4.ru-->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0796a6"
+                             class="bi bi-person-fill " viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        </svg>
+                        <br>
+                        Рабочий кабинет
+                    </a>
+                </li>
+                <!--Кабинет сотрудника - конец-->
+                {% else %}
                 <!--Кабинет клиента - начало-->
                 <li class="nav-item">
                     <a class="nav-link text-center" href="/profil/">
@@ -338,6 +353,7 @@
                     </a>
                 </li>
                 <!--Кабинет клиента - конец-->
+                {% endif %}
                 {% endif %}
                 <!--Выйти - начало-->
                 <li class="nav-item">
@@ -745,7 +761,7 @@
     </div>
 </footer>
 
-<!--Включить ресурсы CKEditor для вставки в поле ввода редактор-->
+<!--*** Включить ресурсы CKEditor для вставки в поле ввода редактор  - начало-->
 <!--поля форм CKEditorField (например comments = CKEditorField("Сопроводительный текст"))-->
 <!--https://flask-ckeditor.readthedocs.io/en/latest/basic.html-->
 <!--CKEditor предоставляет пять типов установок (см. сравнительную таблицу для различий):-->
@@ -756,8 +772,19 @@
 <!--Другие фукции здесь пока не нужны(загрузка изображений, цвет и тд)-->
 
 {{ ckeditor.load(pkg_type="basic") }}
+{{ ckeditor.config(name='comments_1') }}
+{{ ckeditor.config(name='comments_2') }}
+<!--Этот код позволяет вставить редактор, но в админке он не работает-->
+<!--Для админки надо вставить эту загрузку в admin\base.html-->
+
+<!--см также-->
+<!--https: // flask - ckeditor.readthedocs.io / en / latest / faq.html  # how-to-make-this-extension-work-with-flask-admin-->
+<!--https: // stackru.com / questions / 26991804 / kak - zastavit - ckeditor - rabotat - s - flask - admin-->
+<!--https: // flask - admin.readthedocs.io / en / latest / introduction /-->
+<!--https: // askdev.ru / q / s - ckeditor - vnutri - modalnoe - okno - butstrapa - 591239 /-->
 
 
+<!--*** Включить ресурсы CKEditor для вставки в поле ввода редактор  - конец-->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
