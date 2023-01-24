@@ -44,13 +44,30 @@ def render_session_clear():
 # Очистить сессию - конец
 
 
-# Создать заказ
+
+# Оформить (разместить) заказ из корзины
+@order_blueprint.route('/place_order/', methods=['GET', 'POST'])
+@login_required
+def place_order():
+    print('session=', session)
+    cart=session.get('cart', [])
+    print('type(cart)=', type(cart))
+    print('cart=', cart)
+    print('jsonify(cart)=', jsonify(cart), 'type(jsonify(cart))=', type(jsonify(cart)))
+    form=ApplicationForm()
+    return render_template('place_order.html',
+                           form=form)
+
+
+# Создать заказ - это роут для создания заказа из админки менеджером в случае,
+# если клиент звонит по телефону?? Пока не реализовано!!! Просто пока так.
 @order_blueprint.route('/create_order/', methods=['GET', 'POST'])
 @login_required
 def create_order():
     orders=Order.query.all()
     return render_template('show_orders.html',
                            orders=orders)
+
 
 # роут для выбора пользователя по выбору в роли при назначении ответственного
 # на странице show_orders (см скрипт в конце стр show_orders.html)
@@ -214,16 +231,7 @@ def show_end_orders():
 # Поменять флаг для показа только закрытых заказов - конец
 
 
-# Оформить (разместить) заказ из корзины
-@order_blueprint.route('/place_order/', methods=['GET', 'POST'])
-@login_required
-def place_order():
-    print('session=', session)
-    cart=session.get('cart', [])
-    print('type(cart)=', type(cart))
-    print('cart=', cart)
-    print('jsonify(cart)=', jsonify(cart), 'type(jsonify(cart))=', type(jsonify(cart)))
-    return render_template('place_order.html')
+
 
 
 # заявка на заказ по ссылке из прайса на странице услуги
@@ -239,7 +247,7 @@ def order_request(card_usluga_id, price_id, i, j):
     card_usluga = CardUsluga.query.filter(CardUsluga.id == card_usluga_id).first()
     price = PriceTable.query.filter(PriceTable.id == price_id).first()
     print('card_usluga=', card_usluga, 'price=', price)
-    form = ApplicationForm()
+
 
     # Если строку прайса можно перевести в число (целое или десятичное число) сделаем это
     # И тогда можно считать сумму услуги, увеличивая кол-во
@@ -279,8 +287,7 @@ def order_request(card_usluga_id, price_id, i, j):
                            price=price,
                            i=i,
                            j=j,
-                           order_request_sum=order_request_sum,
-                           form=form
+                           order_request_sum=order_request_sum
                            )
 
 

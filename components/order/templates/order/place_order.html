@@ -3,7 +3,215 @@
 {% block container %}
 <main>
     <div class="container">
-Оформить заказ
+        <div class="row">
+            <div class="col-12 pt-2">
+                <h5>Оформление заказа</h5>
+            </div>
+
+            <div class="col-6">
+                <div class="px-3 border border-success">
+
+                    {% if current_user.is_authenticated %}
+                    <div class="text-muted pt-3">
+                        <!--<h5 class="h3 mb-3 font-weight-normal">Для уточнения деталей заказа заполните данные</h5>-->
+                        <!--<h4 class="mb-3 font-weight-light">-->
+                        {% if current_user.user_first_name %}
+                        {{ current_user.user_first_name }}!
+                        {% endif %}
+                        <!--</h4>-->
+                    </div>
+                    {% endif %}
+
+                    <!--класс бутстреп text-muted делает текст более бледным чем черный (серым)-->
+                    <div class="text-muted">
+                        <!--<h5 class="h3 mb-3 font-weight-normal">Для уточнения деталей заказа заполните данные</h5>-->
+                        <!--<h4 class="mb-3 font-weight-light">-->
+                        Для уточнения деталей заказа укажите ваши контактные данные:
+                        <!--</h4>-->
+                    </div>
+
+                    <!--Для чего класс form-signin - не помню!!! поэтому не использую-->
+                    <!--<form class="form-signin pt-1" action="" method="POST">-->
+                    <form action="" method="POST">
+                        {{ form.csrf_token }}
+                        <h6 class="pt-2">Заказчик:</h6>
+
+                        <!--Вывод ошибок:-->
+                        <!--Ошибки можем сформировать разными способами:-->
+                        <!--1) валидация, кот. делаем внутри формы, с помощью валидаторов формы
+                        (встроенных и валидаторов, задаваемых в функции validate_user_phone.
+                        Имя такой функции формируется так: validate_имя валидируемого поля
+                        В ней можем задать свои сообщения валидатора.)
+                        При использовании встроенных валидаторов появляются стандартные сообщения,
+                        кот. заданы в браузерах (могут немного отличаться)
+                        Если задано в параметрах валидатора собственные message - появятся они!!!-->
+                        <!--2) условия, кот. накладываем на данные внутри роута и передаем на стр. с помощью переменных            -->
+                        <!--Затем на стр. выводим ошибки и 1) и 2)-->
+
+
+                        <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        {% if form.user_phone.errors %}
+                        {% for err in form.user_phone.errors %}
+                        <p class="error alert alert-warning" role="alert">
+                            {{ err }}
+                        </p>
+                        {% endfor %}
+                        {% endif %}
+                        <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+
+                        <!--Вывод ошибок, формируемых внутри роута (п.2) (если такие заданы), кот. рендерит эту стр. - начало-->
+                        {% if err %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ err }}
+                        </div>
+                        {% endif %}
+                        <!--Вывод ошибок, формируемых внутри роута (п.2), кот. рендерит эту стр. - конец-->
+
+                        <div class="pt-0">
+                        <!--класс бутстреп text-muted делает текст более бледным чем черный (серым)-->
+                        {{ form.user_phone.label(class="text-muted  control-label") }}
+                        {{ form.user_phone(class="form-control") }}
+                        </div>
+
+                         <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        <div class="pt-2">
+                            {% if form.user_last_name.errors %}
+                            {% for err in form.user_last_name.errors %}
+                            <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                         <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+
+                        <!--Фамилия - начало-->
+                        <div class="pt-2">
+                            {% if current_user.user_last_name %}
+                            <!--{{ form.user_last_name.label(class="text-muted control-label") }}-->
+                            {{ form.user_last_name(class="form-control", value=current_user.user_last_name) }}
+                            {% else %}
+                            {{ form.user_last_name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <!--Фамилия - конец-->
+
+
+                        <!--Имя - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        <div class="pt-2">
+                            {% if form.user_first_name.errors %}
+                            {% for err in form.user_first_name.errors %}
+                            <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                         <!--Имя - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                        <!--Имя - начало-->
+                        <div class="pt-2">
+                            <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                            {% if current_user.user_first_name %}
+                            {{ form.user_first_name(class="form-control", value=current_user.user_first_name) }}
+                            {% else %}
+                            {{ form.user_first_name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <!--Имя - конец-->
+
+                        <!--Отчество - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        <div class="pt-2">
+                            {% if form.user_middle_name.errors %}
+                            {% for err in form.user_middle_name.errors %}
+                            <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                         <!--Отчество - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                        <!--Отчество - начало-->
+                        <div class="pt-2">
+                            {% if current_user.user_middle_name %}
+                        <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                            {{ form.user_middle_name(class="form-control", value=current_user.user_middle_name) }}
+                            {% else %}
+                            {{ form.user_middle_name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <!--Отчество - конец-->
+
+                               <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        <div class="pt-2">
+                            {% if form.email.errors %}
+                            {% for err in form.email.errors %}
+                            <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                         <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                        <!--email - начало-->
+                        <div class="pt-2">
+                            {% if current_user.email %}
+                        <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                            {{ form.email(class="form-control", value=current_user.email) }}
+                            {% else %}
+                            {{ form.user_middle_name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <!--email - конец-->
+
+                        <h6 class="pt-4">Плательщик:</h6>
+                        <!--class="list-unstyled" убирает ненужные точки в начале строки в списке-->
+                        <!--радиокнопок, т.к. в типе RadioField поля form.user_organization используются теги -->
+                        <!--<ul><li></li></ul> которые задают эти точки по умолчанию-->
+                        <div class="pt-2">
+<!--                            {{ form.user_organization.label(class="text-muted control-label") }}-->
+                            {{ form.user_organization(class="list-unstyled text-muted") }}
+
+                        </div>
+
+                        <div class="pt-3">Дря расчета стоимости доставки укажите адрес и способ доставки:</div>
+                        <h6 class="pt-3">Адрес доставки:</h6>
+                        <h6 class="pt-3">Способ доставки:</h6>
+                        <h6 class="pt-3">Стоимость доставки:</h6>
+                        <h6 class="pt-3">Оплата:</h6>
+
+                        <div class="pt-3">
+                            {{ form.user_consent() }}
+                            {{ form.user_consent.label(class="text-muted control-label") }}
+                            <div>
+                                <a href="">Соглашение о персональных данных</a>
+                            </div>
+                        </div>
+
+                        <!--Кнопка сохранить - с классом form-control-->
+                        <div class="pt-5 pb-3">
+                            {{ form.submit(class="form-control btn btn-success") }}
+                        </div>
+                        <!--Кнопка сохранить - без класса form-control-->
+                        <!--<div class="pt-3">                                -->
+                        <!--{{ form.submit(class="btn btn-success") }}-->
+                        <!--</div>-->
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </main>
 {% endblock %}
+
+ <!--Эти вводы управляются плагином jquery.maskedinput, скрипты находятся в base.html - начало-->
+<!--https://webstool.ru/jquery.maskedinput.html-->
+<!--https://github.com/digitalBush/jquery.maskedinput-->
+<!--http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html-->
+<!--https://snipp.ru/jquery/masked-input-->
+<!--<input placeholder="Ваш телефон:" id="phone" type="text" />-->
+<!--<input placeholder="+7(___)___-__-__" id="phone_1" type="text" />-->
+<!--<input class=form-control placeholder="+7(___)___-__-__" id="phone_2" type="text" />-->
+<!--<input class=form-control placeholder="+7(___)___-__-__" id="phone_4" type="text" />-->
+<!--<input placeholder="Ваш телефон:" id="phone_3" type="text" />-->
+<!--<input placeholder="Дата day/month/year" id="date" type="text" />-->
+<!--Эти вводы управляются плагином jquery.maskedinput см base.html - конец-->

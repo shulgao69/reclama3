@@ -217,116 +217,9 @@
 
                 </div>
             </div>
-
-                        <!--<div class="col-6">-->
-                <!--<div class="px-3 border border-success">-->
-
-                    <!--{% if current_user.is_authenticated %}-->
-                    <!--<h5 class="base_color_1 pt-3">-->
-                        <!--Здравствуйте {{ current_user }} id: {{ current_user.id }}!-->
-                    <!--</h5>-->
-                    <!--{% endif %}-->
-
-                    <!--&lt;!&ndash;класс бутстреп text-muted делает текст более бледным чем черный (серым)&ndash;&gt;-->
-                    <!--<div class="text-muted pt-3">-->
-                        <!--&lt;!&ndash;<h5 class="h3 mb-3 font-weight-normal">Для уточнения деталей заказа заполните данные</h5>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<h4 class="mb-3 font-weight-light">&ndash;&gt;-->
-                        <!--Для уточнения деталей заказа укажите ваши контактные данные:-->
-                        <!--&lt;!&ndash;</h4>&ndash;&gt;-->
-                    <!--</div>-->
-
-                    <!--&lt;!&ndash;Для чего класс form-signin - не помню!!! поэтому не использую&ndash;&gt;-->
-                    <!--&lt;!&ndash;<form class="form-signin pt-1" action="" method="POST">&ndash;&gt;-->
-                    <!--<form action="" method="POST">-->
-                        <!--{{ form.csrf_token }}-->
-
-                        <!--&lt;!&ndash;Вывод ошибок:&ndash;&gt;-->
-                        <!--&lt;!&ndash;Ошибки можем сформировать разными способами:&ndash;&gt;-->
-                        <!--&lt;!&ndash;1) валидация, кот. делаем внутри формы, с помощью валидаторов формы-->
-                        <!--(встроенных и валидаторов, задаваемых в функции validate_user_phone.-->
-                        <!--Имя такой функции формируется так: validate_имя валидируемого поля-->
-                        <!--В ней можем задать свои сообщения валидатора.)-->
-                        <!--При использовании встроенных валидаторов появляются стандартные сообщения,-->
-                        <!--кот. заданы в браузерах (могут немного отличаться)-->
-                        <!--Если задано в параметрах валидатора собственные message - появятся они!!!&ndash;&gt;-->
-                        <!--&lt;!&ndash;2) условия, кот. накладываем на данные внутри роута и передаем на стр. с помощью переменных            &ndash;&gt;-->
-                        <!--&lt;!&ndash;Затем на стр. выводим ошибки и 1) и 2)-->
-
-
-                        <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало&ndash;&gt;-->
-                        <!--{% if form.user_phone.errors %}-->
-                        <!--{% for err in form.user_phone.errors %}-->
-                        <!--<p class="error alert alert-warning" role="alert">-->
-                            <!--{{ err }}-->
-                        <!--</p>-->
-                        <!--{% endfor %}-->
-                        <!--{% endif %}-->
-                        <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец&ndash;&gt;-->
-
-
-                        <!--&lt;!&ndash;Вывод ошибок, формируемых внутри роута (п.2) (если такие заданы), кот. рендерит эту стр. - начало&ndash;&gt;-->
-                        <!--{% if err %}-->
-                        <!--<div class="alert alert-warning" role="alert">-->
-                            <!--{{ err }}-->
-                        <!--</div>-->
-                        <!--{% endif %}-->
-                        <!--&lt;!&ndash;Вывод ошибок, формируемых внутри роута (п.2), кот. рендерит эту стр. - конец&ndash;&gt;-->
-
-
-                        <!--&lt;!&ndash;класс бутстреп text-muted делает текст более бледным чем черный (серым)&ndash;&gt;-->
-                        <!--{{ form.user_phone.label(class="text-muted control-label") }}-->
-                        <!--{{ form.user_phone(class="form-control") }}-->
-
-                        <!--<div class="pt-3">-->
-                            <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало&ndash;&gt;-->
-                            <!--{% if form.user_first_name.errors %}-->
-                            <!--{% for err in form.user_first_name.errors %}-->
-                            <!--<p class="error alert alert-warning" role="alert">{{ err }}</p>-->
-                            <!--{% endfor %}-->
-                            <!--{% endif %}-->
-                            <!--&lt;!&ndash;Вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец&ndash;&gt;-->
-                        <!--</div>-->
-
-                        <!--<div class="pt-3">-->
-                            <!--&lt;!&ndash;{{ form.user_first_name.label(class="text-muted control-label") }}&ndash;&gt;-->
-                            <!--{{ form.user_first_name(class="form-control", value=current_user ) }}-->
-                        <!--</div>-->
-
-                        <!--<div class="pt-3">-->
-                            <!--&lt;!&ndash;{{ form.user_surname.label(class="text-muted control-label") }}&ndash;&gt;-->
-                            <!--{{ form.user_surname(class="form-control") }}-->
-                        <!--</div>-->
-
-
-                        <!--&lt;!&ndash;class="list-unstyled" убирает ненужные точки в начале строки в списке&ndash;&gt;-->
-                        <!--&lt;!&ndash;радиокнопок, т.к. в типе RadioField поля form.user_organization используются теги &ndash;&gt;-->
-                        <!--&lt;!&ndash;<ul><li></li></ul> которые задают эти точки по умолчанию&ndash;&gt;-->
-                        <!--<div class="pt-4">-->
-                            <!--{{ form.user_organization.label(class="text-muted control-label") }}-->
-                            <!--{{ form.user_organization(class="list-unstyled") }}-->
-
-                        <!--</div>-->
-
-                        <!--<div class="pt-3">-->
-                            <!--{{ form.user_consent() }}-->
-                            <!--{{ form.user_consent.label(class="text-muted control-label") }}-->
-                            <!--<div>-->
-                                <!--<a href="">Соглашение о персональных данных</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                        <!--&lt;!&ndash;Кнопка сохранить - с классом form-control&ndash;&gt;-->
-                        <!--<div class="pt-5 pb-3">-->
-                            <!--{{ form.submit(class="form-control btn btn-success") }}-->
-                        <!--</div>-->
-                        <!--&lt;!&ndash;Кнопка сохранить - без класса form-control&ndash;&gt;-->
-                        <!--&lt;!&ndash;<div class="pt-3">                                &ndash;&gt;-->
-                        <!--&lt;!&ndash;{{ form.submit(class="btn btn-success") }}&ndash;&gt;-->
-                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-                    <!--</form>-->
-                <!--</div>-->
-            <!--</div>-->
+            <div class="col-6">
+                Добавить еще что-то
+            </div>
 
 
         </div>
@@ -337,18 +230,6 @@
 
 {% endblock %}
 
- <!--Эти вводы управляются плагином jquery.maskedinput, скрипты находятся в base.html - начало-->
-        <!--https://webstool.ru/jquery.maskedinput.html-->
-        <!--https://github.com/digitalBush/jquery.maskedinput-->
-        <!--http://web-verstka.ru/verstka-sajta/elementyi-sajta/maska-vvoda-telefona.-jquery-mask-plugin.html-->
-        <!--https://snipp.ru/jquery/masked-input-->
-         <!--<input placeholder="Ваш телефон:" id="phone" type="text" />-->
-        <!--<input placeholder="+7(___)___-__-__" id="phone_1" type="text" />-->
-        <!--<input class=form-control placeholder="+7(___)___-__-__" id="phone_2" type="text" />-->
-        <!--<input class=form-control placeholder="+7(___)___-__-__" id="phone_4" type="text" />-->
-        <!--<input placeholder="Ваш телефон:" id="phone_3" type="text" />-->
-        <!--<input placeholder="Дата day/month/year" id="date" type="text" />-->
-        <!--Эти вводы управляются плагином jquery.maskedinput см base.html - конец-->
 
 
 

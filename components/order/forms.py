@@ -59,7 +59,7 @@ class ChooseRoleAndPersonForm(FlaskForm):
     #                          for manager_person in manager_role_id.users]
 
 
-# *** Форма заявки (Application) - начало
+# *** Форма для размещения заявки (Application) на заказ  - начало
 class ApplicationForm(FlaskForm):
 
     # СМ регулярные выражения!!!
@@ -101,18 +101,26 @@ class ApplicationForm(FlaskForm):
     # Пока оставляю 'placeholder': "+7(___)___-__-__" но подумать стоит ли задавать образец для пользователя
     # может быть это будет усложнять для тех у кого например городской номер и шаблон тогда у них другой
 
-    user_phone = TelField("Введите телефон",
+    user_phone = TelField("Телефон",
                           [InputRequired(message='Номер не введен')],
                           render_kw={'autofocus': True, 'placeholder': "+7(___)___-__-__" }
                           )
 
-    user_first_name = StringField("Введите имя", [InputRequired()],
+    user_last_name = StringField("Фамилия", [InputRequired()],
+                                 render_kw={'autofocus': True, 'placeholder': "Фамилия"}
+                                 )
+
+    user_first_name = StringField("Имя", [InputRequired()],
                             render_kw={'autofocus': True, 'placeholder': "Имя" }
                             )
+    user_middle_name = StringField("Имя", [InputRequired()],
+                                  render_kw={'autofocus': True, 'placeholder': "Отчество"}
+                                  )
 
-    user_surname = StringField("Введите фамилию", [InputRequired()],
-                            render_kw={'autofocus': True, 'placeholder': "Фамилия" }
-                            )
+    email = StringField("Электронная почта",
+                           [InputRequired(), Email(message='Проверьте адрес электронной почты')],
+                           render_kw={'autofocus': True, 'placeholder': "E-mail"}
+                           )
 
     # Подтверждение что user - юридическое лицо
     user_organization = RadioField("Плательщик", [InputRequired()], default='value_one', choices=[('value_one', 'юридическое лицо'),

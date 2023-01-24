@@ -120,8 +120,8 @@ def login():
         # Пояснения - конец
 
         if user and check_password_hash(user.password, password) and user.active == False:
-            print('notactive_bp')
-            print('url_for("notactive_bp.notactive")=', url_for('notactive_bp.notactive'))
+            # print('notactive_bp')
+            # print('url_for("notactive_bp.notactive")=', url_for('notactive_bp.notactive'))
             # print(current_user, current_user.is_active)
             # return redirect(url_for('admin_bp.render_notactive'))
             return redirect(url_for('notactive_bp.notactive'))
@@ -133,7 +133,8 @@ def login():
             # print('current_user.is_authenticated1=', current_user.is_authenticated)- дает ошибку
             # print('current_user1=', current_user)- дает ошибку
             login_user(user)
-            # print('current_user=', current_user) - дает ошибку
+            # - дает ошибку - почему??
+            print('current_user=', current_user)
             # print('current_user.is_authenticated2=', current_user.is_authenticated)
             # print(current_user, current_user.is_active)
 
@@ -178,7 +179,7 @@ def login():
             #     print('type(next_page1)=', type(next_page))
             # print('request.url=', request.url)
             # print('request.args=', request.args)
-            # print(next_page)
+            print('next_page=', next_page)
 
             # Проверка безопастности next параметра
             # Вариант 1
@@ -190,10 +191,10 @@ def login():
 
 
             user_id = session.get('_user_id', '')
-            print('user_id from login before=', user_id)
-            print('current_user.id from login before=', current_user.id)
+            # print('user_id from login before=', user_id)
+            # print('current_user.id from login before=', current_user.id)
             carts_users = session.get('carts_users', [])
-            print('carts_users from login before=', carts_users)
+            # print('carts_users from login before=', carts_users)
 
             # Список user_id в списке корзин пользователей в рамках одной сессии
             # (состоит из id либо 'anonymous', если анонимная корзина)
@@ -201,7 +202,7 @@ def login():
             # его не удалять!!! Обновляется при добавлении корзины нового пользователя
             # и при слиянии анонимной корзины при входе нового пользователя в login_blueprint
             list_users_id_in_carts_users=session.get('list_users_id_in_carts_users', [])
-            print('list_users_id_in_carts_users from login before=', list_users_id_in_carts_users)
+            # print('list_users_id_in_carts_users from login before=', list_users_id_in_carts_users)
 
             # Создаем словарь для анонимной корзины чтобы слить с корзиной авторизуемого пользователя
             dict_anonymous = {}
@@ -213,19 +214,19 @@ def login():
 
             # user_authenticated_in_carts_users = False
             if carts_users != []:
-                print('список корзин пользователей не пуст')
+                # print('список корзин пользователей не пуст')
                 # Перебираем корзины пользователей и заполняем два словаря -
                 # анонима и авторизуемого пользователя (если они есть в корзинах)
                 for cart_user in carts_users:
-                    print('перебираем список корзин пользователей')
+                    # print('перебираем список корзин пользователей')
                     # Если корзина из списка корзин принадлежит анониму и она не пуста
                     if cart_user['user_id'] == 'anonymous' and cart_user['cart'] != []:
-                        print('корзина из списка корзин принадлежит анониму '
-                              '(т.е. cart_user["user_id"] == "anonymous") и она не пуста(т.е. cart_user["cart"] != [])')
-                        print('заполняем словарь анонима корзиной анонима')
+                        # print('корзина из списка корзин принадлежит анониму '
+                        #       '(т.е. cart_user["user_id"] == "anonymous") и она не пуста(т.е. cart_user["cart"] != [])')
+                        # print('заполняем словарь анонима корзиной анонима')
                         # Тогда заполняем словарь анонима корзиной анонима
                         dict_anonymous['cart'] = cart_user['cart']
-                        print('dict_anonymous=', dict_anonymous)
+                        # print('dict_anonymous=', dict_anonymous)
                         # а корзину анонима из списка корзин зануляем
                         cart_user['cart']=[]
 
@@ -235,8 +236,8 @@ def login():
                         # user_authenticated_in_carts_users = True
                         dict_user_id['user_id'] = cart_user['user_id']
                         dict_user_id['cart'] = cart_user['cart']
-                print('dict_anonymous=', dict_anonymous)
-                print('dict_user_id=', dict_user_id)
+                # print('dict_anonymous=', dict_anonymous)
+                # print('dict_user_id=', dict_user_id)
 
                 # Если авторизуемого пользователя нет в списке корзин пользователей
                 # и словарь, кот. создали из анонимной корзины не пуст добавим в список корзин
@@ -244,30 +245,30 @@ def login():
 
                 # Если авторизуемого пользователя нет в списке корзин пользователей:
                 if current_user.id not in list_users_id_in_carts_users:
-                    print('авторизуемого пользователя нет в списке корзин пользователей т.е.')
-                    print('current_user.id not in list_users_id_in_carts_users')
+                    # print('авторизуемого пользователя нет в списке корзин пользователей т.е.')
+                    # print('current_user.id not in list_users_id_in_carts_users')
                     # Создадим новую корзину для авторизуемого пользователя
                     new_cart_user={}
                     new_cart_user['user_id']=current_user.id
                     new_cart_user['cart']=dict_anonymous['cart']
-                    print('new_cart_user=', new_cart_user)
+                    # print('new_cart_user=', new_cart_user)
                     carts_users.append(new_cart_user)
-                    print('carts_users=', carts_users)
+                    # print('carts_users=', carts_users)
                     # Либо занулить здесь анонимный словарь и далее if вместо elif,
                     # либо просто следующий elif а не if. Сделала elif
                     # dict_anonymous['cart']=[]
 
                     # добавляем нового пользователя в список id корзин пользователей
                     list_users_id_in_carts_users.append(current_user.id)
-                    print('list_users_id_in_carts_users=', list_users_id_in_carts_users)
+                    # print('list_users_id_in_carts_users=', list_users_id_in_carts_users)
                     session['list_users_id_in_carts_users']=list_users_id_in_carts_users
                 # Если авторизуемый пользователь в списке корзин пользователей
                 # и словарь, кот. создали из анонимной корзины не пуст добавим
                 # его в корзину пользователя
                 elif current_user.id in list_users_id_in_carts_users and dict_anonymous['cart'] != []:
-                    print('current_user.id in list_users_id_in_carts_users and dict_anonymous["cart"] != []')
+                    # print('current_user.id in list_users_id_in_carts_users and dict_anonymous["cart"] != []')
                     for cart_user in carts_users:
-                        print('cart_user=', cart_user)
+                        # print('cart_user=', cart_user)
                         if cart_user['user_id'] == current_user.id:
                             for d in dict_anonymous['cart']:
                                 if d['order_request_sum']==-1:
@@ -300,8 +301,8 @@ def login():
 
             session['carts_users'] = carts_users
             session['user_id'] = user_id
-            print('list_users_id_in_carts_users from login after=', list_users_id_in_carts_users)
-            print('session from login=', session)
+            # print('list_users_id_in_carts_users from login after=', list_users_id_in_carts_users)
+            # print('session from login=', session)
 
             return redirect(next_page)
 
