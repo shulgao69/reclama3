@@ -3,18 +3,17 @@
 {% block container %}
 <main>
     <div class="container">
-        <div class="row">
-            <div class="col-12 pt-2">
-                <h5>Оформление заказа</h5>
-            </div>
 
-            <div class="col-6">
-                <div class="px-3 border border-success">
+        <!--Для чего класс form-signin - не помню!!! поэтому не использую-->
+        <!--<form class="form-signin pt-1" action="" method="POST">-->
+        <form action="" method="POST">
+            {{ form.csrf_token }}
 
-                    {% if current_user.is_authenticated %}
+            <h5 class="pt-2">Оформление заказа</h5>
+            {% if current_user.is_authenticated %}
                     <div class="text-muted pt-3">
-                        <!--<h5 class="h3 mb-3 font-weight-normal">Для уточнения деталей заказа заполните данные</h5>-->
-                        <!--<h4 class="mb-3 font-weight-light">-->
+                        <!--<h5 class="font-weight-normal">Для уточнения деталей заказа заполните данные</h5>-->
+                        <!--<h4 class="font-weight-light">-->
                         {% if current_user.user_first_name %}
                         {{ current_user.user_first_name }}!
                         {% endif %}
@@ -30,11 +29,436 @@
                         <!--</h4>-->
                     </div>
 
-                    <!--Для чего класс form-signin - не помню!!! поэтому не использую-->
-                    <!--<form class="form-signin pt-1" action="" method="POST">-->
-                    <form action="" method="POST">
-                        {{ form.csrf_token }}
-                        <h6 class="pt-2">Заказчик:</h6>
+            <!--Страница оформления заказа - вариант 1 - начало-->
+            <div class="row">
+                <div class="col-6">
+
+                    <!--Заголовок Контактные данные - начало-->
+                    <h6 class="pt-3">1. Контактные данные:</h6>
+                    <!--Заголовок Контактные данные - начало-->
+
+                    <!--Контактные данные - начало-->
+                    <!--Телефон, email - начало-->
+                    <div class="row">
+                        <!--email - начало-->
+                        <div class="col-6 pr-2">
+                            <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.email.errors %}
+                                {% for err in form.email.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--email - само поле начало-->
+                            <div class="pt-2">
+                                {% if current_user.email %}
+                                <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                                {{ form.email(class="form-control", value=current_user.email) }}
+                                {% else %}
+                                {{ form.user_middle_name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <!--email - само поле конец-->
+                        </div>
+                        <!--email - конец-->
+
+                        <!--Телефон - начало-->
+                        <div class="col-6 pl-2">
+                            <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.user_phone.errors %}
+                                {% for err in form.user_phone.errors %}
+                                <p class="error alert alert-warning" role="alert">
+                                    {{ err }}
+                                </p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Телефон - само поле начало-->
+                            <div class="pt-2">
+                                <!--класс бутстреп text-muted делает текст более бледным чем черный (серым)-->
+                                <!--                                    {{ form.user_phone.label(class="text-muted control-label") }}-->
+                                {{ form.user_phone(class="form-control") }}
+                            </div>
+                            <!--Телефон - само поле конец-->
+                        </div>
+                        <!--Телефон - конец-->
+                    </div>
+                    <!--Телефон, email - конец-->
+
+                    <!--ФИО - начало-->
+                    <div class="row">
+                        <!--Фамилия - начало-->
+                        <div class="col-12">
+                            <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.user_last_name.errors %}
+                                {% for err in form.user_last_name.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Фамилия - само поле начало-->
+                            <div class="pt-2">
+                                {% if current_user.user_last_name %}
+                                <!--{{ form.user_last_name.label(class="text-muted control-label") }}-->
+                                {{ form.user_last_name(class="form-control", value=current_user.user_last_name) }}
+                                {% else %}
+                                {{ form.user_last_name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <!--Фамилия - само поле конец-->
+                        </div>
+                        <!--Фамилия - конец-->
+
+                        <!--Имя - начало-->
+                        <div class="col-6 pr-2">
+                            <!--Имя - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.user_first_name.errors %}
+                                {% for err in form.user_first_name.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Имя - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Имя - само поле начало-->
+                            <div class="pt-2">
+                                <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                                {% if current_user.user_first_name %}
+                                {{ form.user_first_name(class="form-control", value=current_user.user_first_name) }}
+                                {% else %}
+                                {{ form.user_first_name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <!--Имя - само поле конец-->
+                        </div>
+                        <!--Имя - конец-->
+
+                        <!--Отчество - начало-->
+                        <div class="col-6 pl-2">
+                            <!--Отчество - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.user_middle_name.errors %}
+                                {% for err in form.user_middle_name.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Отчество - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Отчество - само поле начало-->
+                            <div class="pt-2">
+                                {% if current_user.user_middle_name %}
+                                <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                                {{ form.user_middle_name(class="form-control", value=current_user.user_middle_name)
+                                }}
+                                {% else %}
+                                {{ form.user_middle_name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <!--Отчество - само поле конец-->
+                        </div>
+                        <!--Отчество - конец-->
+                    </div>
+                    <!--ФИО - конец-->
+                    <!--Контактные данные - конец-->
+
+
+                    <!--Адрес доставки - начало-->
+
+                    <!--Заголовок Адрес доставки - начало-->
+                    <h6 class="pt-4">2. Адрес доставки:</h6>
+                    <!--Заголовок Адрес доставки - начало-->
+
+                    <!--Регион, Район, Населенный пункт доставки - начало-->
+                    <div class="row">
+                        <!-- Регион доставки- начало-->
+                        <div class="col-6 pr-2">
+                            <!--Регион доставки - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-1">
+                                {% if form.email.errors %}
+                                {% for err in form.email.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!-- Регион доставки- вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Регион доставки - само поле начало-->
+                            <div class="pt-1">
+                                {{ form.region.label(class='small mb-0') }}
+                                {{ form.region(class="form-control") }}
+                            </div>
+                            <!-- Регион доставки- само поле конец-->
+                        </div>
+                        <!--Регион доставки - конец-->
+
+                        <!--Район доставки - начало-->
+                        <div class="col-6 pl-2">
+                            <!--Район доставки - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-1">
+                                {% if form.area.errors %}
+                                {% for err in form.area.errors %}
+                                <p class="error alert alert-warning" role="alert">
+                                    {{ err }}
+                                </p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Район доставки - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Район доставки - само поле начало-->
+                            <div class="pt-1">
+                                {{ form.area.label(class='small mb-0') }}
+                                {{ form.area(class="form-control") }}
+                            </div>
+                            <!--Район доставки - само поле конец-->
+                        </div>
+                        <!--Район доставки - конец-->
+
+                        <!-- Населенный пункт- начало-->
+                        <div class="col-12 pr-2">
+                            <!--Населенный пункт - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-1">
+                                {% if form.punkt.errors %}
+                                {% for err in form.punkt.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!-- Населенный пункт- вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Населенный пункт - само поле начало-->
+                            <div class="pt-1">
+                                {{ form.punkt.label(class='small mb-0') }}
+                                {{ form.punkt(class="form-control") }}
+                            </div>
+                            <!-- Населенный пункт- само поле конец-->
+                        </div>
+                        <!--Населенный пункт - конец-->
+
+                    </div>
+                    <!--Регион, Район, Населенный пункт доставки - конец-->
+
+
+                    <!--Улица, Номер дома, Номер квартиры - начало-->
+                    <div class="row">
+                        <!--Тип улицы - начало-->
+                        <div class="col-4 pr-2">
+                            <!--Тип улицы - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.type_street.errors %}
+                                {% for err in form.type_street.errors %}
+                                <p class="error alert alert-warning" role="alert">
+                                    {{ err }}
+                                </p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Тип улицы - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Тип улицы - само поле начало-->
+                            <div class="pt-2">
+                                {{ form.type_street.label(class='small mb-0') }}
+                                {{ form.type_street(class="form-control") }}
+                            </div>
+                            <!--Тип улицы - само поле конец-->
+                        </div>
+                        <!--Тип улицыt - конец-->
+                        <!--Улица - начало-->
+                        <div class="col-8 pl-2">
+                            <!--name_street - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.name_street.errors %}
+                                {% for err in form.name_street.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--name_street - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--name_street - само поле начало-->
+                            <div class="pt-2">
+                                {{ form.name_street.label(class='small mb-0') }}
+                                {{ form.name_street(class="form-control") }}
+                            </div>
+                            <!--name_street - само поле конец-->
+                        </div>
+                        <!--Улица - конец-->
+
+                        <!--Номер дома - начало-->
+                        <div class="col-6 pr-2">
+                            <!--Номер дома - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-1">
+                                {% if form.house_number.errors %}
+                                {% for err in form.house_number.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Номер дома - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Номер дома - само поле начало-->
+                            <div class="pt-1">
+                                {{ form.house_number.label(class='small mb-0') }}
+                                {{ form.house_number(class="form-control") }}
+                            </div>
+                            <!--Номер дома - само поле конец-->
+                        </div>
+                        <!--Номер дома - конец-->
+
+                        <!--Номер квартиры - начало-->
+                        <div class="col-6 pl-2">
+                            <!--Номер квартиры - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-1">
+                                {% if form.apartment.errors %}
+                                {% for err in form.apartment.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Номер квартиры - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Номер квартиры - само поле начало-->
+                            <div class="pt-1">
+                                {{ form.apartment.label(class='small mb-0') }}
+                                {{ form.apartment(class="form-control") }}
+                            </div>
+                            <!--Номер квартиры - само поле конец-->
+                        </div>
+                        <!--Номер квартиры - конец-->
+
+                    </div>
+                    <!--Улица, Номер дома, Номер квартиры - конец-->
+
+                    <!--Адрес доставки - конец-->
+
+
+                    <!--Тип плательщика - начало-->
+                    <div class="col-12">
+                        <h6 class="pt-4">2. Тип плательщика:</h6>
+                        <!--class="list-unstyled" убирает ненужные точки в начале строки в списке-->
+                        <!--радиокнопок, т.к. в типе RadioField поля form.user_organization используются теги -->
+                        <!--<ul><li></li></ul> которые задают эти точки по умолчанию-->
+                        <div class="pt-2">
+                            <!-- {{ form.types_payer.label(class="text-muted control-label") }}-->
+                            {{ form.types_payer(class="list-unstyled text-muted") }}
+                        </div>
+                    </div>
+                    <!--Тип плательщика - конец-->
+
+                </div>
+
+                <div class="col-6">
+                    <!--Заголовок способ доставки - начало-->
+                    <h6 class="pt-3">3. Способ доставки:</h6>
+                    <!--Заголовок способ доставки - начало-->
+
+                    <!--способ доставки - начало-->
+                    <div class="row">
+                        <div class="col-12">
+                        <!--class="list-unstyled" убирает ненужные точки в начале строки в списке-->
+                        <!--радиокнопок, т.к. в типе RadioField поля form.user_organization используются теги -->
+                        <!--<ul><li></li></ul> которые задают эти точки по умолчанию-->
+                        <div class="pt-2">
+                            <!-- {{ form.types_payer.label(class="text-muted control-label") }}-->
+                            {{ form.delivery_method(class="list-unstyled text-muted") }}
+                        </div>
+                    </div>
+                    </div>
+                    <!--способ доставки - конец-->
+
+                    <div class="row">
+                        <!--email - начало-->
+                        <div class="col-6 pr-2">
+                            <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.email.errors %}
+                                {% for err in form.email.errors %}
+                                <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--email - само поле начало-->
+                            <div class="pt-2">
+                                {% if current_user.email %}
+                                <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                                {{ form.email(class="form-control", value=current_user.email) }}
+                                {% else %}
+                                {{ form.user_middle_name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <!--email - само поле конец-->
+                        </div>
+                        <!--email - конец-->
+
+                        <!--Телефон - начало-->
+                        <div class="col-6 pl-2">
+                            <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                            <div class="pt-2">
+                                {% if form.user_phone.errors %}
+                                {% for err in form.user_phone.errors %}
+                                <p class="error alert alert-warning" role="alert">
+                                    {{ err }}
+                                </p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                            <!--Телефон - само поле начало-->
+                            <div class="pt-2">
+                                <!--класс бутстреп text-muted делает текст более бледным чем черный (серым)-->
+                                <!--                                    {{ form.user_phone.label(class="text-muted control-label") }}-->
+                                {{ form.user_phone(class="form-control") }}
+                            </div>
+                            <!--Телефон - само поле конец-->
+                        </div>
+                        <!--Телефон - конец-->
+                    </div>
+                </div>
+
+            </div>
+            <!--Страница оформления заказа - вариант 1 - конец-->
+
+
+            <!--Страница оформления заказа - вариант 2 - начало-->
+            <div class="row pt-4">
+                <div class="col-6">
+                    <div class="px-3 mt-5 border border-success">
+
+                        <h6 class="pt-3">1. Контактные данные:</h6>
+                        <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        <div class="pt-0">
+                            {% if form.email.errors %}
+                            {% for err in form.email.errors %}
+                            <p class="error alert alert-warning" role="alert">{{ err }}</p>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+
+                        <!--email - начало-->
+                        <div class="pt-0">
+                            {% if current_user.email %}
+                            <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                            {{ form.email(class="form-control", value=current_user.email) }}
+                            {% else %}
+                            {{ form.user_middle_name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <!--email - конец-->
 
                         <!--Вывод ошибок:-->
                         <!--Ошибки можем сформировать разными способами:-->
@@ -48,6 +472,14 @@
                         <!--2) условия, кот. накладываем на данные внутри роута и передаем на стр. с помощью переменных            -->
                         <!--Затем на стр. выводим ошибки и 1) и 2)-->
 
+                        <!--Вывод ошибок, формируемых внутри роута (п.2) (если такие заданы), кот. рендерит эту стр. - начало-->
+                        {% if err %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ err }}
+                        </div>
+                        {% endif %}
+                        <!--Вывод ошибок, формируемых внутри роута (п.2), кот. рендерит эту стр. - конец-->
+
 
                         <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
                         {% if form.user_phone.errors %}
@@ -59,22 +491,15 @@
                         {% endif %}
                         <!--Телефон - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
 
-
-                        <!--Вывод ошибок, формируемых внутри роута (п.2) (если такие заданы), кот. рендерит эту стр. - начало-->
-                        {% if err %}
-                        <div class="alert alert-warning" role="alert">
-                            {{ err }}
+                        <!--Телефон - начало-->
+                        <div class="pt-3">
+                            <!--класс бутстреп text-muted делает текст более бледным чем черный (серым)-->
+                            {{ form.user_phone.label(class="text-muted control-label") }}
+                            {{ form.user_phone(class="form-control") }}
                         </div>
-                        {% endif %}
-                        <!--Вывод ошибок, формируемых внутри роута (п.2), кот. рендерит эту стр. - конец-->
+                        <!--Телефон - конец-->
 
-                        <div class="pt-0">
-                        <!--класс бутстреп text-muted делает текст более бледным чем черный (серым)-->
-                        {{ form.user_phone.label(class="text-muted  control-label") }}
-                        {{ form.user_phone(class="form-control") }}
-                        </div>
-
-                         <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
+                        <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
                         <div class="pt-2">
                             {% if form.user_last_name.errors %}
                             {% for err in form.user_last_name.errors %}
@@ -82,7 +507,7 @@
                             {% endfor %}
                             {% endif %}
                         </div>
-                         <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+                        <!--Фамилия - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
 
 
                         <!--Фамилия - начало-->
@@ -105,7 +530,7 @@
                             {% endfor %}
                             {% endif %}
                         </div>
-                         <!--Имя - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+                        <!--Имя - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
 
                         <!--Имя - начало-->
                         <div class="pt-2">
@@ -126,12 +551,12 @@
                             {% endfor %}
                             {% endif %}
                         </div>
-                         <!--Отчество - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
+                        <!--Отчество - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
 
                         <!--Отчество - начало-->
                         <div class="pt-2">
                             {% if current_user.user_middle_name %}
-                        <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
+                            <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
                             {{ form.user_middle_name(class="form-control", value=current_user.user_middle_name) }}
                             {% else %}
                             {{ form.user_middle_name(class="form-control") }}
@@ -139,38 +564,8 @@
                         </div>
                         <!--Отчество - конец-->
 
-                               <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - начало-->
-                        <div class="pt-2">
-                            {% if form.email.errors %}
-                            {% for err in form.email.errors %}
-                            <p class="error alert alert-warning" role="alert">{{ err }}</p>
-                            {% endfor %}
-                            {% endif %}
-                        </div>
-                         <!--email - вывод ошибок, формируемых на основе валидаторов формы (п.1) - конец-->
 
-                        <!--email - начало-->
-                        <div class="pt-2">
-                            {% if current_user.email %}
-                        <!--{{ form.user_first_name.label(class="text-muted control-label") }}-->
-                            {{ form.email(class="form-control", value=current_user.email) }}
-                            {% else %}
-                            {{ form.user_middle_name(class="form-control") }}
-                            {% endif %}
-                        </div>
-                        <!--email - конец-->
-
-                        <h6 class="pt-4">Плательщик:</h6>
-                        <!--class="list-unstyled" убирает ненужные точки в начале строки в списке-->
-                        <!--радиокнопок, т.к. в типе RadioField поля form.user_organization используются теги -->
-                        <!--<ul><li></li></ul> которые задают эти точки по умолчанию-->
-                        <div class="pt-2">
-<!--                            {{ form.user_organization.label(class="text-muted control-label") }}-->
-                            {{ form.user_organization(class="list-unstyled text-muted") }}
-
-                        </div>
-
-                        <div class="pt-3">Дря расчета стоимости доставки укажите адрес и способ доставки:</div>
+                        <div class="pt-3">Для расчета стоимости доставки укажите адрес и способ доставки:</div>
                         <h6 class="pt-3">Адрес доставки:</h6>
                         <h6 class="pt-3">Способ доставки:</h6>
                         <h6 class="pt-3">Стоимость доставки:</h6>
@@ -193,11 +588,13 @@
                         <!--{{ form.submit(class="btn btn-success") }}-->
                         <!--</div>-->
 
-                    </form>
+                    </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
+            <!--Страница оформления заказа - вариант 2 - конец-->
+
+        </form>
 
     </div>
 </main>

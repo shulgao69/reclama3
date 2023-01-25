@@ -122,9 +122,78 @@ class ApplicationForm(FlaskForm):
                            render_kw={'autofocus': True, 'placeholder': "E-mail"}
                            )
 
-    # Подтверждение что user - юридическое лицо
-    user_organization = RadioField("Плательщик", [InputRequired()], default='value_one', choices=[('value_one', 'юридическое лицо'),
-                          ('value_two', 'индивидуальный предприниматель'), ('value_three', 'частное лицо')])
+    # Регион доставки (области, республики или города ... значения (Москва, Санкт, Севастополь)
+    region = SelectField('Регион доставки',
+                         default='value_two',
+                         choices=[('value_one', 'Московская обл.'),
+                                  ('value_two', 'Тверская обл.'),
+                                  ('value_three', 'республика Башкортостан')
+                                  ]
+                         )
+    # Район доставки (областные центры или районы области)
+    area = SelectField('Областной центр или район',
+                         default='value_one',
+                         choices=[('value_one', 'Тверь'),
+                                  ('value_two', 'Калининский район')]
+                         )
+
+    # Населенный пункт доставки (Населенный пункт)
+    punkt = SelectField('Населенный пункт',
+                       default='value_one',
+                       choices=[('value_one', 'Конаково'),
+                                ('value_two', 'Батино'),
+                                ('value_three', 'Долматово')
+                                ]
+                       )
+
+    # Тип улицы (улица, проезд, проспект и тп)
+    type_street = SelectField('Тип (ул., пер., пр-т и т.п.)',
+                        default='value_one',
+                        choices=[('value_one', 'улица'),
+                                 ('value_two', 'переулок'),
+                                 ('value_three', 'проезд')
+                                 ]
+                        )
+
+    # Имя улицы (улица, проезд, проспект и тп)
+    name_street = SelectField('Улица',
+                              default='value_one',
+                              choices=[('value_one', 'Горького'),
+                                       ('value_two', 'Победы'),
+                                       ('value_three', 'Речная')
+                                       ]
+                              )
+    # Номер дома
+    house_number = StringField("Номер дома",
+                                 render_kw={'autofocus': True, 'placeholder': "Номер дома"}
+                                 )
+    # Номер квартиры
+    apartment = StringField("Номер квартиры",
+                                 render_kw={'autofocus': True, 'placeholder': "Номер квартиры"}
+                                 )
+
+    # Тип плательщика
+    types_payer = RadioField("Тип плательщика", [InputRequired()],
+                             default='value_one',
+                             choices=[('value_one', 'юридическое лицо'),
+                                      ('value_two', 'индивидуальный предприниматель'),
+                                      ('value_three', 'физическое лицо')]
+                             )
+
+    # Способ доставки
+    delivery_method = RadioField("Способ доставки", [InputRequired()],
+                             default='value_one',
+                             choices=[('value_one', 'Почта России'),
+                                      ('value_two', 'Самовывоз'),
+                                      ('value_three', 'Курьерская служба'),
+                                      ('value_four', 'PickPoint'),
+                                      ('value_four', 'Boxberry'),
+                                      ('value_five', 'Транспортная компания СДЭК (до ближайшего терминала)'),
+                                      ('value_five', 'Транспортная компания СДЭК (до двери)'),
+                                      ('value_six', 'Транспортная компания DPD (до ближайшего терминала)'),
+                                      ('value_six', 'Транспортная компания DPD (до двери)')
+                                      ]
+                             )
 
     # Согласие на обработку персональных данных
     user_consent = BooleanField("Согласен на обработку персональных данных", default=True)
